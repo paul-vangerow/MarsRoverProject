@@ -49,12 +49,12 @@
 #define ADNS3080_PRODUCT_ID_VAL        0x17
 
 
-int total_x = 0;
-int total_y = 0;
+float total_x = 0;
+float total_y = 0;
 
 
-int total_x1 = 0;
-int total_y1 = 0;
+float total_x1 = 0;
+float total_y1 = 0;
 
 
 int x=0;
@@ -63,8 +63,8 @@ int y=0;
 int a=0;
 int b=0;
 
-int distance_x=0;
-int distance_y=0;
+float distance_x=0;
+float distance_y=0;
 
 volatile byte movementflag=0;
 volatile int xydat[2];
