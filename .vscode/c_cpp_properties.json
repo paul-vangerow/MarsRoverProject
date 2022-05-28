@@ -3,7 +3,8 @@
         {
             "name": "Mac",
             "includePath": [
-                "${workspaceFolder}/**"
+                "${workspaceFolder}/Optics_and_motor/include/**",
+                "${workspaceFolder}/Optics_and_motor/lib/**"
             ],
             "defines": [],
             "macFrameworkPath": [

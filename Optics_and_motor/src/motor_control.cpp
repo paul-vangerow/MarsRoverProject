@@ -1,4 +1,5 @@
 #include <Robojax_L298N_DC_motor.h>
+#include <HardwareSerial.h>
 
 // motor 1 settings
 #define CHA 0

@@ -1,5 +1,6 @@
 #include <Arduino.h>
 #include "SPI.h"
+#include<HardwareSerial.h>
 
 // these pins may be different on different boards
 
