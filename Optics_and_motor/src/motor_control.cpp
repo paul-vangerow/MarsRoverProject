@@ -1,6 +1,8 @@
 #include <Robojax_L298N_DC_motor.h>
 #include <HardwareSerial.h>
 
+extern HardwareSerial Serial;
+
 // motor 1 settings
 #define CHA 0
 #define ENA 19 // this pin must be PWM enabled pin if Arduino board is used

@@ -2,6 +2,8 @@
 #include "SPI.h"
 #include<HardwareSerial.h>
 
+extern HardwareSerial Serial; // Stop complaining about serial
+
 // these pins may be different on different boards
 
 #define PIN_SS        5
