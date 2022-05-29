@@ -6,6 +6,8 @@
 /Users/vangerow/Documents/GitHub/MarsRoverProject/Optics_and_motor/build/CMakeFiles/size-components.dir
 /Users/vangerow/Documents/GitHub/MarsRoverProject/Optics_and_motor/build/CMakeFiles/menuconfig.dir
 /Users/vangerow/Documents/GitHub/MarsRoverProject/Optics_and_motor/build/CMakeFiles/flash.dir
+/Users/vangerow/Documents/GitHub/MarsRoverProject/Optics_and_motor/build/CMakeFiles/motor_control.dir
+/Users/vangerow/Documents/GitHub/MarsRoverProject/Optics_and_motor/build/CMakeFiles/confserver.dir
 /Users/vangerow/Documents/GitHub/MarsRoverProject/Optics_and_motor/build/CMakeFiles/save-defconfig.dir
 /Users/vangerow/Documents/GitHub/MarsRoverProject/Optics_and_motor/build/CMakeFiles/monitor.dir
 /Users/vangerow/Documents/GitHub/MarsRoverProject/Optics_and_motor/build/CMakeFiles/_project_elf_src.dir
@@ -14,11 +16,10 @@
 /Users/vangerow/Documents/GitHub/MarsRoverProject/Optics_and_motor/build/CMakeFiles/list_install_components.dir
 /Users/vangerow/Documents/GitHub/MarsRoverProject/Optics_and_motor/build/CMakeFiles/gen_project_binary.dir
 /Users/vangerow/Documents/GitHub/MarsRoverProject/Optics_and_motor/build/CMakeFiles/app.dir
+/Users/vangerow/Documents/GitHub/MarsRoverProject/Optics_and_motor/build/CMakeFiles/encrypted-flash.dir
 /Users/vangerow/Documents/GitHub/MarsRoverProject/Optics_and_motor/build/CMakeFiles/uf2-app.dir
 /Users/vangerow/Documents/GitHub/MarsRoverProject/Optics_and_motor/build/CMakeFiles/erase_flash.dir
-/Users/vangerow/Documents/GitHub/MarsRoverProject/Optics_and_motor/build/CMakeFiles/encrypted-flash.dir
-/Users/vangerow/Documents/GitHub/MarsRoverProject/Optics_and_motor/build/CMakeFiles/confserver.dir
-/Users/vangerow/Documents/GitHub/MarsRoverProject/Optics_and_motor/build/CMakeFiles/Optics_and_motor.elf.dir
+/Users/vangerow/Documents/GitHub/MarsRoverProject/Optics_and_motor/build/CMakeFiles/motor_control.elf.dir
 /Users/vangerow/Documents/GitHub/MarsRoverProject/Optics_and_motor/build/CMakeFiles/size-files.dir
 /Users/vangerow/Documents/GitHub/MarsRoverProject/Optics_and_motor/build/CMakeFiles/size.dir
 /Users/vangerow/Documents/GitHub/MarsRoverProject/Optics_and_motor/build/esp-idf/CMakeFiles/install/strip.dir

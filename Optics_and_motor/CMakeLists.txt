@@ -3,4 +3,10 @@
 cmake_minimum_required(VERSION 3.5)
 
 include($ENV{IDF_PATH}/tools/cmake/project.cmake)
-project(Optics_and_motor)
+
+project(motor_control)
+set(CMAKE_CXX_STANDARD 14)
+
+add_executable(motor_control src/main.cpp)
+target_include_directories(motor_control PUBLIC include/**)
+

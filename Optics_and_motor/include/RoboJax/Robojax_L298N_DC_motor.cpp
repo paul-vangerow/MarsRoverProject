@@ -27,6 +27,9 @@ Written by Ahmad Shamshiri (Robojax.com) on Dec 24, 2019
 
 #include "Arduino.h"
 #include "Robojax_L298N_DC_motor.h"
+#include <HardwareSerial.h>
+
+extern HardwareSerial Serial;
 
 
 // -- constructor 1 for single motor -Arduino

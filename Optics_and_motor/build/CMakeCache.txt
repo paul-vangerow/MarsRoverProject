@@ -162,7 +162,7 @@ CMAKE_PROJECT_DESCRIPTION:STATIC=
 CMAKE_PROJECT_HOMEPAGE_URL:STATIC=
 
 //Value Computed by CMake
-CMAKE_PROJECT_NAME:STATIC=Optics_and_motor
+CMAKE_PROJECT_NAME:STATIC=motor_control
 
 //Path to a program.
 CMAKE_RANLIB:FILEPATH=/home/ubuntu/.espressif/tools/xtensa-esp32-elf/esp-2021r2-patch3-8.4.0/xtensa-esp32-elf/bin/xtensa-esp32-elf-ranlib
@@ -486,6 +486,12 @@ mbedtls_LIB_DEPENDS:STATIC=general;__idf_cxx;general;__idf_newlib;general;__idf_
 
 //Dependencies for the target
 mbedx509_LIB_DEPENDS:STATIC=general;__idf_cxx;general;__idf_newlib;general;__idf_freertos;general;__idf_esp_hw_support;general;__idf_heap;general;__idf_log;general;__idf_soc;general;__idf_hal;general;__idf_esp_rom;general;__idf_esp_common;general;__idf_esp_system;general;__idf_esp32;general;mbedcrypto;
+
+//Value Computed by CMake
+motor_control_BINARY_DIR:STATIC=/Users/vangerow/Documents/GitHub/MarsRoverProject/Optics_and_motor/build
+
+//Value Computed by CMake
+motor_control_SOURCE_DIR:STATIC=/Users/vangerow/Documents/GitHub/MarsRoverProject/Optics_and_motor
 
 
 ########################
