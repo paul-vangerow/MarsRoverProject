@@ -9,7 +9,7 @@ void motorInit();
 
 void stp();
 
-void forward(int percent);
+void forward(float distance);
 
 void rotCW(int angle);
 

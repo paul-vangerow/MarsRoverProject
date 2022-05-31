@@ -20,7 +20,8 @@ const int CW  = 1; // do not change
 #define motor1 1 // do not change
 #define motor2 2 // do not change
 
-const int ANGLE_COEFFICIENT = 40;
+#define ANGLE_COEFFICIENT 40
+#define DIST_COEFFICIENT 20
 
 // for two motors without debug information // Watch video instruciton for this line: https://youtu.be/2JTMqURJTwg
 Robojax_L298N_DC_motor robot(IN1, IN2, ENA, CHA,  IN3, IN4, ENB, CHB);
@@ -36,9 +37,12 @@ void stp(){
   robot.brake(2);
 }
 
-void forward(int percent){
-  robot.rotate(motor1, percent, CW);
-  robot.rotate(motor2, percent, CCW);
+void forward(float distance){
+  stp();
+  robot.rotate(motor1, 40, CW);
+  robot.rotate(motor2, 40, CCW);
+  delay(distance * DISTANCE_COEFFICIENT)
+  stp();
 }
 
 void rotCW(int angle){
@@ -47,7 +51,7 @@ void rotCW(int angle){
   read= false;
   robot.rotate(motor1, 20, CW);
   robot.rotate(motor2, 20, CW);
-  delay(angle*ANGLE_COEFFICIENT);
+  delay(angle * ANGLE_COEFFICIENT);
   read = true;
   stp();
   
@@ -59,7 +63,7 @@ void rotCCW(int angle){
   read = false;
   robot.rotate(motor1, 20, CCW);
   robot.rotate(motor2, 20, CCW);
-  delay(angle*ANGLE_COEFFICIENT);
+  delay(angle * ANGLE_COEFFICIENT);
   read = true;
   stp();  
 }

@@ -15,7 +15,13 @@ void drive_core_code( void * parameter){
 
       Mouvement instr = instrq.get_instruction();
 
-      if (instr.get_instruction() == )
+      if (instr.get_instruction() == forward){
+        forward(instr.get_value());
+      } else if (instr.get_instruction() == spinCW ) {
+        spinCW(instr.get_value());
+      } else if (instr.get_instruction() == spinCCW ) {
+        spinCCW(instr.get_value());
+      }
 
     }
   }
