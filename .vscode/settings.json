@@ -1,4 +1,0 @@
-{
-    "cmake.sourceDirectory": "${workspaceFolder}/Optics_and_motor",
-    "cmake.configureOnOpen": true
-}
