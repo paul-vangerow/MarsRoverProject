@@ -1,6 +1,8 @@
 #include <Arduino.h>
 #include "SPI.h"
 
+#include <optics.h>
+
 // these pins may be different on different boards
 
 #define PIN_SS        5
@@ -193,7 +195,7 @@ int mousecam_frame_capture(byte *pdata)
   return ret;
 }
 
-void setup()
+void cam_init()
 {
   pinMode(PIN_SS,OUTPUT);
   pinMode(PIN_MISO,INPUT);
@@ -222,7 +224,7 @@ char asciiart(int k)
 
 byte frame[ADNS3080_PIXELS_X * ADNS3080_PIXELS_Y];
 
-void loop()
+void read_values()
 {
  #if 0
 /*

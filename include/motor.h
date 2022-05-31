@@ -1,5 +1,5 @@
-#ifndef Robojax_L298N_DC_motor_H
-#define Robojax_L298N_DC_motor_H
+#ifndef motor
+#define motor
 
 #include <Robojax_L298N_DC_motor.h>
 
