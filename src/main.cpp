@@ -2,6 +2,7 @@
 #include <motor.h>
 #include <optics.h>
 #include <instructions.hpp>
+#include <communication.hpp>
 
 #define LED 2
 
@@ -16,11 +17,11 @@ void drive_core_code( void * parameter){
       Mouvement instr = instrq.get_instruction();
 
       if (instr.get_instruction() == forward){
-        forward(instr.get_value());
+        move(instr.get_value());
       } else if (instr.get_instruction() == spinCW ) {
-        spinCW(instr.get_value());
+        rotCW(instr.get_value());
       } else if (instr.get_instruction() == spinCCW ) {
-        spinCCW(instr.get_value());
+        rotCCW(instr.get_value());
       }
 
     }

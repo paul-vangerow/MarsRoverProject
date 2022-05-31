@@ -72,6 +72,8 @@ float distance_y=0;
 volatile byte movementflag=0;
 volatile int xydat[2];
 
+bool read_data = true;
+
 
 int convTwosComp(int b){
   //Convert from 2's complement
@@ -278,7 +280,7 @@ void read_values()
   distance_x = md.dx; //convTwosComp(md.dx);
   distance_y = md.dy; //convTwosComp(md.dy);
 
-  if (read){
+  if (read_data){
     total_x1 = total_x1 + (distance_x * cos( (direction / 180) * PI) );
     total_y1 = total_y1 + (distance_x * sin( (direction / 180) * PI) );
   }

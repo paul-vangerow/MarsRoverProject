@@ -3,7 +3,7 @@
 
 extern float direction;
 
-extern bool read;
+extern bool read_data;
 
 void cam_init();
 

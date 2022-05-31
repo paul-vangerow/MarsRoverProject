@@ -21,7 +21,7 @@ class Mouvement{
         Mouvement();
         Mouvement(int _instr, val_t _val);
 
-        ~Mouvement();
+        ~Mouvement(){};
 
         virtual int get_instruction() const;
         virtual val_t get_value() const;
@@ -38,7 +38,7 @@ class Instruction_queue{
     public:
 
         Instruction_queue();
-        ~Instruction_queue();
+        ~Instruction_queue(){};
 
         bool isEmpty(){
             return instructions.empty();
