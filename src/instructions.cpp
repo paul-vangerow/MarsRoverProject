@@ -38,7 +38,7 @@ void Instruction_queue::update(){
     std::cout << "------------------------------------------------------" << std::endl;
     std::cout << payload << std::endl;
     std::cout << "------------------------------------------------------" << std::endl;
-    if(payload=="[{\"instr\":0,\"val\":10}]"){
+    if(payload=="[{\"instr\":0,\"val\":100}]"){
         Mouvement inst(Instruction(0),10);
         instructions.push(inst);
         std::cout << "------------------------------------------------------" << std::endl;
