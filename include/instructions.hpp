@@ -40,6 +40,14 @@ class Instruction_queue{
         Instruction_queue();
         ~Instruction_queue();
 
+        bool isEmpty(){
+            return instructions.empty();
+        }
+
+        Mouvement get_instruction(){
+            return instructions.pop();
+        }
+
         virtual void update();
 };
 
