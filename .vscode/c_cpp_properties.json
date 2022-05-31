@@ -8,8 +8,8 @@
         {
             "name": "PlatformIO",
             "includePath": [
-                "/Users/vangerow/Documents/GitHub/MarsRoverProject/rover_controller/include",
-                "/Users/vangerow/Documents/GitHub/MarsRoverProject/rover_controller/src",
+                "/Users/vangerow/Documents/GitHub/MarsRoverProject/include",
+                "/Users/vangerow/Documents/GitHub/MarsRoverProject/src",
                 "/Users/vangerow/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/include/config",
                 "/Users/vangerow/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/include/newlib/platform_include",
                 "/Users/vangerow/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/include/freertos/include",
@@ -223,8 +223,8 @@
             "browse": {
                 "limitSymbolsToIncludedHeaders": true,
                 "path": [
-                    "/Users/vangerow/Documents/GitHub/MarsRoverProject/rover_controller/include",
-                    "/Users/vangerow/Documents/GitHub/MarsRoverProject/rover_controller/src",
+                    "/Users/vangerow/Documents/GitHub/MarsRoverProject/include",
+                    "/Users/vangerow/Documents/GitHub/MarsRoverProject/src",
                     "/Users/vangerow/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/include/config",
                     "/Users/vangerow/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/include/newlib/platform_include",
                     "/Users/vangerow/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/include/freertos/include",
