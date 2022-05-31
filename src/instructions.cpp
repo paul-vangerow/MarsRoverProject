@@ -33,8 +33,8 @@ Instruction_queue::Instruction_queue(){
 
 void Instruction_queue::update(){
     String payload = FetchInstruction();
-    if(payload=="[{\"instr\":1,\"val\":10}]"){
-        Mouvement inst(Instruction(1),10);
+    if(payload=="[{\"instr\":0,\"val\":10}]"){
+        Mouvement inst(Instruction(0),10);
         instructions.push(inst);
     }
     // while(payload != ""){

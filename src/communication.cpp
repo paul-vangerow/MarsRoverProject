@@ -7,8 +7,8 @@ unsigned long timeout_interval = 3000;
 
 
 void InitWifi(){
-    auto ssid = "whatarewe"; // access point name
-    auto password="Virgins!"; // access point password
+    auto ssid = "Luc phone"; // access point name
+    auto password="yoloswag"; // access point password
         // IPAddress static_addi(172, 20, 10, 4); // IP address for the shield
         // IPAddress gateway_addi(172,20,20,1);
         // IPAddress subnet(255,255,255,240);
