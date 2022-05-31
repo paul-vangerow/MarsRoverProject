@@ -31,6 +31,8 @@ void drive_core_code( void * parameter){
 void setup(){
 
   Serial.begin(115200);
+
+  InitWifi();
   
   xTaskCreatePinnedToCore(drive_core_code, "drive", 1000, NULL, 0, &drive_core, 0);
 
@@ -38,6 +40,8 @@ void setup(){
 }
 
 void loop() {
-  read_values();
-  Serial.println(xPortGetCoreID());
+  //read_values();
+  instrq.update();
+  Serial.println(instrq.isEmpty());
+  delay(1000);
 }
