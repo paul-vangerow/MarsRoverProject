@@ -50,6 +50,8 @@
 
 #define ADNS3080_PRODUCT_ID_VAL        0x17
 
+#define MOD 157
+
 
 float total_x = 0;
 float total_y = 0;
@@ -58,9 +60,8 @@ float total_y = 0;
 float total_x1 = 0;
 float total_y1 = 0;
 
-
-int x=0;
-int y=0;
+float direction = 0;
+float location[2];
 
 int a=0;
 int b=0;
@@ -131,7 +132,6 @@ struct MD
  word shutter;
  byte max_pix;
 };
-
 
 void mousecam_read_motion(struct MD *p)
 {
@@ -275,24 +275,22 @@ void read_values()
   // Serial.println(md.max_pix);
   delay(100);
 
+  distance_x = md.dx; //convTwosComp(md.dx);
+  distance_y = md.dy; //convTwosComp(md.dy);
 
-    distance_x = md.dx; //convTwosComp(md.dx);
-    distance_y = md.dy; //convTwosComp(md.dy);
+  if (read){
+    total_x1 = total_x1 + (distance_x * cos( (direction / 180) * PI) );
+    total_y1 = total_y1 + (distance_x * sin( (direction / 180) * PI) );
+  }
 
-total_x1 = total_x1 + distance_x;
-total_y1 = total_y1 + distance_y;
+  location[0] = total_x1/MOD;
+  location[1] = total_y1/MOD;
 
-total_x = total_x1/157;
-total_y = total_y1/157;
+  Serial.print('\n');
 
+  Serial.println("Location: " + String(location[0]) + " " + String(location[1]));
 
-Serial.print('\n');
-
-
-Serial.println("Distance_x = " + String(total_x));
-
-Serial.println("Distance_y = " + String(total_y));
-Serial.print('\n');
+  Serial.print('\n');
 
   delay(250);
 

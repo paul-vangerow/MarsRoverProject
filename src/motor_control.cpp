@@ -1,5 +1,6 @@
 #include <Robojax_L298N_DC_motor.h>
 #include <motor.h>
+#include <optics.h>
 
 // motor 1 settings
 #define CHA 0
@@ -38,23 +39,28 @@ void stp(){
 void forward(int percent){
   robot.rotate(motor1, percent, CW);
   robot.rotate(motor2, percent, CCW);
-  
 }
 
 void rotCW(int angle){
   stp();
+  direction -= angle;
+  read= false;
   robot.rotate(motor1, 20, CW);
   robot.rotate(motor2, 20, CW);
   delay(angle*ANGLE_COEFFICIENT);
+  read = true;
   stp();
   
 }
 
 void rotCCW(int angle){
   stp();
+  direction += angle;
+  read = false;
   robot.rotate(motor1, 20, CCW);
   robot.rotate(motor2, 20, CCW);
   delay(angle*ANGLE_COEFFICIENT);
+  read = true;
   stp();  
 }
 
