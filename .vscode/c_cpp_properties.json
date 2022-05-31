@@ -10,6 +10,8 @@
             "includePath": [
                 "/Users/vangerow/Documents/GitHub/MarsRoverProject/include",
                 "/Users/vangerow/Documents/GitHub/MarsRoverProject/src",
+                "/Users/vangerow/.platformio/packages/framework-arduinoespressif32/libraries/SPI/src",
+                "/Users/vangerow/Documents/GitHub/MarsRoverProject/lib/RoboJax",
                 "/Users/vangerow/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/include/config",
                 "/Users/vangerow/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/include/newlib/platform_include",
                 "/Users/vangerow/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/include/freertos/include",
@@ -207,7 +209,6 @@
                 "/Users/vangerow/.platformio/packages/framework-arduinoespressif32/libraries/RainMaker/src",
                 "/Users/vangerow/.platformio/packages/framework-arduinoespressif32/libraries/SD/src",
                 "/Users/vangerow/.platformio/packages/framework-arduinoespressif32/libraries/SD_MMC/src",
-                "/Users/vangerow/.platformio/packages/framework-arduinoespressif32/libraries/SPI/src",
                 "/Users/vangerow/.platformio/packages/framework-arduinoespressif32/libraries/SPIFFS/src",
                 "/Users/vangerow/.platformio/packages/framework-arduinoespressif32/libraries/SimpleBLE/src",
                 "/Users/vangerow/.platformio/packages/framework-arduinoespressif32/libraries/Ticker/src",
@@ -225,6 +226,8 @@
                 "path": [
                     "/Users/vangerow/Documents/GitHub/MarsRoverProject/include",
                     "/Users/vangerow/Documents/GitHub/MarsRoverProject/src",
+                    "/Users/vangerow/.platformio/packages/framework-arduinoespressif32/libraries/SPI/src",
+                    "/Users/vangerow/Documents/GitHub/MarsRoverProject/lib/RoboJax",
                     "/Users/vangerow/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/include/config",
                     "/Users/vangerow/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/include/newlib/platform_include",
                     "/Users/vangerow/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/include/freertos/include",
@@ -422,7 +425,6 @@
                     "/Users/vangerow/.platformio/packages/framework-arduinoespressif32/libraries/RainMaker/src",
                     "/Users/vangerow/.platformio/packages/framework-arduinoespressif32/libraries/SD/src",
                     "/Users/vangerow/.platformio/packages/framework-arduinoespressif32/libraries/SD_MMC/src",
-                    "/Users/vangerow/.platformio/packages/framework-arduinoespressif32/libraries/SPI/src",
                     "/Users/vangerow/.platformio/packages/framework-arduinoespressif32/libraries/SPIFFS/src",
                     "/Users/vangerow/.platformio/packages/framework-arduinoespressif32/libraries/SimpleBLE/src",
                     "/Users/vangerow/.platformio/packages/framework-arduinoespressif32/libraries/Ticker/src",

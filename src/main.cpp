@@ -1,16 +1,14 @@
 #include <Arduino.h>
+#include <motor.h>
 
 #define LED 2
+
 void setup(){
   Serial.begin(115200);
-  pinMode(LED,OUTPUT);
+  motorInit();
 }
 
 void loop() {
-  digitalWrite(LED,HIGH);
-  Serial.println("LED ison");
-  delay(1000);
-  digitalWrite(LED,LOW);
-  Serial.println("LED isoff");
+  rotCW(360);
   delay(1000);
 }

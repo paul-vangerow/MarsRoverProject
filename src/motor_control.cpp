@@ -1,4 +1,5 @@
 #include <Robojax_L298N_DC_motor.h>
+#include <motor.h>
 
 // motor 1 settings
 #define CHA 0
@@ -25,15 +26,13 @@ Robojax_L298N_DC_motor robot(IN1, IN2, ENA, CHA,  IN3, IN4, ENB, CHB);
 // for two motors with debug information
 //Robojax_L298N_DC_motor robot(IN1, IN2, ENA, CHA, IN3, IN4, ENB, CHB, true);
 
-void setup() {
-  Serial.begin(115200);
+void motorInit(){
   robot.begin();
-  //L298N DC Motor by Robojax.com
 }
 
-void loop() {
-  rotCW(360);
-  delay(1000);
+void stp(){
+  robot.brake(1);
+  robot.brake(2);
 }
 
 void forward(int percent){
@@ -59,7 +58,4 @@ void rotCCW(int angle){
   stp();  
 }
 
-void stp(){
-  robot.brake(1);
-  robot.brake(2);
-}
+

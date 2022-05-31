@@ -76,8 +76,7 @@ int convTwosComp(int b){
     b = -1 * ((b ^ 0xff) + 1);
     }
   return b;
-  }
-
+}
 
 int tdistance = 0;
 
