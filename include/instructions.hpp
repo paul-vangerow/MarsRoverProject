@@ -7,9 +7,9 @@
 typedef double val_t;
 
 enum Instruction{
-    forward = 1,
-    spin = 0,
-    backwards = -1
+    forward = 0,
+    spinCCW = 1,
+    spinCW = -1
 };
 
 class Mouvement{
@@ -45,7 +45,9 @@ class Instruction_queue{
         }
 
         Mouvement get_instruction(){
-            return instructions.pop();
+            Mouvement temp = instructions.front();
+            instructions.pop();
+            return temp;
         }
 
         virtual void update();

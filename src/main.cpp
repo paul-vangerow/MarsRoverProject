@@ -11,13 +11,13 @@ Instruction_queue instrq;
 void drive_core_code( void * parameter){
   motorInit();
   for(;;){
+    if (!instrq.isEmpty()){
 
-    if (instrq.isEmpty()){
-      
+      Mouvement instr = instrq.get_instruction();
+
+      if (instr.get_instruction() == )
+
     }
-
-
-    
   }
 }
 
