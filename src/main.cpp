@@ -12,7 +12,7 @@ Instruction_queue instrq;
 void drive_core_code( void * parameter){
   motorInit();
   for(;;){
-    Serial.println(instrq.isEmpty());
+    
     if (!instrq.isEmpty()){
       Serial.println("succ");
       Mouvement instr = instrq.get_instruction();
@@ -26,6 +26,7 @@ void drive_core_code( void * parameter){
       }
 
     }
+    //move(100);
     delay(1000);
   }
 }
@@ -34,15 +35,15 @@ void setup(){
 
   Serial.begin(115200);
 
-  InitWifi();
+  //InitWifi();
+  cam_init();
   
   xTaskCreate(drive_core_code, "drive", 1000, &instrq, tskIDLE_PRIORITY, NULL);
-
-  cam_init();
+  
 }
 
 void loop() {
-  //read_values();
-  instrq.update();
-  delay(1000);
+  read_values();
+  //instrq.update();
+  //delay(1000);
 }
