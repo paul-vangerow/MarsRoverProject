@@ -4,7 +4,34 @@
 #include <instructions.hpp>
 #include <communication.hpp>
 
-#define LED 2
+/*
+
+------- CURRENT PIN SETUP -------
+
+OPTICS >>
+
+PIN_SS        5 <-- CONFLICT --> IO21
+PIN_MISO      19 <-- CONFLICT --> IO22
+PIN_MOSI      23 
+PIN_SCK       18 <-- CONFLICT --> IO14
+PIN_MOUSECAM_RESET     35
+PIN_MOUSECAM_CS        5 <-- CONFLICT --> IO21
+
+MOTOR >>
+
+Motor (1)
+CHA 0
+ENA 19 // this pin must be PWM enabled pin if Arduino board is used
+IN1 18 
+IN2 5
+
+Motor (2)
+IN3 17
+IN4 16
+ENB 4 // this pin must be PWM enabled pin if Arduino board is used
+CHB 1
+
+*/
 
 TaskHandle_t drive_core;
 Instruction_queue instrq;

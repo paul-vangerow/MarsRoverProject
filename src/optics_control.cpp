@@ -5,13 +5,13 @@
 
 // these pins may be different on different boards
 
-#define PIN_SS        5
-#define PIN_MISO      19
+#define PIN_SS        21
+#define PIN_MISO      22
 #define PIN_MOSI      23
-#define PIN_SCK       18
+#define PIN_SCK       14
 
 #define PIN_MOUSECAM_RESET     35
-#define PIN_MOUSECAM_CS        5
+#define PIN_MOUSECAM_CS        21
 
 #define ADNS3080_PIXELS_X                 30
 #define ADNS3080_PIXELS_Y                 30
