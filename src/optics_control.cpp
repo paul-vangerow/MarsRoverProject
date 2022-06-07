@@ -5,13 +5,13 @@
 
 // these pins may be different on different boards
 
-#define PIN_SS        21
-#define PIN_MISO      22
+#define PIN_SS        5
+#define PIN_MISO      19
 #define PIN_MOSI      23
-#define PIN_SCK       14
+#define PIN_SCK       18
 
 #define PIN_MOUSECAM_RESET     35
-#define PIN_MOUSECAM_CS        21
+#define PIN_MOUSECAM_CS        5
 
 #define ADNS3080_PIXELS_X                 30
 #define ADNS3080_PIXELS_Y                 30
@@ -203,12 +203,12 @@ void cam_init()
   pinMode(PIN_MISO,INPUT);
   pinMode(PIN_MOSI,OUTPUT);
   pinMode(PIN_SCK,OUTPUT);
-
+  
   SPI.begin();
   SPI.setClockDivider(SPI_CLOCK_DIV32);
   SPI.setDataMode(SPI_MODE3);
   SPI.setBitOrder(MSBFIRST);
-
+  
   Serial.begin(9600);
 
   if(mousecam_init()==-1)
@@ -216,6 +216,7 @@ void cam_init()
     Serial.println("Mouse cam failed to init");
     while(1);
   }
+  
 }
 
 char asciiart(int k)

@@ -8,7 +8,7 @@
 #include <string.h>
 #include <vector>
 
-const String host = "http://18.133.28.79:80/";
+const String host = "http://13.41.77.188:80/";
 
 
 void InitWifi();

@@ -38,6 +38,8 @@ Instruction_queue instrq;
 
 void drive_core_code( void * parameter){
   motorInit();
+  delay(4000);
+  move(500);
   for(;;){
     
     if (!instrq.isEmpty()){
@@ -54,7 +56,7 @@ void drive_core_code( void * parameter){
 
     }
     //move(100);
-    delay(1000);
+    //delay(100);
   }
 }
 
