@@ -1,6 +1,9 @@
 #ifndef instruction_hpp
-#define isntruction_hpp
+#define instruction_hpp
 
+#include <Arduino.h>
+
+#include <communication.hpp>
 #include <string.h>
 #include <queue>
 
@@ -52,5 +55,11 @@ class Instruction_queue{
 
         virtual void update();
 };
+
+// returns the number of substrings in the string
+int count(std::string msg);
+
+// updates the queue according to the json formated string
+void parse(std::queue<Mouvement> &q, String message);
 
 #endif

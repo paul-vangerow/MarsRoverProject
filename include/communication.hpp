@@ -1,6 +1,7 @@
 #ifndef communication_hpp
 #define communication_hpp
 
+#include <WiFi.h>
 #include <WiFiClient.h>
 #include <HTTPClient.h>
 #include <WiFiUdp.h>
@@ -8,7 +9,7 @@
 #include <string.h>
 #include <vector>
 
-const String host = "http://18.133.28.79:80/";
+const String host = "http://13.41.77.188:80/";
 
 
 void InitWifi();
@@ -21,6 +22,8 @@ void get();
 
 // fetch the set of instructions from the server that haven't been executed yet
 String FetchInstruction();
+
+
 
 void PostSensorReadings();
 

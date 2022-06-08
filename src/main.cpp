@@ -36,7 +36,7 @@ void setup(){
 
   InitWifi();
   
-  xTaskCreate(drive_core_code, "drive", 1000, &instrq, tskIDLE_PRIORITY, NULL);
+  // xTaskCreate(drive_core_code, "drive", 1000, &instrq, tskIDLE_PRIORITY, NULL);
 
   cam_init();
 }
@@ -44,5 +44,6 @@ void setup(){
 void loop() {
   //read_values();
   instrq.update();
-  delay(1000);
+
+  delay(10000);
 }
