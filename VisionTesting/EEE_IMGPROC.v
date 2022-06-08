@@ -1,3 +1,7 @@
+//cd C:/Users/Abdal/Desktop/EEE2Rover-master/DE10_LITE_D8M_VIP_16/software/D8M_Camera_Test
+
+//nios2-download D8M_Camera_Test.elf -c 1 -g
+
 module EEE_IMGPROC(
 	// global clock & reset
 	clk,
@@ -139,20 +143,22 @@ reg prev_detect_high_pink, prev_high_pink, prev_high_pink2;
 
 wire red_ball_detect, pink_ball_detect, teal_ball_detect, orange_ball_detect;	
 wire building_detect;
-assign pink_ball_detect = ((((hue >= 150 && hue <= 180)||(hue <= 6 && hue >= 0)) && (saturation > 84 && value > 245))||
-(hue <= 6 && hue >= 0 && ((value > 229 && saturation > 17 && saturation < 155)||(value > 210 && saturation > 130)))
-|| ((hue >= 160 && hue <= 180) && ((saturation >= 76 && value >= 249) || (saturation >= 102 && value >= 140)))
-|| (((hue >= 160 && hue <= 180)||(hue >= 0 && hue <= 4)) && (saturation > 140 && saturation <= 179 && value >= 89 && value <= 106)) 
-|| (((hue >= 172 && hue <= 180)||(hue >= 0 && hue <= 6)) && ((value >  105 && saturation > 102) || (saturation > 82 && value > 168))));
+assign pink_ball_detect = //((((hue >= 150 && hue <= 180)||(hue <= 6 && hue >= 0)) && (saturation > 84 && value > 245))||
+//(hue <= 6 && hue >= 0 && ((value > 229 && saturation > 17 && saturation < 155)||(value > 210 && saturation > 130)))
+//|| ((hue >= 160 && hue <= 180) && ((saturation >= 76 && value >= 249) || (saturation >= 102 && value >= 140)))
+//|| (((hue >= 160 && hue <= 180)||(hue >= 0 && hue <= 4)) && (saturation > 140 && saturation <= 179 && value >= 89 && value <= 106)) ||
+ (((hue >= 175 && hue <= 180)||(hue >= 0 && hue <= 22)) && ((saturation > 83 && saturation < 190)) && ((value >  205 && value < 256)));
 
-assign red_ball_detect = ((((hue >= 160 && hue <= 180)||(hue <= 10 && hue >= 3)) && (saturation > 60 && value > 245))
-||(hue <= 10 && hue >= 3 && ((value > 229 && saturation > 17 && saturation < 155)||(value > 210 && saturation > 130)))
-||(((hue >= 172 && hue <= 180)||(hue >= 3 && hue <= 10)) && ((value >  60 && saturation > 80) || (saturation > 60 && value > 80)))); //sat > 102
+assign red_ball_detect = (//(((hue >= 160 && hue <= 180)||(hue <= 10 && hue >= 3)) && (saturation > 60 && value > 245))||
+(hue <= 17 && hue >= 5 && (value <= 255 &&(value > 112 && saturation > 195 && saturation <= 255))) 
+//||(((hue >= 172 && hue <= 180)||(hue >= 3 && hue <= 10)) && ((value >  60 && saturation > 80) || (saturation > 60 && value > 80)))
+); //sat > 102
 
-assign orange_ball_detect = (((hue >= 16 && hue <=25) && (saturation > 133 && value > 78)) 
+assign orange_ball_detect = 0;
+/*(((hue >= 16 && hue <=25) && (saturation > 133 && value > 78)) 
 || ((hue >= 23 && hue <= 30) && ((value > 155 && saturation > 127)||(saturation >= 153 && value > 252)||(value > 41 && saturation > 247))));
-
-assign teal_ball_detect = (((hue >= 40 && hue <= 85) && (saturation > 50 && value > 50) && (saturation < 150 && value < 150)));
+*/
+assign teal_ball_detect = (((hue >= 60 && hue <= 85) && (saturation > 100 && saturation > 200) && (value > 110 && value < 245)));
 //test orange
 //assign orange_ball_detect = (((hue >= 14 && hue <=25) && (saturation > 160 && value > 128)) || ((hue >= 23 && hue <= 30) && ((value > 155 && saturation > 135)||(saturation >= 153 && value > 252)||(value > 109 && saturation > 247))));
 
