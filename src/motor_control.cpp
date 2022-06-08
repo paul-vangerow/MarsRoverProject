@@ -22,11 +22,39 @@ const int CW  = 1; // do not change
 
 #define ANGLE_COEFFICIENT 40
 #define DISTANCE_COEFFICIENT 20
+#define TURN_CONTROL 26
+
+// PID Control Values (Turning)
+#define INT_COEFF 1;
+#define PROP_COEFF 1;
+#define DIFF_COEFF 1;
 
 // for two motors without debug information // Watch video instruciton for this line: https://youtu.be/2JTMqURJTwg
 Robojax_L298N_DC_motor robot(IN1, IN2, ENA, CHA,  IN3, IN4, ENB, CHB);
 // for two motors with debug information
 //Robojax_L298N_DC_motor robot(IN1, IN2, ENA, CHA, IN3, IN4, ENB, CHB, true);
+
+int current_time = millis();
+
+int rotSpeed(int dir){
+  int mod = 0;
+
+  int step_time = millis();
+  int elapsed = step_time - current_time;
+
+  current_time = step_time;
+
+  if (dir == CW){
+    mod = -1;
+  } else {
+    mod = 1;
+  }
+
+  int error = d_optics[0] - (mod * TURN_CONTROL);
+
+  return 20 + ;
+
+}
 
 void motorInit(){
   robot.begin();
@@ -45,27 +73,12 @@ void move(float distance){
   stp();
 }
 
-void rotCW(int angle){
+void rot(int angle, int direction){
   stp();
-  direction -= angle;
-  read_data= false;
-  robot.rotate(motor1, 20, CW);
-  robot.rotate(motor2, 20, CW);
-  delay(angle * ANGLE_COEFFICIENT);
-  read_data = true;
+  robot.rotate(motor1, rotSpeed(direction), direction);
+  robot.rotate(motor2, rotSpeed(direction), direction);
   stp();
   
-}
-
-void rotCCW(int angle){
-  stp();
-  direction += angle;
-  read_data = false;
-  robot.rotate(motor1, 20, CCW);
-  robot.rotate(motor2, 20, CCW);
-  delay(angle * ANGLE_COEFFICIENT);
-  read_data = true;
-  stp();  
 }
 
 

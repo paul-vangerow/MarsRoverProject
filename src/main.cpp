@@ -38,8 +38,8 @@ Instruction_queue instrq;
 
 void drive_core_code( void * parameter){
   motorInit();
-  delay(4000);
-  move(500);
+  //delay(4000);
+  rot(380, 2);
   for(;;){
     
     if (!instrq.isEmpty()){
@@ -49,9 +49,9 @@ void drive_core_code( void * parameter){
       if (instr.get_instruction() == forward){
         move(instr.get_value());
       } else if (instr.get_instruction() == spinCW ) {
-        rotCW(instr.get_value());
+        rot(instr.get_value(), 1);
       } else if (instr.get_instruction() == spinCCW ) {
-        rotCCW(instr.get_value());
+        rot(instr.get_value(), 2);
       }
 
     }

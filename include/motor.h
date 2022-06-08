@@ -11,9 +11,7 @@ void stp();
 
 void move(float distance);
 
-void rotCW(int angle);
-
-void rotCCW(int angle);
+void rot(int angle, int direction);
 
 
 #endif
