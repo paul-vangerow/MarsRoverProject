@@ -4,9 +4,9 @@
 
 // motor 1 settings
 #define CHA 0
-#define ENA 19 // this pin must be PWM enabled pin if Arduino board is used
-#define IN1 18
-#define IN2 5
+#define ENA 12 // this pin must be PWM enabled pin if Arduino board is used
+#define IN1 14
+#define IN2 15
 
 // motor 2 settings
 #define IN3 17
@@ -39,8 +39,8 @@ void stp(){
 
 void move(float distance){
   stp();
-  robot.rotate(motor1, 40, CW);
-  robot.rotate(motor2, 40, CCW);
+  robot.rotate(motor1, 39, CW);
+  robot.rotate(motor2, 43, CCW);
   delay(distance * DISTANCE_COEFFICIENT);
   stp();
 }

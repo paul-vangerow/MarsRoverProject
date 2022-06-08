@@ -1,0 +1,22 @@
+IO15 -> D12 // AIN2
+IO2 -> D13
+IO4 -> D11 // PWMB
+IO16 (RXD2) -> D9 // BIN2
+IO17 (TXD2) -> D8 // BIN1
+IO5 -> D7 // SS
+IO18 -> D6 // SCK
+IO19 -> D5 // MISO
+IO21 -> D4
+RXD0 -> D0
+TXD0 -> D1
+I022 -> D3
+IO23 -> D2 // MOSI
+IO13 -> SDA
+I012 -> SCL // PWMA
+IO14 -> D10 // AIN1
+IO27 -> A0
+IO26 -> A1
+IO25 -> A2
+IO33 -> A3
+IO32 -> A4
+IO35 -> A5 // RESET

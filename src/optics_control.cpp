@@ -203,12 +203,12 @@ void cam_init()
   pinMode(PIN_MISO,INPUT);
   pinMode(PIN_MOSI,OUTPUT);
   pinMode(PIN_SCK,OUTPUT);
-
+  
   SPI.begin();
   SPI.setClockDivider(SPI_CLOCK_DIV32);
   SPI.setDataMode(SPI_MODE3);
   SPI.setBitOrder(MSBFIRST);
-
+  
   Serial.begin(9600);
 
   if(mousecam_init()==-1)
@@ -216,6 +216,7 @@ void cam_init()
     Serial.println("Mouse cam failed to init");
     while(1);
   }
+  
 }
 
 char asciiart(int k)
@@ -265,8 +266,12 @@ void read_values()
   int val = mousecam_read_reg(ADNS3080_PIXEL_SUM);
   MD md;
   mousecam_read_motion(&md);
+
   for(int i=0; i<md.squal/4; i++)
     Serial.print('*');
+  
+  Serial.println(md.squal);
+
   Serial.print(' ');
   Serial.print((val*100)/351);
   Serial.print(' ');
@@ -280,21 +285,21 @@ void read_values()
   distance_x = md.dx; //convTwosComp(md.dx);
   distance_y = md.dy; //convTwosComp(md.dy);
 
+  Serial.println("Distance: " + String(distance_y));
+
   if (read_data){
-    total_x1 = total_x1 + (distance_x * cos( (direction / 180) * PI) );
-    total_y1 = total_y1 + (distance_x * sin( (direction / 180) * PI) );
+    total_x1 = total_x1 + (distance_y * cos( (direction / 180) * PI) );
+    total_y1 = total_y1 + (distance_y * sin( (direction / 180) * PI) );
   }
 
   location[0] = total_x1/MOD;
   location[1] = total_y1/MOD;
 
-  Serial.print('\n');
-
   Serial.println("Location: " + String(location[0]) + " " + String(location[1]));
 
-  Serial.print('\n');
+  Serial.println("");
 
-  delay(250);
+  delay(1000);
 
   #endif
 }
