@@ -147,17 +147,28 @@ assign pink_ball_detect = //((((hue >= 150 && hue <= 180)||(hue <= 6 && hue >= 0
 //(hue <= 6 && hue >= 0 && ((value > 229 && saturation > 17 && saturation < 155)||(value > 210 && saturation > 130)))
 //|| ((hue >= 160 && hue <= 180) && ((saturation >= 76 && value >= 249) || (saturation >= 102 && value >= 140)))
 //|| (((hue >= 160 && hue <= 180)||(hue >= 0 && hue <= 4)) && (saturation > 140 && saturation <= 179 && value >= 89 && value <= 106)) ||
- (((hue >= 175 && hue <= 180)||(hue >= 0 && hue <= 22)) && ((saturation > 83 && saturation < 190)) && ((value >  205 && value < 256)));
+ (((hue >= 175 && hue <= 181)||(hue >= 0 && hue <= 22)) && ((saturation > 83 && saturation < 190)) && ((value >  205 && value < 256)));
 
-assign red_ball_detect = (//(((hue >= 160 && hue <= 180)||(hue <= 10 && hue >= 3)) && (saturation > 60 && value > 245))||
-(hue <= 17 && hue >= 5 && (value <= 256 &&(value > 112 && saturation > 195 && saturation <= 256))) 
+assign red_ball_detect = ((((hue >= 150 && hue <= 180)||(hue <= 6 && hue >= 0)) && (saturation > 84 && value > 245))||
+(hue <= 6 && hue >= 0 && ((value > 229 && saturation > 17 && saturation < 155)||(value > 210 && saturation > 130)))
+|| ((hue >= 160 && hue <= 180) && ((saturation >= 76 && value >= 249) || (saturation >= 102 && value >= 140)))
+|| (((hue >= 160 && hue <= 180)||(hue >= 0 && hue <= 4)) && (saturation > 140 && saturation <= 179 && value >= 89 && value <= 106)) 
+||(((hue >= 172 && hue <= 180)||(hue >= 0 && hue <= 6)) && ((value >  105 && saturation > 102) || (saturation > 82 && value > 168)))); //sat > 102
+
+/*(//(((hue >= 160 && hue <= 180)||(hue <= 10 && hue >= 3)) && (saturation > 60 && value > 245))||
+(hue <= 17 && hue >= 5 && value <= 256 &&value > 112 && saturation > 195 && saturation <= 256) 
+||(hue <= 17 && hue >= 8 && value > 248 && saturation > 223 && saturation <= 240)
+||(hue <= 13 && hue >= 3 && value > 249 && saturation > 224 && saturation <= 230)
 //||(((hue >= 172 && hue <= 180)||(hue >= 3 && hue <= 10)) && ((value >  60 && saturation > 80) || (saturation > 60 && value > 80)))
 ); //sat > 102
+*/
+assign orange_ball_detect = (((hue >= 16 && hue <=25) && (saturation > 133 && value > 124)) || ((hue >= 23 && hue <= 30) && ((value > 155 && saturation > 127)||(saturation >= 153 && value > 252)||(value > 100 && saturation > 247))));
 
-assign orange_ball_detect = (((hue >= 16 && hue <=25) && (saturation > 133 && value > 78)) 
-|| ((hue >= 23 && hue <= 30) && ((value > 155 && saturation > 127)||(saturation >= 153 && value > 252)||(value > 41 && saturation > 247))));
+//(((hue >= 16 && hue <=25) && (saturation > 133 && value > 78)) 
+//|| ((hue >= 23 && hue <= 30) && ((value > 155 && saturation > 127)||(saturation >= 153 && value > 252)||(value > 41 && saturation > 247))));
 
-assign teal_ball_detect = (((hue >= 60 && hue <= 85) && (saturation > 100 && saturation < 200) && (value > 110 && value < 245)));
+assign teal_ball_detect = (((hue >= 60 && hue <= 85) && (saturation > 100 && saturation < 200) && (value > 110 && value < 245))
+||((hue >= 53 && hue <= 80) && (saturation > 80 && saturation < 114) && (value > 60 && value <= 256)));
 //test orange
 //assign orange_ball_detect = (((hue >= 14 && hue <=25) && (saturation > 160 && value > 128)) || ((hue >= 23 && hue <= 30) && ((value > 155 && saturation > 135)||(saturation >= 153 && value > 252)||(value > 109 && saturation > 247))));
 
@@ -266,7 +277,7 @@ always@(posedge clk) begin
 	end
 end
 
-//Find first and last red pixels
+//Find first and last coloured pixels
 reg [10:0] x_min_red, x_max_red, x_min_orange, x_max_orange, x_min_teal, x_max_teal, x_min_pink, x_max_pink;
 wire [10:0] x_dist_red, x_dist_orange, x_dist_teal, x_dist_pink;
 
