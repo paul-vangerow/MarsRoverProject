@@ -24,36 +24,26 @@ const int CW  = 1; // do not change
 #define DISTANCE_COEFFICIENT 20
 #define TURN_CONTROL 26
 
-// PID Control Values (Turning)
-#define INT_COEFF 1;
-#define PROP_COEFF 1;
-#define DIFF_COEFF 1;
+// P Control Values (Turning)
+#define P_T 0.1
+
+// P Control Values (Driving)
+#define P_D 0.2
+
+#define ROT_ERROR_TOL 1
 
 // for two motors without debug information // Watch video instruciton for this line: https://youtu.be/2JTMqURJTwg
 Robojax_L298N_DC_motor robot(IN1, IN2, ENA, CHA,  IN3, IN4, ENB, CHB);
 // for two motors with debug information
 //Robojax_L298N_DC_motor robot(IN1, IN2, ENA, CHA, IN3, IN4, ENB, CHB, true);
 
-int current_time = millis();
-
-int rotSpeed(int dir){
-  int mod = 0;
-
-  int step_time = millis();
-  int elapsed = step_time - current_time;
-
-  current_time = step_time;
-
-  if (dir == CW){
-    mod = -1;
+int sign(int val){
+  if (val > 0){
+    return 2;
   } else {
-    mod = 1;
+    return 1;
   }
-
-  int error = d_optics[0] - (mod * TURN_CONTROL);
-
-  return 20 + ;
-
+  
 }
 
 void motorInit(){
@@ -67,18 +57,42 @@ void stp(){
 
 void move(float distance){
   stp();
-  robot.rotate(motor1, 39, CW);
-  robot.rotate(motor2, 43, CCW);
-  delay(distance * DISTANCE_COEFFICIENT);
+  int speed_d = 0;
+  while (1){
+    speed_d = straight_factor * P_D;
+    
+    if (speed_d > 40){
+      speed_d = 40;
+    } else if (speed_d < -40){
+      speed_d = -40;
+    }
+
+    Serial.println(straight_factor);
+
+    robot.rotate(motor1, 25 + speed_d, CW);
+    robot.rotate(motor2, 25 - speed_d, CCW); 
+    delay(100); 
+  }
+  
   stp();
 }
 
-void rot(int angle, int direction){
+void rot(int angle){
+
+  int target = robot_angle + angle;
+  int error = 2;
+
   stp();
-  robot.rotate(motor1, rotSpeed(direction), direction);
-  robot.rotate(motor2, rotSpeed(direction), direction);
+  while (abs(error) > ROT_ERROR_TOL){
+    error = target - robot_angle;
+
+    robot.rotate(motor1, 20, sign(error));
+    robot.rotate(motor2, 20, sign(error));
+
+    delay(10);
+    stp();
+  }
   stp();
-  
 }
 
 
