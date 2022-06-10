@@ -67,6 +67,8 @@ float d_optics[2];
 float distance_x=0;
 float distance_y=0;
 
+float straight_factor = 0;
+
 int convTwosComp(int b){
   //Convert from 2's complement
   if(b & 0x80){
@@ -223,12 +225,12 @@ void read_values()
  
   d_optics[0] = convTwosComp(md.dx);  d_optics[1] = convTwosComp(md.dy); // Change in X and Y of image (as int)
 
-  total_optics[0] = total_optics[0] + d_optics[0];
-  total_optics[1] = total_optics[1] + d_optics[1];
+  straight_factor = straight_factor + d_optics[0];
+  
+  total_optics[0] = total_optics[0] + d_optics[0]; // Shouldn't happen during Turning
+  total_optics[1] = total_optics[1] + d_optics[1]; // Shouldn't happen during Moving
 
   robot_angle = (total_optics[0] / 4000) * 360;
-
-
 
   Serial.print(" ( ");
   Serial.print(d_optics[0]);  Serial.print(" , "); Serial.print(d_optics[1]);
