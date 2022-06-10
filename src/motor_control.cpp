@@ -21,21 +21,28 @@ const int CW  = 1; // do not change
 #define motor2 2 // do not change
 
 #define ANGLE_COEFFICIENT 40
-#define DISTANCE_COEFFICIENT 20
+#define DISTANCE_COEFFICIENT 40
 #define TURN_CONTROL 26
 
 // P Control Values (Turning)
 #define P_T 0.1
 
 // P Control Values (Driving)
-#define P_D 0.2
+#define P_D 0.4
 
 #define ROT_ERROR_TOL 1
+#define MOV_ERROR_TOL 1
 
 // for two motors without debug information // Watch video instruciton for this line: https://youtu.be/2JTMqURJTwg
 Robojax_L298N_DC_motor robot(IN1, IN2, ENA, CHA,  IN3, IN4, ENB, CHB);
 // for two motors with debug information
 //Robojax_L298N_DC_motor robot(IN1, IN2, ENA, CHA, IN3, IN4, ENB, CHB, true);
+
+enum state {
+  MOV = 1,
+  ROT = 2,
+  NOP = 0
+};
 
 int sign(int val){
   if (val > 0){
@@ -56,25 +63,32 @@ void stp(){
 }
 
 void move(float distance){
-  stp();
-  int speed_d = 0;
-  while (1){
-    speed_d = straight_factor * P_D;
-    
-    if (speed_d > 40){
-      speed_d = 40;
-    } else if (speed_d < -40){
-      speed_d = -40;
-    }
-
-    Serial.println(straight_factor);
-
-    robot.rotate(motor1, 25 + speed_d, CW);
-    robot.rotate(motor2, 25 - speed_d, CCW); 
-    delay(100); 
-  }
   
+
+  
+  int speed_d = 0;
+
+  int target = total_optics[1] + (distance*DISTANCE_COEFFICIENT);
+  int error = 2;
+
+  straight_factor = 0;
+
   stp();
+  ROBOT_STATE = MOV;
+  while (error > MOV_ERROR_TOL){
+
+    error = target - total_optics[1];
+
+    speed_d = straight_factor * P_D;
+
+    robot.rotate(motor1, 40 + speed_d, CW);
+    robot.rotate(motor2, 40 - speed_d, CCW); 
+    delay(10); 
+  }
+
+  stp();
+  ROBOT_STATE = NOP;
+
 }
 
 void rot(int angle){
@@ -83,6 +97,7 @@ void rot(int angle){
   int error = 2;
 
   stp();
+  ROBOT_STATE = ROT;
   while (abs(error) > ROT_ERROR_TOL){
     error = target - robot_angle;
 
@@ -90,9 +105,9 @@ void rot(int angle){
     robot.rotate(motor2, 20, sign(error));
 
     delay(10);
-    stp();
   }
   stp();
+  ROBOT_STATE = NOP;
 }
 
 

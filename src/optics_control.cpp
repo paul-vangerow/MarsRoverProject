@@ -63,11 +63,15 @@ int a=0;
 int b=0;
 
 float d_optics[2];
-
-float distance_x=0;
-float distance_y=0;
-
 float straight_factor = 0;
+
+enum state {
+  MOV = 1,
+  ROT = 2,
+  NOP = 0
+};
+
+int ROBOT_STATE = NOP;
 
 int convTwosComp(int b){
   //Convert from 2's complement
@@ -217,7 +221,7 @@ void read_values()
   MD md;
   mousecam_read_motion(&md);
 
-  // READ CAMERA QUALITY
+  //* READ CAMERA QUALITY
   for(int i=0; i<md.squal/4; i++)
     Serial.print('*');
   Serial.println(md.squal);
@@ -225,17 +229,26 @@ void read_values()
  
   d_optics[0] = convTwosComp(md.dx);  d_optics[1] = convTwosComp(md.dy); // Change in X and Y of image (as int)
 
-  straight_factor = straight_factor + d_optics[0];
-  
-  total_optics[0] = total_optics[0] + d_optics[0]; // Shouldn't happen during Turning
-  total_optics[1] = total_optics[1] + d_optics[1]; // Shouldn't happen during Moving
+  if (ROBOT_STATE == MOV){
+    straight_factor = straight_factor + d_optics[0];
+
+    location[0] = cos((robot_angle / 180) * PI) * d_optics[1];
+    location[1] = sin((robot_angle / 180) * PI) * d_optics[1];
+
+    total_optics[1] = total_optics[1] + d_optics[1];
+
+  } else if (ROBOT_STATE == ROT){
+    total_optics[0] = total_optics[0] + d_optics[0];
+  }
 
   robot_angle = (total_optics[0] / 4000) * 360;
-
+  /*
   Serial.print(" ( ");
   Serial.print(d_optics[0]);  Serial.print(" , "); Serial.print(d_optics[1]);
   Serial.println(" ) ");
+  */
 
+ Serial.print(location[0]); Serial.print(" , "); Serial.println(location[1]); Serial.print(" , "); 
 
   /*
   location[0] = total_x1/MOD;
