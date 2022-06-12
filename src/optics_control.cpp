@@ -1,5 +1,6 @@
 #include <Arduino.h>
 #include "SPI.h"
+#include <list>
 
 #include <optics.h>
 
@@ -52,28 +53,25 @@
 
 #define MOD 157
 
-
-float total_x = 0;
-float total_y = 0;
-
-
-float total_x1 = 0;
-float total_y1 = 0;
-
-float direction = 0;
+float total_optics[2];
+float robot_angle = 0;
 float location[2];
+
+std::list<float> avg;
 
 int a=0;
 int b=0;
 
-float distance_x=0;
-float distance_y=0;
+float d_optics[2];
+float straight_factor = 0;
 
-volatile byte movementflag=0;
-volatile int xydat[2];
+enum state {
+  MOV = 1,
+  ROT = 2,
+  NOP = 0
+};
 
-bool read_data = true;
-
+int ROBOT_STATE = NOP;
 
 int convTwosComp(int b){
   //Convert from 2's complement
@@ -83,9 +81,6 @@ int convTwosComp(int b){
   return b;
 }
 
-int tdistance = 0;
-
-
 void mousecam_reset()
 {
   digitalWrite(PIN_MOUSECAM_RESET,HIGH);
@@ -93,7 +88,6 @@ void mousecam_reset()
   digitalWrite(PIN_MOUSECAM_RESET,LOW);
   delay(35); // 35ms from reset to functional
 }
-
 
 int mousecam_init()
 {
@@ -219,87 +213,46 @@ void cam_init()
   
 }
 
-char asciiart(int k)
-{
-  static char foo[] = "WX86*3I>!;~:,`. ";
-  return foo[k>>4];
-}
-
 byte frame[ADNS3080_PIXELS_X * ADNS3080_PIXELS_Y];
 
 void read_values()
 {
- #if 0
-/*
-    if(movementflag){
-
-    tdistance = tdistance + convTwosComp(xydat[0]);
-    Serial.println("Distance = " + String(tdistance));
-    movementflag=0;
-    delay(3);
-    }
-
-  */
-  // if enabled this section grabs frames and outputs them as ascii art
-
-  if(mousecam_frame_capture(frame)==0)
-  {
-    int i,j,k;
-    for(i=0, k=0; i<ADNS3080_PIXELS_Y; i++)
-    {
-      for(j=0; j<ADNS3080_PIXELS_X; j++, k++)
-      {
-        Serial.print(asciiart(frame[k]));
-        Serial.print(' ');
-      }
-      Serial.println();
-    }
-  }
-  Serial.println();
-  delay(250);
-
-  #else
-
-  // if enabled this section produces a bar graph of the surface quality that can be used to focus the camera
-  // also drawn is the average pixel value 0-63 and the shutter speed and the motion dx,dy.
-
   int val = mousecam_read_reg(ADNS3080_PIXEL_SUM);
   MD md;
   mousecam_read_motion(&md);
 
+  //* READ CAMERA QUALITY
   for(int i=0; i<md.squal/4; i++)
     Serial.print('*');
-  
   Serial.println(md.squal);
+  //*/
+ 
+  d_optics[0] = convTwosComp(md.dx);  d_optics[1] = convTwosComp(md.dy); // Change in X and Y of image (as int)
 
-  Serial.print(' ');
-  Serial.print((val*100)/351);
-  Serial.print(' ');
-  Serial.print(md.shutter); Serial.print(" (");
-  Serial.print((int)md.dx); Serial.print(',');
-  Serial.print((int)md.dy); Serial.println(')');
+  if (ROBOT_STATE == MOV){
+    straight_factor = straight_factor + d_optics[0];
 
-  // Serial.println(md.max_pix);
-  delay(100);
+    location[0] = cos((robot_angle / 180) * PI) * d_optics[1];
+    location[1] = sin((robot_angle / 180) * PI) * d_optics[1];
 
-  distance_x = md.dx; //convTwosComp(md.dx);
-  distance_y = md.dy; //convTwosComp(md.dy);
+    total_optics[1] = total_optics[1] + d_optics[1];
 
-  Serial.println("Distance: " + String(distance_y));
-
-  if (read_data){
-    total_x1 = total_x1 + (distance_y * cos( (direction / 180) * PI) );
-    total_y1 = total_y1 + (distance_y * sin( (direction / 180) * PI) );
+  } else if (ROBOT_STATE == ROT){
+    total_optics[0] = total_optics[0] + d_optics[0];
   }
 
+  robot_angle = (total_optics[0] / 4000) * 360;
+  /*
+  Serial.print(" ( ");
+  Serial.print(d_optics[0]);  Serial.print(" , "); Serial.print(d_optics[1]);
+  Serial.println(" ) ");
+  */
+
+ Serial.print(location[0]); Serial.print(" , "); Serial.println(location[1]); Serial.print(" , "); 
+
+  /*
   location[0] = total_x1/MOD;
   location[1] = total_y1/MOD;
-
-  Serial.println("Location: " + String(location[0]) + " " + String(location[1]));
-
-  Serial.println("");
-
-  delay(1000);
-
-  #endif
+  */
+  delay(100);
 }

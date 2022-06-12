@@ -21,12 +21,37 @@ const int CW  = 1; // do not change
 #define motor2 2 // do not change
 
 #define ANGLE_COEFFICIENT 40
-#define DISTANCE_COEFFICIENT 20
+#define DISTANCE_COEFFICIENT 40
+#define TURN_CONTROL 26
+
+// P Control Values (Turning)
+#define P_T 0.1
+
+// P Control Values (Driving)
+#define P_D 0.4
+
+#define ROT_ERROR_TOL 1
+#define MOV_ERROR_TOL 1
 
 // for two motors without debug information // Watch video instruciton for this line: https://youtu.be/2JTMqURJTwg
 Robojax_L298N_DC_motor robot(IN1, IN2, ENA, CHA,  IN3, IN4, ENB, CHB);
 // for two motors with debug information
 //Robojax_L298N_DC_motor robot(IN1, IN2, ENA, CHA, IN3, IN4, ENB, CHB, true);
+
+enum state {
+  MOV = 1,
+  ROT = 2,
+  NOP = 0
+};
+
+int sign(int val){
+  if (val > 0){
+    return 2;
+  } else {
+    return 1;
+  }
+  
+}
 
 void motorInit(){
   robot.begin();
@@ -38,34 +63,51 @@ void stp(){
 }
 
 void move(float distance){
-  stp();
-  robot.rotate(motor1, 39, CW);
-  robot.rotate(motor2, 43, CCW);
-  delay(distance * DISTANCE_COEFFICIENT);
-  stp();
-}
-
-void rotCW(int angle){
-  stp();
-  direction -= angle;
-  read_data= false;
-  robot.rotate(motor1, 20, CW);
-  robot.rotate(motor2, 20, CW);
-  delay(angle * ANGLE_COEFFICIENT);
-  read_data = true;
-  stp();
   
+
+  
+  int speed_d = 0;
+
+  int target = total_optics[1] + (distance*DISTANCE_COEFFICIENT);
+  int error = 2;
+
+  straight_factor = 0;
+
+  stp();
+  ROBOT_STATE = MOV;
+  while (error > MOV_ERROR_TOL){
+
+    error = target - total_optics[1];
+
+    speed_d = straight_factor * P_D;
+
+    robot.rotate(motor1, 40 + speed_d, CW);
+    robot.rotate(motor2, 40 - speed_d, CCW); 
+    delay(10); 
+  }
+
+  stp();
+  ROBOT_STATE = NOP;
+
 }
 
-void rotCCW(int angle){
+void rot(int angle){
+
+  int target = robot_angle + angle;
+  int error = 2;
+
   stp();
-  direction += angle;
-  read_data = false;
-  robot.rotate(motor1, 20, CCW);
-  robot.rotate(motor2, 20, CCW);
-  delay(angle * ANGLE_COEFFICIENT);
-  read_data = true;
-  stp();  
+  ROBOT_STATE = ROT;
+  while (abs(error) > ROT_ERROR_TOL){
+    error = target - robot_angle;
+
+    robot.rotate(motor1, 20, sign(error));
+    robot.rotate(motor2, 20, sign(error));
+
+    delay(10);
+  }
+  stp();
+  ROBOT_STATE = NOP;
 }
 
 

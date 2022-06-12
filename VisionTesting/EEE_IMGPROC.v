@@ -1,3 +1,7 @@
+//cd C:/Users/Abdal/Desktop/EEE2Rover-master/DE10_LITE_D8M_VIP_16/software/D8M_Camera_Test
+
+//nios2-download D8M_Camera_Test.elf -c 1 -g
+
 module EEE_IMGPROC(
 	// global clock & reset
 	clk,
@@ -139,20 +143,32 @@ reg prev_detect_high_pink, prev_high_pink, prev_high_pink2;
 
 wire red_ball_detect, pink_ball_detect, teal_ball_detect, orange_ball_detect;	
 wire building_detect;
-assign pink_ball_detect = ((((hue >= 150 && hue <= 180)||(hue <= 6 && hue >= 0)) && (saturation > 84 && value > 245))||
+assign pink_ball_detect = //((((hue >= 150 && hue <= 180)||(hue <= 6 && hue >= 0)) && (saturation > 84 && value > 245))||
+//(hue <= 6 && hue >= 0 && ((value > 229 && saturation > 17 && saturation < 155)||(value > 210 && saturation > 130)))
+//|| ((hue >= 160 && hue <= 180) && ((saturation >= 76 && value >= 249) || (saturation >= 102 && value >= 140)))
+//|| (((hue >= 160 && hue <= 180)||(hue >= 0 && hue <= 4)) && (saturation > 140 && saturation <= 179 && value >= 89 && value <= 106)) ||
+ (((hue >= 175 && hue <= 181)||(hue >= 0 && hue <= 22)) && ((saturation > 83 && saturation < 190)) && ((value >  205 && value < 256)));
+
+assign red_ball_detect = ((((hue >= 150 && hue <= 180)||(hue <= 6 && hue >= 0)) && (saturation > 84 && value > 245))||
 (hue <= 6 && hue >= 0 && ((value > 229 && saturation > 17 && saturation < 155)||(value > 210 && saturation > 130)))
 || ((hue >= 160 && hue <= 180) && ((saturation >= 76 && value >= 249) || (saturation >= 102 && value >= 140)))
 || (((hue >= 160 && hue <= 180)||(hue >= 0 && hue <= 4)) && (saturation > 140 && saturation <= 179 && value >= 89 && value <= 106)) 
-|| (((hue >= 172 && hue <= 180)||(hue >= 0 && hue <= 6)) && ((value >  105 && saturation > 102) || (saturation > 82 && value > 168))));
+||(((hue >= 172 && hue <= 180)||(hue >= 0 && hue <= 6)) && ((value >  105 && saturation > 102) || (saturation > 82 && value > 168)))); //sat > 102
 
-assign red_ball_detect = ((((hue >= 160 && hue <= 180)||(hue <= 10 && hue >= 3)) && (saturation > 60 && value > 245))
-||(hue <= 10 && hue >= 3 && ((value > 229 && saturation > 17 && saturation < 155)||(value > 210 && saturation > 130)))
-||(((hue >= 172 && hue <= 180)||(hue >= 3 && hue <= 10)) && ((value >  60 && saturation > 80) || (saturation > 60 && value > 80)))); //sat > 102
+/*(//(((hue >= 160 && hue <= 180)||(hue <= 10 && hue >= 3)) && (saturation > 60 && value > 245))||
+(hue <= 17 && hue >= 5 && value <= 256 &&value > 112 && saturation > 195 && saturation <= 256) 
+||(hue <= 17 && hue >= 8 && value > 248 && saturation > 223 && saturation <= 240)
+||(hue <= 13 && hue >= 3 && value > 249 && saturation > 224 && saturation <= 230)
+//||(((hue >= 172 && hue <= 180)||(hue >= 3 && hue <= 10)) && ((value >  60 && saturation > 80) || (saturation > 60 && value > 80)))
+); //sat > 102
+*/
+assign orange_ball_detect = (((hue >= 16 && hue <=25) && (saturation > 133 && value > 124)) || ((hue >= 23 && hue <= 30) && ((value > 155 && saturation > 127)||(saturation >= 153 && value > 252)||(value > 100 && saturation > 247))));
 
-assign orange_ball_detect = (((hue >= 16 && hue <=25) && (saturation > 133 && value > 78)) 
-|| ((hue >= 23 && hue <= 30) && ((value > 155 && saturation > 127)||(saturation >= 153 && value > 252)||(value > 41 && saturation > 247))));
+//(((hue >= 16 && hue <=25) && (saturation > 133 && value > 78)) 
+//|| ((hue >= 23 && hue <= 30) && ((value > 155 && saturation > 127)||(saturation >= 153 && value > 252)||(value > 41 && saturation > 247))));
 
-assign teal_ball_detect = (((hue >= 40 && hue <= 85) && (saturation > 50 && value > 50) && (saturation < 150 && value < 150)));
+assign teal_ball_detect = (((hue >= 60 && hue <= 85) && (saturation > 100 && saturation < 200) && (value > 110 && value < 245))
+||((hue >= 53 && hue <= 80) && (saturation > 80 && saturation < 114) && (value > 60 && value <= 256)));
 //test orange
 //assign orange_ball_detect = (((hue >= 14 && hue <=25) && (saturation > 160 && value > 128)) || ((hue >= 23 && hue <= 30) && ((value > 155 && saturation > 135)||(saturation >= 153 && value > 252)||(value > 109 && saturation > 247))));
 
@@ -224,17 +240,17 @@ assign new_image_red = bb_active_red ? {24'hff0000} : color_high;
 wire [23:0] new_image_orange;
 wire bb_active_orange;
 assign bb_active_orange = (x == left_orange && left_orange != IMAGE_W-11'h1) | (x == right_orange && right_orange != 0);
-assign new_image_orange = bb_active_orange ? {24'hffff00} : new_image_red;
+assign new_image_orange = bb_active_orange ? {24'hffa500} : new_image_red;
 
 wire [23:0] new_image_teal;
 wire bb_active_teal;
 assign bb_active_teal = (x == left_teal && left_teal != IMAGE_W-11'h1) | (x == right_teal && right_teal != 0);
-assign new_image_teal = bb_active_teal ? {24'h00ff00} : new_image_orange;
+assign new_image_teal = bb_active_teal ? {24'h0080800} : new_image_orange;
 
 wire [23:0] new_image_pink;
 wire bb_active_pink;
 assign bb_active_pink = (x == left_pink && left_pink != IMAGE_W-11'h1) | (x == right_pink && right_pink != 0);
-assign new_image_pink = bb_active_pink ? {24'h0000ff} : new_image_teal;
+assign new_image_pink = bb_active_pink ? {24'hffc0cb} : new_image_teal;
 
 // Switch output pixels depending on mode switch
 // Don't modify the start-of-packet word - it's a packet discriptor
@@ -261,7 +277,7 @@ always@(posedge clk) begin
 	end
 end
 
-//Find first and last red pixels
+//Find first and last coloured pixels
 reg [10:0] x_min_red, x_max_red, x_min_orange, x_max_orange, x_min_teal, x_max_teal, x_min_pink, x_max_pink;
 wire [10:0] x_dist_red, x_dist_orange, x_dist_teal, x_dist_pink;
 
@@ -279,174 +295,174 @@ reg[15:0] data_value;
 assign outbuffer = (data_drive_mux) ? data_value : drive_instr;
 
 
-always@(posedge clk)begin
-	if (distance_red == 0 && distance_orange == 0 && distance_teal == 0 && distance_pink == 0 && msg_state == 3)begin //if no balls on the screen rotate right
-		//rotating right
-		data_drive_mux <= 0;
-		drive_instr <= {16'b0000100000000000}; //rotate the drone right 
-	end
-	else begin
-		if ((distance_red != 0) && ((distance_red < distance_orange) || (distance_orange == 0)) && 
-		((distance_red < distance_teal)|| (distance_teal == 0)) && 
-		((distance_red < distance_pink) || (distance_pink == 0)) && 
-		msg_state == 3) begin //red ball nearest
+// always@(posedge clk)begin
+// 	if (distance_red == 0 && distance_orange == 0 && distance_teal == 0 && distance_pink == 0 && msg_state == 3)begin //if no balls on the screen rotate right
+// 		//rotating right
+// 		data_drive_mux <= 0;
+// 		drive_instr <= {16'b0000100000000000}; //rotate the drone right 
+// 	end
+// 	else begin
+// 		if ((distance_red != 0) && ((distance_red < distance_orange) || (distance_orange == 0)) && 
+// 		((distance_red < distance_teal)|| (distance_teal == 0)) && 
+// 		((distance_red < distance_pink) || (distance_pink == 0)) && 
+// 		msg_state == 3) begin //red ball nearest
 		
-			if(x_min_red >  600)begin //case: if x_min is greater than the middle pixel
-				drive_instr <= {16'b0000100000000000}; //rotate the drone right
+// 			if(x_min_red >  600)begin //case: if x_min is greater than the middle pixel
+// 				drive_instr <= {16'b0000100000000000}; //rotate the drone right
 				
-				data_drive_mux <= 0;
-			end
-			else if(x_max_red < 40) begin//case if x_max is smaller than the middle pixel
-				drive_instr <= {16'b0001000000000000}; //rotate the drone left
-				data_drive_mux <= 0;
-			end
-			else if (distance_red > 30) begin //if the red ping pong ball is too far
-				drive_instr <= {16'b0100000000000000}; //move the drone forward
-				data_drive_mux <= 0;
-			end
-			else if (distance_red < 26) begin //if the red ping pong ball is too near
-				drive_instr <= {16'b0010000000000000}; //move the drone backward
-				data_drive_mux <= 0;
-			end
-			/*
-			else if (((320-x_min_red) > (x_max_red - 320)) && (((320-x_min_red) - (x_max_red - 320)) > 130))begin //if the image is more to the left 
+// 				data_drive_mux <= 0;
+// 			end
+// 			else if(x_max_red < 40) begin//case if x_max is smaller than the middle pixel
+// 				drive_instr <= {16'b0001000000000000}; //rotate the drone left
+// 				data_drive_mux <= 0;
+// 			end
+// 			else if (distance_red > 30) begin //if the red ping pong ball is too far
+// 				drive_instr <= {16'b0100000000000000}; //move the drone forward
+// 				data_drive_mux <= 0;
+// 			end
+// 			else if (distance_red < 26) begin //if the red ping pong ball is too near
+// 				drive_instr <= {16'b0010000000000000}; //move the drone backward
+// 				data_drive_mux <= 0;
+// 			end
+// 			/*
+// 			else if (((320-x_min_red) > (x_max_red - 320)) && (((320-x_min_red) - (x_max_red - 320)) > 130))begin //if the image is more to the left 
 				
-				drive_instr <= {16'b0000100000000000}; //rotate the drone right
-				data_drive_mux <= 0;
-			end
-			else if (((x_max_red - 320) > (320 - x_min_red)) && (((x_max_red - 320) - (320-x_min_red)) > 130))begin //if the image is more to the right
-				drive_instr <= {16'b0001000000000000}; //rotate the drone left
-				data_drive_mux <= 0;
-			end
-			*/
-			else begin //send distance measurement as long as it's within 20cm to 25cm
-				data_value <= {1'b1,distance_red[4:0],3'b000,7'h0}; //send the distance + ball colour
-				data_drive_mux <= 1;
-			end
-		end
-		else if ((distance_orange != 0) &&((distance_orange < distance_red) || (distance_red == 0)) && ((distance_orange < distance_teal) || (distance_teal == 0)) && ((distance_orange < distance_pink) || (distance_pink == 0)) && msg_state == 3) begin //orange ball nearest
-			if(x_min_orange > 600)begin //case: if x_min is greater than the middle pixel
-				drive_instr <= {16'b0000100000000000}; //rotate the drone right
+// 				drive_instr <= {16'b0000100000000000}; //rotate the drone right
+// 				data_drive_mux <= 0;
+// 			end
+// 			else if (((x_max_red - 320) > (320 - x_min_red)) && (((x_max_red - 320) - (320-x_min_red)) > 130))begin //if the image is more to the right
+// 				drive_instr <= {16'b0001000000000000}; //rotate the drone left
+// 				data_drive_mux <= 0;
+// 			end
+// 			*/
+// 			else begin //send distance measurement as long as it's within 20cm to 25cm
+// 				data_value <= {1'b1,distance_red[4:0],3'b000,7'h0}; //send the distance + ball colour
+// 				data_drive_mux <= 1;
+// 			end
+// 		end
+// 		else if ((distance_orange != 0) &&((distance_orange < distance_red) || (distance_red == 0)) && ((distance_orange < distance_teal) || (distance_teal == 0)) && ((distance_orange < distance_pink) || (distance_pink == 0)) && msg_state == 3) begin //orange ball nearest
+// 			if(x_min_orange > 600)begin //case: if x_min is greater than the middle pixel
+// 				drive_instr <= {16'b0000100000000000}; //rotate the drone right
 				
-				data_drive_mux <= 0;
-			end
-			else if(x_max_orange < 40) begin//case if x_max is smaller than the middle pixel
-				drive_instr <= {16'b0001000000000000}; //rotate the drone left
-				data_drive_mux <= 0;
-			end
-			else if (distance_orange > 30) begin //if the red ping pong ball is too far
-				drive_instr <= {16'b0100000000000000}; //move the drone forward
-				data_drive_mux <= 0;
-			end
-			else if (distance_orange < 26) begin //if the red ping pong ball is too near
-				drive_instr <= {16'b0010000000000000}; //move the drone backward
-				data_drive_mux <= 0;
-			end
-			/*
-			else if (((320-x_min_orange) > (x_max_orange)) && (((320-x_min_orange) - (x_max_orange - 320)) > 130))begin //if the image is more to the right
-				drive_instr <= {16'b0000100000000000}; //rotate the drone right
-				data_drive_mux <= 0;
-			end
-			else if (((x_max_orange - 320) > (320 - x_min_orange)) && (((x_max_orange - 320) - (320-x_min_orange)) > 130))begin //if the image is more to the left
-				drive_instr <= {16'b0001000000000000}; //rotate the drone left
-				data_drive_mux <= 0;
-			end
-			*/
-			else begin //send distance measurement as long as it's within 20cm to 25cm
-				data_value <= {1'b1,distance_orange[4:0],3'b001,7'h0}; //send the distance + ball colour
-				data_drive_mux <= 1;
-			end
+// 				data_drive_mux <= 0;
+// 			end
+// 			else if(x_max_orange < 40) begin//case if x_max is smaller than the middle pixel
+// 				drive_instr <= {16'b0001000000000000}; //rotate the drone left
+// 				data_drive_mux <= 0;
+// 			end
+// 			else if (distance_orange > 30) begin //if the red ping pong ball is too far
+// 				drive_instr <= {16'b0100000000000000}; //move the drone forward
+// 				data_drive_mux <= 0;
+// 			end
+// 			else if (distance_orange < 26) begin //if the red ping pong ball is too near
+// 				drive_instr <= {16'b0010000000000000}; //move the drone backward
+// 				data_drive_mux <= 0;
+// 			end
+// 			/*
+// 			else if (((320-x_min_orange) > (x_max_orange)) && (((320-x_min_orange) - (x_max_orange - 320)) > 130))begin //if the image is more to the right
+// 				drive_instr <= {16'b0000100000000000}; //rotate the drone right
+// 				data_drive_mux <= 0;
+// 			end
+// 			else if (((x_max_orange - 320) > (320 - x_min_orange)) && (((x_max_orange - 320) - (320-x_min_orange)) > 130))begin //if the image is more to the left
+// 				drive_instr <= {16'b0001000000000000}; //rotate the drone left
+// 				data_drive_mux <= 0;
+// 			end
+// 			*/
+// 			else begin //send distance measurement as long as it's within 20cm to 25cm
+// 				data_value <= {1'b1,distance_orange[4:0],3'b001,7'h0}; //send the distance + ball colour
+// 				data_drive_mux <= 1;
+// 			end
 			
-		end
+// 		end
 		
-		else if ((distance_teal != 0) &&((distance_teal < distance_red) || (distance_red == 0)) && ((distance_teal < distance_orange) || (distance_orange == 0)) && ((distance_teal < distance_pink) || (distance_pink == 0))  && msg_state == 3)begin //green ball nearests
-			if(x_min_teal > 600)begin //case: if x_min is greater than the pixel on the far right
-				drive_instr <= {16'b0000100000000000}; //rotate the drone right
+// 		else if ((distance_teal != 0) &&((distance_teal < distance_red) || (distance_red == 0)) && ((distance_teal < distance_orange) || (distance_orange == 0)) && ((distance_teal < distance_pink) || (distance_pink == 0))  && msg_state == 3)begin //green ball nearests
+// 			if(x_min_teal > 600)begin //case: if x_min is greater than the pixel on the far right
+// 				drive_instr <= {16'b0000100000000000}; //rotate the drone right
 				
 				
-				data_drive_mux <= 0;
-			end
-			else if(x_max_teal < 40) begin//case if x_max is smaller than the middle pixel
-				drive_instr <= {16'b0001000000000000}; //rotate the drone left
-				data_drive_mux <= 0;
-			end
-			else if (distance_teal > 30) begin //if the red ping pong ball is too far
-				drive_instr <= {16'b0100000000000000}; //move the drone forward
-				data_drive_mux <= 0;
-			end
-			else if (distance_teal < 26) begin //if the red ping pong ball is too near
-				drive_instr <= {16'b0010000000000000}; //move the drone backward
-				data_drive_mux <= 0;
-			end
-			/*
-			else if (((320-x_min_teal) > (x_max_teal - 320)) && (((320-x_min_teal) - (x_max_teal - 320)) > 130))begin //if the image is more to the left 
+// 				data_drive_mux <= 0;
+// 			end
+// 			else if(x_max_teal < 40) begin//case if x_max is smaller than the middle pixel
+// 				drive_instr <= {16'b0001000000000000}; //rotate the drone left
+// 				data_drive_mux <= 0;
+// 			end
+// 			else if (distance_teal > 30) begin //if the red ping pong ball is too far
+// 				drive_instr <= {16'b0100000000000000}; //move the drone forward
+// 				data_drive_mux <= 0;
+// 			end
+// 			else if (distance_teal < 26) begin //if the red ping pong ball is too near
+// 				drive_instr <= {16'b0010000000000000}; //move the drone backward
+// 				data_drive_mux <= 0;
+// 			end
+// 			/*
+// 			else if (((320-x_min_teal) > (x_max_teal - 320)) && (((320-x_min_teal) - (x_max_teal - 320)) > 130))begin //if the image is more to the left 
 				
-				drive_instr <= {16'b0000100000000000}; //rotate the drone right
-				data_drive_mux <= 0;
-			end
-			else if (((x_max_teal - 320) > (320 - x_min_teal)) && (((x_max_teal - 320) - (320-x_min_teal)) > 130))begin //if the image is more to the right
-				drive_instr <= {16'b0001000000000000}; //rotate the drone left
-				data_drive_mux <= 0;
-			end
-			*/
-			else begin //send distance measurement as long as it's within 20cm to 25cm
-				data_value <= {1'b1,distance_teal[4:0],3'b010,7'h0}; //send the distance + ball colour
-				data_drive_mux <= 1;
-			end
-		end
-		else if ((distance_pink != 0) &&((distance_pink < distance_red) || (distance_red == 0)) && ((distance_pink < distance_orange) || (distance_orange == 0)) && ((distance_pink < distance_teal) || (distance_teal == 0)) && msg_state == 3)begin //green ball nearests
-			if(x_min_pink > 600)begin //case: if x_min is greater than the middle pixel
-				drive_instr <= {16'b0000100000000000}; //rotate the drone right
-				data_drive_mux <= 0;
-			end
-			else if(x_max_pink < 40) begin//case if x_max is smaller than the middle pixel
+// 				drive_instr <= {16'b0000100000000000}; //rotate the drone right
+// 				data_drive_mux <= 0;
+// 			end
+// 			else if (((x_max_teal - 320) > (320 - x_min_teal)) && (((x_max_teal - 320) - (320-x_min_teal)) > 130))begin //if the image is more to the right
+// 				drive_instr <= {16'b0001000000000000}; //rotate the drone left
+// 				data_drive_mux <= 0;
+// 			end
+// 			*/
+// 			else begin //send distance measurement as long as it's within 20cm to 25cm
+// 				data_value <= {1'b1,distance_teal[4:0],3'b010,7'h0}; //send the distance + ball colour
+// 				data_drive_mux <= 1;
+// 			end
+// 		end
+// 		else if ((distance_pink != 0) &&((distance_pink < distance_red) || (distance_red == 0)) && ((distance_pink < distance_orange) || (distance_orange == 0)) && ((distance_pink < distance_teal) || (distance_teal == 0)) && msg_state == 3)begin //green ball nearests
+// 			if(x_min_pink > 600)begin //case: if x_min is greater than the middle pixel
+// 				drive_instr <= {16'b0000100000000000}; //rotate the drone right
+// 				data_drive_mux <= 0;
+// 			end
+// 			else if(x_max_pink < 40) begin//case if x_max is smaller than the middle pixel
 				
-				drive_instr <= {16'b0001000000000000}; //rotate the drone left
-				data_drive_mux <= 0;
-			end
-			else if (distance_pink > 30) begin //if the red ping pong ball is too far
-				drive_instr <= {16'b0100000000000000}; //move the drone forward
-				data_drive_mux <= 0;
-			end
-			else if (distance_pink < 26) begin //if the red ping pong ball is too near
-				drive_instr <= {16'b0010000000000000}; //move the drone backward
-				data_drive_mux <= 0;
-			end
-			/*
-			else if (((320-x_min_pink) > (x_max_pink - 320)) && (((320-x_min_pink) - (x_max_pink - 320)) > 130))begin //if the image is more to the left 
-				drive_instr <= {16'b0000100000000000}; //rotate the drone right
-				data_drive_mux <= 0;
-			end
-			else if (((x_max_pink - 320) > (320 - x_min_pink)) && (((x_max_pink - 320) - (320-x_min_pink)) > 130))begin //if the image is more to the right
-				drive_instr <= {16'b0001000000000000}; //rotate the drone left
-				data_drive_mux <= 0;
-			end
-			*/
-			else begin //send distance measurement as long as it's within 20cm to 25cm
-				data_value <= {1'b1,distance_pink[4:0],3'b011,7'h0}; //send the distance + ball colour
-				data_drive_mux <= 1;
-			end
-		end
+// 				drive_instr <= {16'b0001000000000000}; //rotate the drone left
+// 				data_drive_mux <= 0;
+// 			end
+// 			else if (distance_pink > 30) begin //if the red ping pong ball is too far
+// 				drive_instr <= {16'b0100000000000000}; //move the drone forward
+// 				data_drive_mux <= 0;
+// 			end
+// 			else if (distance_pink < 26) begin //if the red ping pong ball is too near
+// 				drive_instr <= {16'b0010000000000000}; //move the drone backward
+// 				data_drive_mux <= 0;
+// 			end
+// 			/*
+// 			else if (((320-x_min_pink) > (x_max_pink - 320)) && (((320-x_min_pink) - (x_max_pink - 320)) > 130))begin //if the image is more to the left 
+// 				drive_instr <= {16'b0000100000000000}; //rotate the drone right
+// 				data_drive_mux <= 0;
+// 			end
+// 			else if (((x_max_pink - 320) > (320 - x_min_pink)) && (((x_max_pink - 320) - (320-x_min_pink)) > 130))begin //if the image is more to the right
+// 				drive_instr <= {16'b0001000000000000}; //rotate the drone left
+// 				data_drive_mux <= 0;
+// 			end
+// 			*/
+// 			else begin //send distance measurement as long as it's within 20cm to 25cm
+// 				data_value <= {1'b1,distance_pink[4:0],3'b011,7'h0}; //send the distance + ball colour
+// 				data_drive_mux <= 1;
+// 			end
+// 		end
 		
-			/*
-			else if (((320-x_min_pink) > (x_max_pink - 320)) && (((320-x_min_pink) - (x_max_pink - 320)) > 130))begin //if the image is more to the left 
-				drive_instr <= {16'b0000100000000000}; //rotate the drone right
-				data_drive_mux <= 0;
-			end
-			else if (((x_max_pink - 320) > (320 - x_min_pink)) && (((x_max_pink - 320) - (320-x_min_pink)) > 130))begin //if the image is more to the right
-				drive_instr <= {16'b0001000000000000}; //rotate the drone left
-				data_drive_mux <= 0;
-			end
-			*/
-	end
+// 			/*
+// 			else if (((320-x_min_pink) > (x_max_pink - 320)) && (((320-x_min_pink) - (x_max_pink - 320)) > 130))begin //if the image is more to the left 
+// 				drive_instr <= {16'b0000100000000000}; //rotate the drone right
+// 				data_drive_mux <= 0;
+// 			end
+// 			else if (((x_max_pink - 320) > (320 - x_min_pink)) && (((x_max_pink - 320) - (320-x_min_pink)) > 130))begin //if the image is more to the right
+// 				drive_instr <= {16'b0001000000000000}; //rotate the drone left
+// 				data_drive_mux <= 0;
+// 			end
+// 			*/
+// 	end
 		
-		/*
-		else if ((distance_pink < distance_red) && (distance_pink < distance_teal) && (distance_pink < distance_orange) && msg_state == 3) begin //blue ball nearest
-		else if ((distance_teal != 0) &&((distance_teal < distance_red) || (distance_red == 0)) && ((distance_teal < distance_orange) || (distance_orange == 0)) && ((distance_teal < distance_pink) || (distance_pink == 0)) && msg_state == 3)begin
-		end
-		*/
+// 		/*
+// 		else if ((distance_pink < distance_red) && (distance_pink < distance_teal) && (distance_pink < distance_orange) && msg_state == 3) begin //blue ball nearest
+// 		else if ((distance_teal != 0) &&((distance_teal < distance_red) || (distance_red == 0)) && ((distance_teal < distance_orange) || (distance_orange == 0)) && ((distance_teal < distance_pink) || (distance_pink == 0)) && msg_state == 3)begin
+// 		end
+// 		*/
 		
-end
+// end
 
 
 assign x_dist_red = (x_min_red > x_max_red) ? 0 : (x_max_red-x_min_red);
