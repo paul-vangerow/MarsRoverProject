@@ -12,15 +12,9 @@
             "type": "platformio-debug",
             "request": "launch",
             "name": "PIO Debug",
-<<<<<<< HEAD
             "executable": "/Users/lucjones/year2/MarsRoverProject/.pio/build/esp32dev/firmware.elf",
             "projectEnvName": "esp32dev",
             "toolchainBinDir": "/Users/lucjones/.platformio/packages/toolchain-xtensa-esp32/bin",
-=======
-            "executable": "c:/Users/Abdal/Documents/GitHub/MarsRoverProject/.pio/build/esp32dev/firmware.elf",
-            "projectEnvName": "esp32dev",
-            "toolchainBinDir": "C:/Users/Abdal/.platformio/packages/toolchain-xtensa-esp32/bin",
->>>>>>> fe7195e3830d4282fd8eb83a351df311ad0a485f
             "internalConsoleOptions": "openOnSessionStart",
             "preLaunchTask": {
                 "type": "PlatformIO",
@@ -31,30 +25,18 @@
             "type": "platformio-debug",
             "request": "launch",
             "name": "PIO Debug (skip Pre-Debug)",
-<<<<<<< HEAD
             "executable": "/Users/lucjones/year2/MarsRoverProject/.pio/build/esp32dev/firmware.elf",
             "projectEnvName": "esp32dev",
             "toolchainBinDir": "/Users/lucjones/.platformio/packages/toolchain-xtensa-esp32/bin",
-=======
-            "executable": "c:/Users/Abdal/Documents/GitHub/MarsRoverProject/.pio/build/esp32dev/firmware.elf",
-            "projectEnvName": "esp32dev",
-            "toolchainBinDir": "C:/Users/Abdal/.platformio/packages/toolchain-xtensa-esp32/bin",
->>>>>>> fe7195e3830d4282fd8eb83a351df311ad0a485f
             "internalConsoleOptions": "openOnSessionStart"
         },
         {
             "type": "platformio-debug",
             "request": "launch",
             "name": "PIO Debug (without uploading)",
-<<<<<<< HEAD
             "executable": "/Users/lucjones/year2/MarsRoverProject/.pio/build/esp32dev/firmware.elf",
             "projectEnvName": "esp32dev",
             "toolchainBinDir": "/Users/lucjones/.platformio/packages/toolchain-xtensa-esp32/bin",
-=======
-            "executable": "c:/Users/Abdal/Documents/GitHub/MarsRoverProject/.pio/build/esp32dev/firmware.elf",
-            "projectEnvName": "esp32dev",
-            "toolchainBinDir": "C:/Users/Abdal/.platformio/packages/toolchain-xtensa-esp32/bin",
->>>>>>> fe7195e3830d4282fd8eb83a351df311ad0a485f
             "internalConsoleOptions": "openOnSessionStart",
             "loadMode": "manual"
         }

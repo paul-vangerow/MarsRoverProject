@@ -39,6 +39,10 @@ void Instruction_queue::update(){
 
     parse(instructions, payload);
 
+    Serial.println(instructions.front().get_instruction());
+    Serial.println(instructions.front().get_value());
+    instructions.pop();
+
     // std::cout << "------------------------------------------------------" << std::endl;
     // // Serial.println(payload);
     // std::cout << "------------------------------------------------------" << std::endl;
@@ -88,6 +92,7 @@ void parse(std::queue<Mouvement> &q, String message){
         int val_index_end = msg.substr(val_index_start, std::string::npos).find_first_of('}');
         Mouvement new_mouv(std::stoi(msg.substr(instr_index_start, instr_index_end)), std::stod(msg.substr(val_index_start, val_index_end)));
         q.push(new_mouv);
+        return;
     }
     else{
         return;
