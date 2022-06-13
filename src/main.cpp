@@ -4,7 +4,6 @@
 #include <instructions.hpp>
 #include <communication.hpp>
 
-#define LED 2
 
 TaskHandle_t drive_core;
 Instruction_queue instrq;
@@ -34,7 +33,9 @@ void drive_core_code( void * parameter){
 
 void setup(){
 
-  Serial.begin(115200);
+  //Serial.begin(115200);
+
+  cam_init();
 
   //InitWifi();
   
@@ -44,7 +45,6 @@ void setup(){
 
 void loop() {
   read_values();
-  Serial.print("???");
   //instrq.update();
   //delay(1000);
 }

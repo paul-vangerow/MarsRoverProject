@@ -6,7 +6,7 @@ extern float robot_angle;
 extern float d_optics[2];
 extern float total_optics[2];
 extern float straight_factor;
-extern float location_scaled[2];
+//extern float location_scaled[2];
 
 extern int ROBOT_STATE;
 
