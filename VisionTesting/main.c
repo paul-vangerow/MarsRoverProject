@@ -22,7 +22,7 @@
 
 #define EXPOSURE_INIT 0x002000
 #define EXPOSURE_STEP 0x100
-#define GAIN_INIT 0x63F
+#define GAIN_INIT 0x67F
 #define GAIN_STEP 0x040
 #define DEFAULT_LEVEL 3
 
@@ -245,13 +245,21 @@ int main()
 #endif
 
         //Read messages from the image processor and print them on the terminal
+        int counter = 0;
         while ((IORD(0x42000, EEE_IMGPROC_STATUS) >> 8) & 0xff) { 	//Find out if there are words to read
             int word = IORD(0x42000, EEE_IMGPROC_MSG); 			//Get next word from message buffer
             if (word == EEE_IMGPROC_MSG_START) { 					//Newline on message identifier
+                counter = 0;
                 printf("\n");
             }
             if (word != EEE_IMGPROC_MSG_START) {
-                printf("distance: %d ", word);
+                if (counter == 0) {
+                    printf("distance of yellow: %d ", word);
+                    counter++;
+                }
+                else {
+                    printf("distance of red: %d ", word);
+                }
             }
         }
 
