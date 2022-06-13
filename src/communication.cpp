@@ -77,7 +77,7 @@ String FetchInstruction(){
     }
 }
 
-void PostSensorReadings(){
+void PostSensorReadings(val_t x, val_t y){
     // initialise the http connection
     HTTPClient http;
     String GetAddress, LinkGet, GetData;
@@ -87,7 +87,8 @@ void PostSensorReadings(){
     http.addHeader("Content-Type", "application/x-www-form-urlencoded");
 
     // dealing with the post
-    String http_post_data = "x=2&y=3";
+    String s_x = String(x), s_y = String(y);
+    String http_post_data = "x="+s_x+"&y="+s_y;
     int httpCode = http.POST(http_post_data);
     std::cout << httpCode << std::endl;
 }

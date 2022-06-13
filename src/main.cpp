@@ -11,11 +11,8 @@ Instruction_queue instrq;
 
 void drive_core_code( void * parameter){
   motorInit();
-<<<<<<< HEAD
-=======
   //delay(4000);
   move(25);
->>>>>>> e43cd112ec7adaf25a9a683f7c94947ebd640f00
   for(;;){
     Serial.println(instrq.isEmpty());
     if (!instrq.isEmpty()){
@@ -41,18 +38,6 @@ void setup(){
 
   InitWifi();
   
-<<<<<<< HEAD
-  // xTaskCreate(drive_core_code, "drive", 1000, &instrq, tskIDLE_PRIORITY, NULL);
-
-  cam_init();
-}
-
-void loop() {
-  //read_values();
-  instrq.update();
-
-  delay(10000);
-=======
   xTaskCreate(drive_core_code, "drive", 1000, &instrq, tskIDLE_PRIORITY, NULL);
   
 }
@@ -61,5 +46,4 @@ void loop() {
   read_values();
   //instrq.update();
   //delay(1000);
->>>>>>> e43cd112ec7adaf25a9a683f7c94947ebd640f00
 }
