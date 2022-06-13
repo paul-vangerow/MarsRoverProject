@@ -248,7 +248,7 @@ void read_values()
   Serial.println(" ) ");
   */
 
- Serial.print(location[0]); Serial.print(" , "); Serial.println(location[1]); Serial.print(" , "); 
+ //Serial.print(location[0]); Serial.print(" , "); Serial.println(location[1]); Serial.print(" , "); 
 
   /*
   location[0] = total_x1/MOD;

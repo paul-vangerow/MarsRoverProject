@@ -28,7 +28,7 @@ const int CW  = 1; // do not change
 #define P_T 0.1
 
 // P Control Values (Driving)
-#define P_D 0.4
+#define P_D 0.2
 
 #define ROT_ERROR_TOL 1
 #define MOV_ERROR_TOL 1
@@ -64,8 +64,6 @@ void stp(){
 
 void move(float distance){
   
-
-  
   int speed_d = 0;
 
   int target = total_optics[1] + (distance*DISTANCE_COEFFICIENT);
@@ -81,9 +79,12 @@ void move(float distance){
 
     speed_d = straight_factor * P_D;
 
-    robot.rotate(motor1, 40 + speed_d, CW);
-    robot.rotate(motor2, 40 - speed_d, CCW); 
-    delay(10); 
+    Serial.print(error); Serial.print(" , ");
+    Serial.println(straight_factor);
+
+    robot.rotate(motor1, 30 + speed_d, CW);
+    robot.rotate(motor2, 30 - speed_d, CCW); 
+    delay(100); 
   }
 
   stp();
