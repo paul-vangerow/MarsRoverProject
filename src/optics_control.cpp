@@ -51,11 +51,12 @@
 
 #define ADNS3080_PRODUCT_ID_VAL        0x17
 
-#define MOD 157
+#define MOD 40
 
 float total_optics[2];
 float robot_angle = 0;
 float location[2];
+float location_scaled[2];
 
 std::list<float> avg;
 
@@ -232,14 +233,17 @@ void read_values()
   if (ROBOT_STATE == MOV){
     straight_factor = straight_factor + d_optics[0];
 
-    location[0] = cos((robot_angle / 180) * PI) * d_optics[1];
-    location[1] = sin((robot_angle / 180) * PI) * d_optics[1];
+    location[0] += cos((robot_angle / 180) * PI) * d_optics[1];
+    location[1] += sin((robot_angle / 180) * PI) * d_optics[1];
 
     total_optics[1] = total_optics[1] + d_optics[1];
 
   } else if (ROBOT_STATE == ROT){
     total_optics[0] = total_optics[0] + d_optics[0];
   }
+
+  location_scaled[0] = location[0] / 40;
+  location_scaled[1] = location[1] / 40;
 
   robot_angle = (total_optics[0] / 4000) * 360;
   /*
@@ -248,7 +252,7 @@ void read_values()
   Serial.println(" ) ");
   */
 
- //Serial.print(location[0]); Serial.print(" , "); Serial.println(location[1]); Serial.print(" , "); 
+  Serial.print(location_scaled[0]); Serial.print(" , "); Serial.println(location_scaled[1]); Serial.print(" , "); 
 
   /*
   location[0] = total_x1/MOD;

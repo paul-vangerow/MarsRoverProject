@@ -5,6 +5,8 @@
 
 // Motor Functions
 
+extern bool kill_motion;
+
 void motorInit();
 
 void stp();

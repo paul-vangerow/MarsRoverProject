@@ -11,8 +11,8 @@ Instruction_queue instrq;
 
 void drive_core_code( void * parameter){
   motorInit();
-  //delay(4000);
   move(25);
+  
   for(;;){
     Serial.println(instrq.isEmpty());
     if (!instrq.isEmpty()){
@@ -36,7 +36,7 @@ void setup(){
 
   Serial.begin(115200);
 
-  InitWifi();
+  //InitWifi();
   
   xTaskCreate(drive_core_code, "drive", 1000, &instrq, tskIDLE_PRIORITY, NULL);
   
@@ -44,6 +44,7 @@ void setup(){
 
 void loop() {
   read_values();
+  Serial.print("???");
   //instrq.update();
   //delay(1000);
 }

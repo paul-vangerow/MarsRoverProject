@@ -33,6 +33,8 @@ const int CW  = 1; // do not change
 #define ROT_ERROR_TOL 1
 #define MOV_ERROR_TOL 1
 
+bool kill_motion = false;
+
 // for two motors without debug information // Watch video instruciton for this line: https://youtu.be/2JTMqURJTwg
 Robojax_L298N_DC_motor robot(IN1, IN2, ENA, CHA,  IN3, IN4, ENB, CHB);
 // for two motors with debug information
@@ -82,10 +84,17 @@ void move(float distance){
     Serial.print(error); Serial.print(" , ");
     Serial.println(straight_factor);
 
+  /*
+    if (kill_motion){
+      break;
+    }*/
+
     robot.rotate(motor1, 30 + speed_d, CW);
     robot.rotate(motor2, 30 - speed_d, CCW); 
     delay(100); 
   }
+
+  kill_motion = false;
 
   stp();
   ROBOT_STATE = NOP;
