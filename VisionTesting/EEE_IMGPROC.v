@@ -274,12 +274,12 @@ always@(negedge clk) begin
 	
 end
 
-// Highlight detected areas
+// Colour in detected areas
 wire [23:0] color_high;
 assign grey = green[7:1] + red[7:2] + blue[7:2]; //Grey = green/2 + red/4 + blue/4
 assign color_high  =  (red_ball_detect && prev_detect_high_red && prev_high_red && prev_high_red2) ? {8'hff,8'h10,8'h0} 
-	: ((teal_ball_detect && prev_detect_high_teal && prev_high_teal)? {8'00,8'h80,8'h80} 
-	: ((yellow_ball_detect && prev_detect_high_yellow && prev_high_yellow && prev_high_yellow2)? {8'hff,8'hff,8'h00} 
+	: ((teal_ball_detect && prev_detect_high_teal && prev_high_teal) ? {8'h00,8'h80,8'h80} 
+	: ((yellow_ball_detect && prev_detect_high_yellow && prev_high_yellow && prev_high_yellow2) ? {8'hff,8'hff,8'h00} 
 	: ((pink_ball_detect && prev_detect_high_pink && prev_high_pink && prev_high_pink2) ? {8'hdf,8'h55,8'he2}
 	: ((blue_ball_detect && prev_detect_high_blue && prev_high_blue && prev_high_blue2) ? {8'h00,8'h00,8'h8b}
 	: ((green_ball_detect && prev_detect_high_green && prev_high_green && prev_high_green2) ? {8'h90,8'hee,8'h90}
@@ -351,7 +351,7 @@ end
 //Find first and last coloured pixels
 reg [10:0] x_min_red, x_max_red, x_min_yellow, x_max_yellow, x_min_teal, x_max_teal, x_min_pink, x_max_pink, 
 x_min_blue, x_max_blue, x_min_green, x_max_green, x_min_black, x_max_black;
-wire [10:0] x_dist_red, x_dist_yellow, x_dist_teal, x_dist_pink;
+wire [10:0] x_dist_red, x_dist_yellow, x_dist_teal, x_dist_pink, x_dist_blue, x_dist_green, x_dist_black;
 
 reg	data_drive_mux;
 
@@ -703,7 +703,7 @@ always @(posedge clk)begin
 		distance_pink = 0;
 	end
 
-	if (x_min_green != IMAGE_W-11'h1 && x_max_green != 0 && _green_f) begin
+	if (x_min_green != IMAGE_W-11'h1 && x_max_green != 0 && !green_f) begin
 		distance_green = (x_dist_green < 97) ? ((constant * ratio1)/ratio2/x_dist_green) / 10: ((((constant - (((x_dist_green - 97) * 5)/16))* ratio1)/ratio2)/x_dist_green) / 10;
 	end
 	else begin
