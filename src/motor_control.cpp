@@ -84,13 +84,12 @@ void move(float distance){
     Serial.print(error); Serial.print(" , ");
     Serial.println(straight_factor);
 
-  /*
     if (kill_motion){
       break;
-    }*/
+    }
 
-    //robot.rotate(motor1, 30 + speed_d, CW);
-    //robot.rotate(motor2, 30 - speed_d, CCW); 
+    robot.rotate(motor1, 30 + speed_d, CW);
+    robot.rotate(motor2, 30 - speed_d, CCW); 
     delay(100); 
   }
 

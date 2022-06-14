@@ -3,6 +3,7 @@
 #include <optics.h>
 #include <instructions.hpp>
 #include <communication.hpp>
+#include <gyro.hpp>
 
 
 TaskHandle_t drive_core;
@@ -10,7 +11,7 @@ Instruction_queue instrq;
 
 void drive_core_code( void * parameter){
   motorInit();
-  move(25);
+  //move(25);
   
   for(;;){
     Serial.println(instrq.isEmpty());
@@ -31,20 +32,35 @@ void drive_core_code( void * parameter){
   }
 }
 
+void angle_core_code( void * parameter){
+  gyroInit();
+  for(;;){
+    gyroRead();
+    Serial.println(robotAngle);
+  }
+}
+
 void setup(){
 
   //Serial.begin(115200);
 
   cam_init();
+  gyroInit();
 
   //InitWifi();
   
   xTaskCreate(drive_core_code, "drive", 1000, &instrq, tskIDLE_PRIORITY, NULL);
+  //xTaskCreate(angle_core_code, "gyro", 1000, &instrq, tskIDLE_PRIORITY, NULL);
   
 }
 
 void loop() {
-  read_values();
+
+  gyroRead();
+  Serial.print(robotAngle); Serial.println("---");
+
+  //gyroRead();
+  //read_values();
   //instrq.update();
   //delay(1000);
 }
