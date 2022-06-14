@@ -148,13 +148,13 @@ assign hue = (red == green && red == blue) ? 0 :((value != red)? (value != green
                 (blue < green) ? ((60*(green - blue)/(value - min))>>1): (((360*(value-min) +(60*(green - blue)))/(value - min))>>1));
 
 ///Detect Ping Pong balls
-reg prev_detect_high_red, prev_high_red, prev_high_red2;
-reg prev_detect_high_yellow, prev_high_yellow, prev_high_yellow2; 
-reg prev_detect_high_teal, prev_high_teal, prev_high_teal2;
-reg prev_detect_high_pink, prev_high_pink, prev_high_pink2;
-reg prev_detect_high_blue, prev_high_blue, prev_high_blue2;
-reg prev_detect_high_green, prev_high_green, prev_high_green2;
-reg prev_detect_high_black, prev_high_black, prev_high_black2;
+reg prev_detect_high_red, prev_high_red, prev_high_red2, prev_high_red3, prev_high_red4, prev_high_red5;
+reg prev_detect_high_yellow, prev_high_yellow, prev_high_yellow2, prev_high_yellow3, prev_high_yellow4, prev_high_yellow5; 
+reg prev_detect_high_teal, prev_high_teal, prev_high_teal2, prev_high_teal3, prev_high_teal4, prev_high_teal5;
+reg prev_detect_high_pink, prev_high_pink, prev_high_pink2, prev_high_pink3, prev_high_pink4, prev_high_pink5;
+reg prev_detect_high_blue, prev_high_blue, prev_high_blue2, prev_high_blue3, prev_high_blue4, prev_high_blue5;
+reg prev_detect_high_green, prev_high_green, prev_high_green2, prev_high_green3, prev_high_green4, prev_high_green5;
+reg prev_detect_high_black, prev_high_black, prev_high_black2, prev_high_black3, prev_high_black4, prev_high_black5;
 
 
 wire red_ball_detect, pink_ball_detect, teal_ball_detect, yellow_ball_detect, blue_ball_detect, green_ball_detect, black_ball_detect;	
@@ -189,13 +189,13 @@ assign teal_ball_detect = (((hue >= 60 && hue <= 85) && (saturation > 100 && sat
 //assign yellow_ball_detect = (((hue >= 14 && hue <=25) && (saturation > 160 && value > 128)) || ((hue >= 23 && hue <= 30) && ((value > 155 && saturation > 135)||(saturation >= 153 && value > 252)||(value > 109 && saturation > 247))));
 
 
-assign blue_ball_detect = (hue >= 55 && hue <= 85 && saturation >= 51 && saturation <= 89 && value >= 76 && value <= 240);
+//assign blue_ball_detect = (hue >= 55 && hue <= 85 && saturation >= 51 && saturation <= 89 && value >= 76 && value <= 240);
 
-/*
+
 assign blue_ball_detect = (hue >= 75 && hue <= 95 && ((saturation >= 63 && saturation <= 112 && value >= 130)||(saturation >= 63 && saturation <= 140 && value >= 58 && value <= 125)))
 || ((hue >= 87 && hue <= 104) && ((saturation >= 90 && saturation <= 146 && value >= 91 && value <= 170) || (saturation >= 127 && saturation <= 178 && value >= 63 && value <= 89)))
 || ((hue >= 62 && hue <= 75 && saturation >= 40 && saturation <= 89 && value <= 102 && value >= 114));
-*/
+
 
 /*
 assign blue_ball_detect = (hue >= 75 && hue <= 95 && ((saturation >= 63 && saturation <= 112 && value >= 130)||(saturation >= 63 && saturation <= 140 && value >= 58 && value <= 135)))
@@ -220,54 +220,96 @@ initial begin
 	prev_detect_high_red <= 0;
 	prev_high_red <= 0;
 	prev_high_red2 <= 0;
+	prev_high_red3 <= 0;
+	prev_high_red4 <= 0;
+	prev_high_red5 <= 0;
 	prev_detect_high_yellow <= 0;
 	prev_high_yellow <= 0;
 	prev_high_yellow2 <= 0;
+	prev_high_yellow3 <= 0;
+	prev_high_yellow4 <= 0;
+	prev_high_yellow5 <= 0;
 	prev_detect_high_teal <= 0;
 	prev_high_teal <= 0;
 	prev_high_teal2 <= 0;
+	prev_high_teal3 <= 0;
+	prev_high_teal4 <= 0;
+	prev_high_teal5 <= 0;
 	prev_detect_high_pink <= 0;
 	prev_high_pink <= 0;
 	prev_high_pink2 <= 0;
+	prev_high_pink3 <= 0;
+	prev_high_pink4 <= 0;
+	prev_high_pink5 <= 0;
 	prev_detect_high_blue <= 0;
 	prev_high_blue <= 0;
 	prev_high_blue2 <= 0;
+	prev_high_blue3 <= 0;
+	prev_high_blue4 <= 0;
+	prev_high_blue5 <= 0;
 	prev_detect_high_green <= 0;
 	prev_high_green <= 0;
 	prev_high_green2 <= 0;
+	prev_high_green3 <= 0;
+	prev_high_green4 <= 0;
+	prev_high_green5 <= 0;
 	prev_detect_high_black <= 0;
 	prev_high_black <= 0;
 	prev_high_black2 <= 0;
+	prev_high_black3 <= 0;
+	prev_high_black4 <= 0;
+	prev_high_black5 <= 0;
 end
 //r = red
 //y = yellow
 //g = teal
 //b = pink
 always@(negedge clk) begin
+	prev_high_red5 = prev_high_red4;
+	prev_high_red4 = prev_high_red3;
+	prev_high_red3 = prev_high_red2;
 	prev_high_red2 = prev_high_red;
 	prev_high_red = prev_detect_high_red;
 	prev_detect_high_red = (red_ball_detect);
 	
+	prev_high_yellow5 = prev_high_yellow4;
+	prev_high_yellow4 = prev_high_yellow3;
+	prev_high_yellow3 = prev_high_yellow2;
 	prev_high_yellow2 = prev_high_yellow;
 	prev_high_yellow = prev_detect_high_yellow;
 	prev_detect_high_yellow = (yellow_ball_detect);
 	
+	prev_high_teal5 = prev_high_teal4;
+	prev_high_teal4 = prev_high_teal3;
+	prev_high_teal3 = prev_high_teal2;
 	prev_high_teal2 = prev_high_teal;
 	prev_high_teal = prev_detect_high_teal;
 	prev_detect_high_teal = (teal_ball_detect);
 	
+	prev_high_pink5 = prev_high_pink4;
+	prev_high_pink4 = prev_high_pink3;
+	prev_high_pink3 = prev_high_pink2;
 	prev_high_pink2 = prev_high_pink;
 	prev_high_pink = prev_detect_high_pink;
 	prev_detect_high_pink = (pink_ball_detect);
 
+	prev_high_blue5 = prev_high_blue4;
+	prev_high_blue4 = prev_high_blue3;
+	prev_high_blue3 = prev_high_blue2;
 	prev_high_blue2 = prev_high_blue;
 	prev_high_blue = prev_detect_high_blue;
 	prev_detect_high_blue = (blue_ball_detect);
-
+	
+	prev_high_green5 = prev_high_green4;
+	prev_high_green4 = prev_high_green3;
+	prev_high_green3 = prev_high_green2;
 	prev_high_green2 = prev_high_green;
 	prev_high_green = prev_detect_high_green;
 	prev_detect_high_green = (green_ball_detect);
 
+	prev_high_black5 = prev_high_black4;
+	prev_high_black4 = prev_high_black3;
+	prev_high_black3 = prev_high_black2;
 	prev_high_black2 = prev_high_black;
 	prev_high_black = prev_detect_high_black;
 	prev_detect_high_black = (black_ball_detect);
@@ -277,13 +319,13 @@ end
 // Colour in detected areas
 wire [23:0] color_high;
 assign grey = green[7:1] + red[7:2] + blue[7:2]; //Grey = green/2 + red/4 + blue/4
-assign color_high  =  (red_ball_detect && prev_detect_high_red && prev_high_red && prev_high_red2) ? {8'hff,8'h10,8'h0} 
-	: ((teal_ball_detect && prev_detect_high_teal && prev_high_teal) ? {8'h00,8'h80,8'h80} 
-	: ((yellow_ball_detect && prev_detect_high_yellow && prev_high_yellow && prev_high_yellow2) ? {8'hff,8'hff,8'h00} 
-	: ((pink_ball_detect && prev_detect_high_pink && prev_high_pink && prev_high_pink2) ? {8'hdf,8'h55,8'he2}
-	: ((blue_ball_detect && prev_detect_high_blue && prev_high_blue && prev_high_blue2) ? {8'h00,8'h00,8'h8b}
-	: ((green_ball_detect && prev_detect_high_green && prev_high_green && prev_high_green2) ? {8'h90,8'hee,8'h90}
-	: ((black_ball_detect && prev_detect_high_black && prev_high_black && prev_high_black2) ? {8'h00,8'h00,8'h00}
+assign color_high  =  (red_ball_detect && prev_detect_high_red && prev_high_red && prev_high_red2 && prev_high_red3 && prev_high_red4 && prev_high_red5) ? {8'hff,8'h10,8'h0} 
+	: ((teal_ball_detect && prev_detect_high_teal && prev_high_teal && prev_high_teal2 && prev_high_teal3 && prev_high_teal4 && prev_high_teal5) ? {8'h00,8'h80,8'h80} 
+	: ((yellow_ball_detect && prev_detect_high_yellow && prev_high_yellow && prev_high_yellow2 && prev_high_yellow3 && prev_high_yellow4 && prev_high_yellow5) ? {8'hff,8'hff,8'h00} 
+	: ((pink_ball_detect && prev_detect_high_pink && prev_high_pink && prev_high_pink2 && prev_high_pink3 && prev_high_pink4 && prev_high_pink5) ? {8'hdf,8'h55,8'he2}
+	: ((blue_ball_detect && prev_detect_high_blue && prev_high_blue && prev_high_blue2 && prev_high_blue3 && prev_high_blue4 && prev_high_blue5) ? {8'h00,8'h00,8'h8b}
+	: ((green_ball_detect && prev_detect_high_green && prev_high_green && prev_high_green2 && prev_high_green3 && prev_high_green4 && prev_high_green5) ? {8'h90,8'hee,8'h90}
+	: ((black_ball_detect && prev_detect_high_black && prev_high_black && prev_high_black2 && prev_high_black3 && prev_high_black4 && prev_high_black5) ? {8'h87,8'hce,8'heb}
 	: {grey,grey,grey}) ) ) ) ) ) ;
 
 // Show bounding box
@@ -568,31 +610,31 @@ end
 
 always@(posedge clk) begin
 	//Update bounds when the pixel is certain colour
-	if ((red_ball_detect && prev_detect_high_red && prev_high_red && prev_high_red2) & in_valid & y > 280) begin
+	if ((red_ball_detect && prev_detect_high_red && prev_high_red && prev_high_red2 && prev_high_red3 && prev_high_red4 && prev_high_red5) & in_valid & y > 280) begin
 		if (x < x_min_red) x_min_red <= x;
 		if (x > x_max_red) x_max_red <= x;
 	end
-	if ((yellow_ball_detect && prev_detect_high_yellow && prev_high_yellow && prev_high_yellow2) & in_valid & y > 280) begin
+	if ((yellow_ball_detect && prev_detect_high_yellow && prev_high_yellow && prev_high_yellow2 && prev_high_yellow3 && prev_high_yellow4 && prev_high_yellow5) & in_valid & y > 280) begin
 		if (x < x_min_yellow) x_min_yellow <= x;
 		if (x > x_max_yellow) x_max_yellow <= x;
 	end
-	if ((teal_ball_detect && prev_detect_high_teal && prev_high_teal && prev_high_teal2) & in_valid & y > 280) begin
+	if ((teal_ball_detect && prev_detect_high_teal && prev_high_teal && prev_high_teal2 && prev_high_teal3 && prev_high_teal4 && prev_high_teal5) & in_valid & y > 280) begin
 		if (x < x_min_teal) x_min_teal <= x;
 		if (x > x_max_teal) x_max_teal <= x;
 	end
-	if ((pink_ball_detect && prev_detect_high_pink && prev_high_pink && prev_high_pink2) & in_valid & y > 280) begin
+	if ((pink_ball_detect && prev_detect_high_pink && prev_high_pink && prev_high_pink2 && prev_high_pink3 && prev_high_pink4 && prev_high_pink5) & in_valid & y > 280) begin
 		if (x < x_min_pink) x_min_pink <= x;
 		if (x > x_max_pink) x_max_pink <= x;
 	end
-	if ((blue_ball_detect && prev_detect_high_blue && prev_high_blue && prev_high_blue2) & in_valid & y > 280) begin
+	if ((blue_ball_detect && prev_detect_high_blue && prev_high_blue && prev_high_blue2 && prev_high_blue3 && prev_high_blue4 && prev_high_blue5) & in_valid & y > 280) begin
 		if (x < x_min_blue) x_min_blue <= x;
 		if (x > x_max_blue) x_max_blue <= x;
 	end
-	if ((green_ball_detect && prev_detect_high_green && prev_high_green && prev_high_green2) & in_valid & y > 280) begin
+	if ((green_ball_detect && prev_detect_high_green && prev_high_green && prev_high_green2 && prev_high_green3 && prev_high_green4 && prev_high_green5) & in_valid & y > 280) begin
 		if (x < x_min_green) x_min_green <= x;
 		if (x > x_max_green) x_max_green <= x;
 	end
-	if ((black_ball_detect && prev_detect_high_black && prev_high_black && prev_high_black2) & in_valid & y > 280) begin
+	if ((black_ball_detect && prev_detect_high_black && prev_high_black && prev_high_black2 && prev_high_black3 && prev_high_black4 && prev_high_black5) & in_valid & y > 280) begin
 		if (x < x_min_black) x_min_black <= x;
 		if (x > x_max_black) x_max_black <= x;
 	end
