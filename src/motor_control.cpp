@@ -1,6 +1,7 @@
 #include <Robojax_L298N_DC_motor.h>
 #include <motor.h>
 #include <optics.h>
+#include <gyro.hpp>
 
 // motor 1 settings
 #define CHA 0
@@ -71,7 +72,8 @@ void move(float distance){
   int target = total_optics[1] + (distance*DISTANCE_COEFFICIENT);
   int error = 2;
 
-  straight_factor = 0;
+  // straight_factor = 0;
+  float curr_angle = robotAngle;
 
   stp();
   ROBOT_STATE = MOV;
@@ -79,17 +81,16 @@ void move(float distance){
 
     error = target - total_optics[1];
 
-    speed_d = straight_factor * P_D;
+    // speed_d = straight_factor * P_D; OPTICS_CONTROL
 
-    Serial.print(error); Serial.print(" , ");
-    Serial.println(straight_factor);
+    speed_d = curr_angle - robotAngle;
 
     if (kill_motion){
       break;
     }
 
-    robot.rotate(motor1, 30 + speed_d, CW);
-    robot.rotate(motor2, 30 - speed_d, CCW); 
+    robot.rotate(motor1, 30 - speed_d, CW);
+    robot.rotate(motor2, 30 + speed_d, CCW); 
     delay(100); 
   }
 
@@ -102,13 +103,13 @@ void move(float distance){
 
 void rot(int angle){
 
-  int target = robot_angle + angle;
+  int target = robotAngle + angle;
   int error = 2;
 
   stp();
   ROBOT_STATE = ROT;
   while (abs(error) > ROT_ERROR_TOL){
-    error = target - robot_angle;
+    error = target - robotAngle;
 
     robot.rotate(motor1, 20, sign(error));
     robot.rotate(motor2, 20, sign(error));

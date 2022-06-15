@@ -1,5 +1,5 @@
-#include "communication.hpp"
-#include "instructions.hpp"
+#include <communication.hpp>
+#include <instructions.hpp>
 #include <iostream>
 
 unsigned long previous_timer = 0;
@@ -52,6 +52,27 @@ void get(){
     }
 }
 
+int InitDB(){
+     // initialise the http connection
+    HTTPClient http;
+    String GetAddress, LinkGet, GetData;
+    GetAddress = "create_database.php";
+    LinkGet = host + GetAddress;
+    http.begin(LinkGet);
+
+    // dealing with the recieved payload
+    int httpCode = http.GET();
+    Serial.printf("HTTP code: %i\n", httpCode);
+    if(httpCode > 0){
+        if(httpCode == HTTP_CODE_OK){
+            String payload = http.getString();
+            return std::stoi(payload.c_str());
+        }
+        return 0;
+    }
+    return 0;
+}
+
 String FetchInstruction(){
     // initialise the http connection
     HTTPClient http;
@@ -77,7 +98,7 @@ String FetchInstruction(){
     }
 }
 
-void PostSensorReadings(val_t x, val_t y){
+void PostInstruction(Mouvement mouv){
     // initialise the http connection
     HTTPClient http;
     String GetAddress, LinkGet, GetData;
@@ -87,8 +108,50 @@ void PostSensorReadings(val_t x, val_t y){
     http.addHeader("Content-Type", "application/x-www-form-urlencoded");
 
     // dealing with the post
-    String s_x = String(x), s_y = String(y);
-    String http_post_data = "x="+s_x+"&y="+s_y;
+    String s_instr = String(mouv.get_instruction());
+    String s_val = String(mouv.get_value());
+    String http_post_data = "instr=" + s_instr + "&val=" + s_val + "&executed=1";
+    int httpCode = http.POST(http_post_data);
+    if(!httpCode == HTTP_CODE_OK){
+        fprintf(stderr, "HTTP code for post instruction: %i", httpCode);
+    }
+}
+
+void PostSensorReadings(val_t x, val_t y, double value){
+    // initialise the http connection
+    HTTPClient http;
+    String GetAddress, LinkGet, GetData;
+    GetAddress = "put_sensor_data.php";
+    LinkGet = host + GetAddress;
+    http.begin(LinkGet);
+    http.addHeader("Content-Type", "application/x-www-form-urlencoded");
+
+    // dealing with the post
+    String s_x = String(x), s_y = String(y), s_val = String(value);
+    String http_post_data = "x=" + s_x + "&y=" + s_y + "&val=" + s_val;
+    int httpCode = http.POST(http_post_data);
+    if(!httpCode == HTTP_CODE_OK){
+        fprintf(stderr,"HTTP code for Post radar value: %i", httpCode);
+    }
+}
+
+void PostAlienLocation(val_t x, val_t y, double distance, Orientation orientation, Colour c){
+    // initialise the http connection
+    HTTPClient http;
+    String GetAddress, LinkGet, GetData;
+    GetAddress = "put_alien_location.php";
+    LinkGet = host + GetAddress;
+    http.begin(LinkGet);
+    http.addHeader("Content-Type", "application/x-www-form-urlencoded");
+   
+    //dealing with the post
+    String s_x = String(x), s_y = String(y), s_distance = String(distance), s_orientation = String(orientation), s_c = String(c);
+    String http_post_data = "x=" + s_x + "&y=" + s_y + "&distance=" + s_distance + "&orientation=" + s_orientation + "&colour=" + s_c;
     int httpCode = http.POST(http_post_data);
     std::cout << httpCode << std::endl;
+    if(httpCode == HTTP_CODE_OK){
+        String payload = http.getString();
+        Serial.println(payload);
+    }
+
 }

@@ -6,6 +6,7 @@
 //extern bool kill_motion;
 
 extern float_t robotAngle;
+extern float elapsed_time;
 
 void gyroInit();
 
