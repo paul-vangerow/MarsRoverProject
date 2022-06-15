@@ -1,19 +1,37 @@
 #ifndef instruction_hpp
 #define instruction_hpp
 
-#include <Arduino.h>
-
-#include <communication.hpp>
-#include <string.h>
-#include <queue>
-
 typedef double val_t;
+
 
 enum Instruction{
     forward = 0,
     spinCCW = 1,
     spinCW = -1
 };
+
+enum Orientation{
+    up,
+    down,
+    left,
+    right
+};
+
+enum Colour{
+    red,
+    pink,
+    teal,
+    yellow,
+    blue,
+    green
+};
+
+#include <Arduino.h>
+#include <string.h>
+#include <queue>
+
+
+#include <communication.hpp>
 
 class Mouvement{
     private:

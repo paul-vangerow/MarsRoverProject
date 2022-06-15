@@ -7,6 +7,7 @@
 
 TaskHandle_t drive_core;
 Instruction_queue instrq;
+int session_id;
 
 void drive_core_code( void * parameter){
   motorInit();
@@ -33,18 +34,30 @@ void drive_core_code( void * parameter){
 
 void setup(){
 
-  //Serial.begin(115200);
+  Serial.begin(115200);
 
   cam_init();
 
-  //InitWifi();
+  InitWifi();
+  delay(1000);
+  // session_id = InitDB();
+  session_id = 2;
   
-  xTaskCreate(drive_core_code, "drive", 1000, &instrq, tskIDLE_PRIORITY, NULL);
+  // xTaskCreate(drive_core_code, "drive", 1000, &instrq, tskIDLE_PRIORITY, NULL);
   
 }
 
 void loop() {
-  read_values();
+  // read_values();
   //instrq.update();
-  //delay(1000);
+
+
+  PostSensorReadings(5, 5, 10.3);
+  delay(60000);
+  // for(int i=0; i<4; i++){
+  //   delay(10000);
+  //   Orientation orient = Orientation(i);
+  //   Colour c = pink;
+  //   PostAlienLocation(10, 10, 2, orient, c);
+  // }
 }
