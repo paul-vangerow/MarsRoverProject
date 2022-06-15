@@ -56,6 +56,11 @@ void Instruction_queue::update(){
     // // }
 }
 
+void Instruction_queue::add_instruction(Mouvement mouv){
+    instructions.push(mouv);
+    
+}
+
 int count(std::string msg, std::string charr){
     int i = 0;
     int found = msg.find(charr);

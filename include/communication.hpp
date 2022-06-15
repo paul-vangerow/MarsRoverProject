@@ -28,6 +28,9 @@ String FetchInstruction();
 // initialise the database for the session
 int InitDB();
 
+// send the instruction to the database as executed
+void PostInstruction(Mouvement mouv);
+
 // post position of the rover
 void PostSensorReadings(val_t x, val_t y, double value);
 

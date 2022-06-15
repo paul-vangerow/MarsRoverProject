@@ -53,26 +53,18 @@ void setup(){
   // session_id = InitDB();
   session_id = 2;
   
-<<<<<<< HEAD
-  // xTaskCreate(drive_core_code, "drive", 1000, &instrq, tskIDLE_PRIORITY, NULL);
-=======
   xTaskCreate(drive_core_code, "drive", 1000, &instrq, tskIDLE_PRIORITY, NULL);
   //xTaskCreate(angle_core_code, "gyro", 1000, &instrq, tskIDLE_PRIORITY, NULL);
->>>>>>> bd579a496eacc5930e02275dd512f948d0f25a8e
   
 }
 
 void loop() {
-<<<<<<< HEAD
-  // read_values();
-=======
 
   gyroRead();
   Serial.print(robotAngle); Serial.println("---");
 
   //gyroRead();
   //read_values();
->>>>>>> bd579a496eacc5930e02275dd512f948d0f25a8e
   //instrq.update();
 
 

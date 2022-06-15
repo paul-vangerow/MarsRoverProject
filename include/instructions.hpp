@@ -71,6 +71,7 @@ class Instruction_queue{
             return temp;
         }
 
+        virtual void add_instruction(Mouvement mouv);
         virtual void update();
 };
 

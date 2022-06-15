@@ -98,6 +98,25 @@ String FetchInstruction(){
     }
 }
 
+void PostInstruction(Mouvement mouv){
+    // initialise the http connection
+    HTTPClient http;
+    String GetAddress, LinkGet, GetData;
+    GetAddress = "put_sensor_data.php";
+    LinkGet = host + GetAddress;
+    http.begin(LinkGet);
+    http.addHeader("Content-Type", "application/x-www-form-urlencoded");
+
+    // dealing with the post
+    String s_instr = String(mouv.get_instruction());
+    String s_val = String(mouv.get_value());
+    String http_post_data = "instr=" + s_instr + "&val=" + s_val + "&executed=1";
+    int httpCode = http.POST(http_post_data);
+    if(!httpCode == HTTP_CODE_OK){
+        fprintf(stderr, "HTTP code for post instruction: %i", httpCode);
+    }
+}
+
 void PostSensorReadings(val_t x, val_t y, double value){
     // initialise the http connection
     HTTPClient http;
