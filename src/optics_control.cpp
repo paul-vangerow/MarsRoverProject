@@ -3,6 +3,7 @@
 #include <list>
 
 #include <optics.h>
+#include <gyro.hpp>
 
 // these pins may be different on different boards
 
@@ -233,8 +234,8 @@ void read_values()
   if (ROBOT_STATE == MOV){
     straight_factor = straight_factor + d_optics[0];
 
-    location[0] += cos((robot_angle / 180) * PI) * d_optics[1];
-    location[1] += sin((robot_angle / 180) * PI) * d_optics[1];
+    location[0] += cos((robotAngle / 180) * PI) * d_optics[1];
+    location[1] += sin((robotAngle / 180) * PI) * d_optics[1];
 
     total_optics[1] = total_optics[1] + d_optics[1];
 
@@ -245,9 +246,9 @@ void read_values()
   location_scaled[0] = location[0] / 40;
   location_scaled[1] = location[1] / 40;
 
-  robot_angle = (total_optics[0] / 4000) * 360;
+  // robot_angle = (total_optics[0] / 4000) * 360; OPTICAL FLOW CONTROL
  
-  Serial.print(location_scaled[0]); Serial.print(" , "); Serial.println(location_scaled[1]); Serial.print(" , "); 
+  //Serial.print(location_scaled[0]); Serial.print(" , "); Serial.println(location_scaled[1]); Serial.print(" , "); 
 
   delay(100);
 }

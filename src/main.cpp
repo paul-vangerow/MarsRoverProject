@@ -11,10 +11,15 @@ Instruction_queue instrq;
 
 void drive_core_code( void * parameter){
   motorInit();
-  //move(25);
+  // delay(2000);
+  // rot(90);
+  // delay(1000);
+  // rot(-90);
+  delay(2000);
+  move(100);
   
   for(;;){
-    Serial.println(instrq.isEmpty());
+    //Serial.println(instrq.isEmpty());
     if (!instrq.isEmpty()){
       Serial.println("succ");
       Mouvement instr = instrq.get_instruction();
@@ -29,14 +34,6 @@ void drive_core_code( void * parameter){
 
     }
     delay(1000);
-  }
-}
-
-void angle_core_code( void * parameter){
-  gyroInit();
-  for(;;){
-    gyroRead();
-    Serial.println(robotAngle);
   }
 }
 
@@ -55,12 +52,11 @@ void setup(){
 }
 
 void loop() {
-
+  float start = millis();
+  read_values();
   gyroRead();
-  Serial.print(robotAngle); Serial.println("---");
-
-  //gyroRead();
-  //read_values();
+  Serial.println(robotAngle); 
   //instrq.update();
-  //delay(1000);
+  delay(10);
+  elapsed_time = millis() - start;
 }
