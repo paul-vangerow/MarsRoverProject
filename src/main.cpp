@@ -10,6 +10,12 @@ TaskHandle_t drive_core;
 Instruction_queue instrq;
 int session_id;
 
+// init variables used to send data to the server
+Orientation rover_orientation;
+Colour *colour_of_object = new Colour;
+int distance_to_object;
+
+
 void drive_core_code( void * parameter){
   motorInit();
   //move(25);
@@ -60,6 +66,7 @@ void setup(){
 
 void loop() {
 
+
   gyroRead();
   Serial.print(robotAngle); Serial.println("---");
 
@@ -68,12 +75,7 @@ void loop() {
   //instrq.update();
 
 
-  PostSensorReadings(5, 5, 10.3);
-  delay(60000);
-  // for(int i=0; i<4; i++){
-  //   delay(10000);
-  //   Orientation orient = Orientation(i);
-  //   Colour c = pink;
-  //   PostAlienLocation(10, 10, 2, orient, c);
-  // }
+  // PostSensorReadings(5, 5, 10.3);
+  // delay(60000);
+
 }
