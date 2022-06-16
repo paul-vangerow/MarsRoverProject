@@ -6,6 +6,7 @@ unsigned long previous_timer = 0;
 unsigned long timeout_interval = 3000;
 
 
+
 void InitWifi(){
     auto ssid = "whatarewe"; // access point name
     auto password="Virgins!"; // access point password
@@ -23,6 +24,8 @@ void InitWifi(){
         delay(1000);
     }
 }
+
+
 
 void CheckWifi(){
     unsigned long current_timer = millis();

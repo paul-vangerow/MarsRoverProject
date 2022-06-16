@@ -13,6 +13,14 @@
 
 const String host = "http://13.41.77.188:80/";
 
+struct Server_info{
+    Orientation rover_orientation;
+    Colour *colour_of_object;
+    int distance_to_object;
+    float x;
+    float y;
+};
+
 
 void InitWifi();
 
@@ -32,7 +40,7 @@ int InitDB();
 void PostInstruction(Mouvement mouv);
 
 // post position of the rover
-void PostSensorReadings(val_t x, val_t y, double value);
+void PostRadarValues(val_t x, val_t y, double value);
 
 //post the position of an alien
 void PostAlienLocation(val_t x, val_t y, double distance, Orientation orientation, Colour c);
