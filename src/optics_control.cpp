@@ -223,7 +223,7 @@ void read_values()
   MD md;
   mousecam_read_motion(&md);
 
-  //* READ CAMERA QUALITY
+  /* READ CAMERA QUALITY
   for(int i=0; i<md.squal/4; i++)
     Serial.print('*');
   Serial.println(md.squal);
@@ -240,7 +240,7 @@ void read_values()
     total_optics[1] = total_optics[1] + d_optics[1];
 
   } else if (ROBOT_STATE == ROT){
-    total_optics[0] = total_optics[0] + d_optics[0];
+    // total_optics[0] = total_optics[0] + d_optics[0];
   }
 
   location_scaled[0] = location[0] / 40;
@@ -249,6 +249,4 @@ void read_values()
   // robot_angle = (total_optics[0] / 4000) * 360; OPTICAL FLOW CONTROL
  
   //Serial.print(location_scaled[0]); Serial.print(" , "); Serial.println(location_scaled[1]); Serial.print(" , "); 
-
-  delay(100);
 }

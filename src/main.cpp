@@ -18,10 +18,10 @@ int distance_to_object;
 
 void drive_core_code( void * parameter){
   motorInit();
-  // delay(2000);
-  // rot(90);
-  // delay(1000);
-  // rot(-90);
+  delay(2000);
+  rot(90);
+  delay(1000);
+  rot(-90);
   delay(2000);
   move(100);
   
@@ -51,20 +51,21 @@ void setup(){
   cam_init();
   gyroInit();
 
-  InitWifi();
+  //InitWifi();
   delay(1000);
   // session_id = InitDB();
   session_id = 2;
   
   xTaskCreate(drive_core_code, "drive", 1000, &instrq, tskIDLE_PRIORITY, NULL);
-  //xTaskCreate(angle_core_code, "gyro", 1000, &instrq, tskIDLE_PRIORITY, NULL);
   
 }
 
 void loop() {
   float start = millis();
+
   read_values();
   gyroRead();
+
   Serial.println(robotAngle); 
   //instrq.update();
   delay(10);
