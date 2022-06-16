@@ -75,7 +75,7 @@ void loop() {
   //instrq.update();
 
 
-  // PostSensorReadings(5, 5, 10.3);
+  // PostRadarValue(5, 5, 10.3);
   // delay(60000);
 
 }
