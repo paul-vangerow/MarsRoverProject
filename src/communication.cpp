@@ -117,7 +117,7 @@ void PostInstruction(Mouvement mouv){
     }
 }
 
-void PostSensorReadings(val_t x, val_t y, double value){
+void PostRadarValue(val_t x, val_t y, double value){
     // initialise the http connection
     HTTPClient http;
     String GetAddress, LinkGet, GetData;
@@ -149,9 +149,8 @@ void PostAlienLocation(val_t x, val_t y, double distance, Orientation orientatio
     String http_post_data = "x=" + s_x + "&y=" + s_y + "&distance=" + s_distance + "&orientation=" + s_orientation + "&colour=" + s_c;
     int httpCode = http.POST(http_post_data);
     std::cout << httpCode << std::endl;
-    if(httpCode == HTTP_CODE_OK){
-        String payload = http.getString();
-        Serial.println(payload);
+    if(!httpCode == HTTP_CODE_OK){
+        fprintf(stderr, "HTTP code for post alien location: %i", httpCode);
     }
 
 }
