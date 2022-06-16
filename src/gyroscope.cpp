@@ -11,6 +11,7 @@
 Adafruit_MPU6050 mpu;
 
 float robotAngle = 0;
+float elapsed_time = 0;
 
 void gyroInit(void) {
 
@@ -32,7 +33,10 @@ void gyroRead() {
   /* Get new sensor events with the readings */
   sensors_event_t a, g, temp;
   mpu.getEvent(&a, &g, &temp);
+
+  if (abs(g.gyro.z * 0.1 *(180/PI)) > 0.1){
+    robotAngle += g.gyro.z *(180/PI) * (elapsed_time/1000.0);
+  }
   
-  robotAngle += ((g.gyro.z*0.1)/PI)*180;
-  delay(100);
+  
 }

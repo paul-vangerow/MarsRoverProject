@@ -163,7 +163,7 @@ assign pink_ball_detect = //((((hue >= 150 && hue <= 180)||(hue <= 6 && hue >= 0
 //(hue <= 6 && hue >= 0 && ((value > 229 && saturation > 17 && saturation < 155)||(value > 210 && saturation > 130)))
 //|| ((hue >= 160 && hue <= 180) && ((saturation >= 76 && value >= 249) || (saturation >= 102 && value >= 140)))
 //|| (((hue >= 160 && hue <= 180)||(hue >= 0 && hue <= 4)) && (saturation > 140 && saturation <= 179 && value >= 89 && value <= 106)) ||
- (((hue >= 175 && hue <= 181)||(hue >= 0 && hue <= 22)) && ((saturation > 83 && saturation < 190)) && ((value >  205 && value < 256)));
+ (((hue >= 175 && hue <= 181)||(hue >= 0 && hue <= 22)) && ((saturation > 83 && saturation < 190)) && ((value >  205 && value <= 255)));
 
 assign red_ball_detect = ((((hue >= 150 && hue <= 180)||(hue <= 6 && hue >= 0)) && (saturation > 84 && value > 245))||
 (hue <= 6 && hue >= 0 && ((value > 229 && saturation > 17 && saturation < 155)||(value > 210 && saturation > 130)))
@@ -184,17 +184,17 @@ assign yellow_ball_detect = (((hue >= 16 && hue <=25) && (saturation > 133 && va
 //|| ((hue >= 23 && hue <= 30) && ((value > 155 && saturation > 127)||(saturation >= 153 && value > 252)||(value > 41 && saturation > 247))));
 
 assign teal_ball_detect = (((hue >= 60 && hue <= 85) && (saturation > 100 && saturation < 200) && (value > 110 && value < 245))
-||((hue >= 53 && hue <= 80) && (saturation > 80 && saturation < 114) && (value > 60 && value <= 256)));
+||((hue >= 53 && hue <= 80) && (saturation > 80 && saturation < 114) && (value > 60 && value <= 255)));
 //test yellow
 //assign yellow_ball_detect = (((hue >= 14 && hue <=25) && (saturation > 160 && value > 128)) || ((hue >= 23 && hue <= 30) && ((value > 155 && saturation > 135)||(saturation >= 153 && value > 252)||(value > 109 && saturation > 247))));
 
 
 //assign blue_ball_detect = (hue >= 55 && hue <= 85 && saturation >= 51 && saturation <= 89 && value >= 76 && value <= 240);
 
-
-assign blue_ball_detect = (hue >= 75 && hue <= 95 && ((saturation >= 63 && saturation <= 112 && value >= 130)||(saturation >= 63 && saturation <= 140 && value >= 58 && value <= 125)))
-|| ((hue >= 87 && hue <= 104) && ((saturation >= 90 && saturation <= 146 && value >= 91 && value <= 170) || (saturation >= 127 && saturation <= 178 && value >= 63 && value <= 89)))
-|| ((hue >= 62 && hue <= 75 && saturation >= 40 && saturation <= 89 && value <= 102 && value >= 114));
+assign blue_ball_detect = 0;
+// assign blue_ball_detect = (hue >= 75 && hue <= 95 && ((saturation >= 63 && saturation <= 112 && value >= 130)||(saturation >= 63 && saturation <= 140 && value >= 58 && value <= 125)))
+// || ((hue >= 87 && hue <= 104) && ((saturation >= 90 && saturation <= 146 && value >= 91 && value <= 170) || (saturation >= 127 && saturation <= 178 && value >= 63 && value <= 89)))
+// || ((hue >= 62 && hue <= 75 && saturation >= 40 && saturation <= 89 && value <= 102 && value >= 114));
 
 
 /*
@@ -210,9 +210,9 @@ assign green_ball_detect = (((hue >= 50 && hue <= 75) && (saturation > 105 && va
 
 //assign pink_ball_detect = (((hue >= 0 && hue <= 7)||(hue >= 170 && hue <= 180)) && value > 111 && saturation > 102); //sat > 102
 //assign teal_ball_detect = (hue >= 45 && hue <= 80 && value > 90 && saturation > 116);
-//assign yellow_ball_detect = (hue >= 15 && hue <= 32 && value > 130 && satura tion > 112);
+//assign yellow_ball_detect = (hue >= 15 && hue <= 32 && value > 130 && saturation > 112);
 
-assign black_ball_detect = (value > 40 && value <= 75 && x > 10 && x < IMAGE_W-10 && y > 10 && y < IMAGE_H - 10);
+assign black_ball_detect = (value > 40 && value < 75 && saturation < 155 && x > 10 && x < IMAGE_W-10 && y > 10 && y < IMAGE_H - 10);
 
 //Eliminating noise
 
@@ -587,11 +587,16 @@ always @(posedge clk)begin
 end
 //((732 * (79/20))/147) =19.66 ish 19
  // -> 14.9
-reg [15:0] outt_red, outt_yellow;
+reg [15:0] dist_out_red, dist_out_yellow, dist_out_teal, dist_out_pink, dist_out_blue, dist_out_green, dist_out_black;
 //add out for other colours
 
 //79/20 = 3.95 -> 3
 
+//angle calculation:
+//IMAGE_W/2 is centre 
+//x_min
+
+//msg_buf_in is how to output for distance
 always@(*) begin	//Write words to FIFO as state machine advances
 	case(msg_state)
 		2'b00: begin
@@ -604,14 +609,20 @@ always@(*) begin	//Write words to FIFO as state machine advances
 		end
 		2'b10: begin
 			//msg_buf_in = {5'b0, x_min, 5'b0, y_min};	//Top left coordinate
-			outt_red = distance_yellow[15:0];
-			outt_yellow = distance_red[15:0];
+			dist_out_yellow = distance_yellow[15:0];
+			dist_out_red = distance_red[15:0];
+			dist_out_teal = distance_teal[15:0];
+			dist_out_pink = distance_pink[15:0];
+			dist_out_blue = distance_blue[15:0];
+			dist_out_blue = distance_blue[15:0];
+			dist_out_green = distance_green[15:0];
+			dist_out_black = distance_black[15:0];
 			/*for (i = 0; i < 16; i = i+1)begin
 				out = out >> 1;
 			end
 			*/
-			msg_buf_in = distance_teal; //Bottom right coordinate
-			msg_buf_wr = 1'b1; //changed!!!!!!!!!!
+			msg_buf_in = distance_yellow; //Bottom right coordinate
+			msg_buf_wr = 1'b1; 
 		end
 		2'b11: begin
 			//msg_buf_in = {5'b0, x_max, 5'b0, y_max};	//Top left coordinate

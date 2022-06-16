@@ -18,10 +18,15 @@ int distance_to_object;
 
 void drive_core_code( void * parameter){
   motorInit();
-  //move(25);
+  delay(2000);
+  rot(90);
+  delay(1000);
+  rot(-90);
+  delay(2000);
+  move(100);
   
   for(;;){
-    Serial.println(instrq.isEmpty());
+    //Serial.println(instrq.isEmpty());
     if (!instrq.isEmpty()){
       Serial.println("succ");
       Mouvement instr = instrq.get_instruction();
@@ -39,14 +44,6 @@ void drive_core_code( void * parameter){
   }
 }
 
-void angle_core_code( void * parameter){
-  gyroInit();
-  for(;;){
-    gyroRead();
-    Serial.println(robotAngle);
-  }
-}
-
 void setup(){
 
   Serial.begin(115200);
@@ -54,28 +51,27 @@ void setup(){
   cam_init();
   gyroInit();
 
-  InitWifi();
+  //InitWifi();
   delay(1000);
   // session_id = InitDB();
   session_id = 2;
   
   xTaskCreate(drive_core_code, "drive", 1000, &instrq, tskIDLE_PRIORITY, NULL);
-  //xTaskCreate(angle_core_code, "gyro", 1000, &instrq, tskIDLE_PRIORITY, NULL);
   
 }
 
 void loop() {
+  float start = millis();
 
-
+  read_values();
   gyroRead();
-  Serial.print(robotAngle); Serial.println("---");
 
-  //gyroRead();
-  //read_values();
+  Serial.println(robotAngle); 
   //instrq.update();
 
 
   // PostRadarValue(5, 5, 10.3);
+  delay(10);
+  elapsed_time = millis() - start;
   // delay(60000);
-
 }
