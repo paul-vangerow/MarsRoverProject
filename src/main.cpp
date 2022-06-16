@@ -11,9 +11,13 @@ Instruction_queue instrq;
 int session_id;
 
 // init variables used to send data to the server
+<<<<<<< HEAD
+Server_info s_info;
+=======
 Orientation rover_orientation;
 Colour *colour_of_object = new Colour;
 int distance_to_object;
+>>>>>>> 9c0906250fc705bba990c25ffa491eb19b0a9e1f
 
 void drive_core_code( void * parameter){
   motorInit();
@@ -46,6 +50,18 @@ void drive_core_code( void * parameter){
   
 }
 
+void send_to_server(void * parameters){
+  InitWifi();
+  // session_id = InitDB();
+  session_id = 2;
+  double radar_val = 10;
+
+  for(;;){
+    PostRadarValues(s_info.x, s_info.y, radar_val);
+    delay(1000);
+  }
+}
+
 void setup(){
 
   Serial.begin(115200);
@@ -53,12 +69,10 @@ void setup(){
   cam_init();
   gyroInit();
 
-  //InitWifi();
   delay(1000);
-  // session_id = InitDB();
-  session_id = 2;
   
   xTaskCreate(drive_core_code, "drive", 1000, &instrq, tskIDLE_PRIORITY, NULL);
+  xTaskCreate(send_to_server, "server", 1000, &s_info, tskIDLE_PRIORITY, NULL);
   
 }
 
