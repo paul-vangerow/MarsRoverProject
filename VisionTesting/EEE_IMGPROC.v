@@ -153,12 +153,12 @@ assign hue = (red == green && red == blue) ? 0 :((value != red)? (value != green
                 (blue < green) ? ((60*(green - blue)/(value - min))>>1): (((360*(value-min) +(60*(green - blue)))/(value - min))>>1));
 
 ///Detect Ping Pong balls
-reg last_detect_high_red, last_red, last_red2, last_red3, last_red4, last_red5;
-reg last_detect_high_yellow, last_yellow, last_yellow2, last_yellow3, last_yellow4, last_yellow5; 
-reg last_detect_high_teal, last_teal, last_teal2, last_teal3, last_teal4, last_teal5;
-reg last_detect_high_pink, last_pink, last_pink2, last_pink3, last_pink4, last_pink5;
-reg last_detect_high_blue, last_blue, last_blue2, last_blue3, last_blue4, last_blue5;
-reg last_detect_high_green, last_green, last_green2, last_green3, last_green4, last_green5;
+reg last_detect_high_red, last_red, last_red2, last_red3, last_red4, last_red5, last_red6, last_red7, last_red8, last_red9;
+reg last_detect_high_yellow, last_yellow, last_yellow2, last_yellow3, last_yellow4, last_yellow5, last_yellow6, last_yellow7, last_yellow8, last_yellow9; 
+reg last_detect_high_teal, last_teal, last_teal2, last_teal3, last_teal4, last_teal5, last_teal6, last_teal7, last_teal8, last_teal9;
+reg last_detect_high_pink, last_pink, last_pink2, last_pink3, last_pink4, last_pink5, last_pink6, last_pink7, last_pink8, last_pink9;
+reg last_detect_high_blue, last_blue, last_blue2, last_blue3, last_blue4, last_blue5, last_blue6, last_blue7, last_blue8, last_blue9;
+reg last_detect_high_green, last_green, last_green2, last_green3, last_green4, last_green5, last_green6, last_green7, last_green8, last_green9;
 reg last_detect_high_black, last_black, last_black2, last_black3, last_black4, last_black5;
 reg last_detect_high_white, last_white, last_white2, last_white3, last_white4, last_white5;
 
@@ -232,36 +232,60 @@ initial begin
 	last_red3 <= 0;
 	last_red4 <= 0;
 	last_red5 <= 0;
+	last_red6 <= 0;
+	last_red7 <= 0;
+	last_red8 <= 0;
+	last_red9 <= 0;
 	last_detect_high_yellow <= 0;
 	last_yellow <= 0;
 	last_yellow2 <= 0;
 	last_yellow3 <= 0;
 	last_yellow4 <= 0;
 	last_yellow5 <= 0;
+	last_yellow6 <= 0;
+	last_yellow7 <= 0;
+	last_yellow8 <= 0;
+	last_yellow9 <= 0;
 	last_detect_high_teal <= 0;
 	last_teal <= 0;
 	last_teal2 <= 0;
 	last_teal3 <= 0;
 	last_teal4 <= 0;
 	last_teal5 <= 0;
+	last_teal6 <= 0;
+	last_teal7 <= 0;
+	last_teal8 <= 0;
+	last_teal9 <= 0;
 	last_detect_high_pink <= 0;
 	last_pink <= 0;
 	last_pink2 <= 0;
 	last_pink3 <= 0;
 	last_pink4 <= 0;
 	last_pink5 <= 0;
+	last_pink6 <= 0;
+	last_pink7 <= 0;
+	last_pink8 <= 0;
+	last_pink9 <= 0;
 	last_detect_high_blue <= 0;
 	last_blue <= 0;
 	last_blue2 <= 0;
 	last_blue3 <= 0;
 	last_blue4 <= 0;
 	last_blue5 <= 0;
+	last_blue6 <= 0;
+	last_blue7 <= 0;
+	last_blue8 <= 0;
+	last_blue9 <= 0;
 	last_detect_high_green <= 0;
 	last_green <= 0;
 	last_green2 <= 0;
 	last_green3 <= 0;
 	last_green4 <= 0;
 	last_green5 <= 0;
+	last_green6 <= 0;
+	last_green7 <= 0;
+	last_green8 <= 0;
+	last_green9 <= 0;
 	last_detect_high_black <= 0;
 	last_black <= 0;
 	last_black2 <= 0;
@@ -280,6 +304,10 @@ end
 //g = teal
 //b = pink
 always@(negedge clk) begin
+	last_red9 = last_red8;
+	last_red8 = last_red7;
+	last_red7 = last_red6;
+	last_red6 = last_red5;
 	last_red5 = last_red4;
 	last_red4 = last_red3;
 	last_red3 = last_red2;
@@ -287,6 +315,10 @@ always@(negedge clk) begin
 	last_red = last_detect_high_red;
 	last_detect_high_red = (red_ball_detect);
 	
+	last_yellow9 = last_yellow8;
+	last_yellow8 = last_yellow7;
+	last_yellow7 = last_yellow6;
+	last_yellow6 = last_yellow5;
 	last_yellow5 = last_yellow4;
 	last_yellow4 = last_yellow3;
 	last_yellow3 = last_yellow2;
@@ -294,6 +326,10 @@ always@(negedge clk) begin
 	last_yellow = last_detect_high_yellow;
 	last_detect_high_yellow = (yellow_ball_detect);
 	
+	last_teal9 = last_teal8;
+	last_teal8 = last_teal7;
+	last_teal7 = last_teal6;
+	last_teal6 = last_teal5;
 	last_teal5 = last_teal4;
 	last_teal4 = last_teal3;
 	last_teal3 = last_teal2;
@@ -301,6 +337,10 @@ always@(negedge clk) begin
 	last_teal = last_detect_high_teal;
 	last_detect_high_teal = (teal_ball_detect);
 	
+	last_pink9 = last_pink8;
+	last_pink8 = last_pink7;
+	last_pink7 = last_pink6;
+	last_pink6 = last_pink5;
 	last_pink5 = last_pink4;
 	last_pink4 = last_pink3;
 	last_pink3 = last_pink2;
@@ -308,6 +348,10 @@ always@(negedge clk) begin
 	last_pink = last_detect_high_pink;
 	last_detect_high_pink = (pink_ball_detect);
 
+	last_blue9 = last_blue8;
+	last_blue8 = last_blue7;
+	last_blue7 = last_blue6;
+	last_blue6 = last_blue5;
 	last_blue5 = last_blue4;
 	last_blue4 = last_blue3;
 	last_blue3 = last_blue2;
@@ -315,6 +359,10 @@ always@(negedge clk) begin
 	last_blue = last_detect_high_blue;
 	last_detect_high_blue = (blue_ball_detect);
 	
+	last_green9 = last_green8;
+	last_green8 = last_green7;
+	last_green7 = last_green6;
+	last_green6 = last_green5;
 	last_green5 = last_green4;
 	last_green4 = last_green3;
 	last_green3 = last_green2;
@@ -341,12 +389,12 @@ end
 // Colour in detected areas
 wire [23:0] color_high;
 assign grey = green[7:1] + red[7:2] + blue[7:2]; //Grey = green/2 + red/4 + blue/4
-assign color_high  =  (red_ball_detect && last_detect_high_red && last_red && last_red2 && last_red3 && last_red4 && last_red5) ? {8'hff,8'h10,8'h0} 
-	: ((teal_ball_detect && last_detect_high_teal && last_teal && last_teal2 && last_teal3 && last_teal4 && last_teal5) ? {8'h00,8'h80,8'h80} 
-	: ((yellow_ball_detect && last_detect_high_yellow && last_yellow && last_yellow2 && last_yellow3 && last_yellow4 && last_yellow5) ? {8'hff,8'hff,8'h00} 
-	: ((pink_ball_detect && last_detect_high_pink && last_pink && last_pink2 && last_pink3 && last_pink4 && last_pink5) ? {8'hdf,8'h55,8'he2}
-	: ((blue_ball_detect && last_detect_high_blue && last_blue && last_blue2 && last_blue3 && last_blue4 && last_blue5) ? {8'h00,8'h00,8'h8b}
-	: ((green_ball_detect && last_detect_high_green && last_green && last_green2 && last_green3 && last_green4 && last_green5) ? {8'h90,8'hee,8'h90}
+assign color_high  =  (red_ball_detect && last_detect_high_red && last_red && last_red2 && last_red3 && last_red4 && last_red5 && last_red6 && last_red7 && last_red8 && last_red9) ? {8'hff,8'h10,8'h0} 
+	: ((teal_ball_detect && last_detect_high_teal && last_teal && last_teal2 && last_teal3 && last_teal4 && last_teal5 && last_teal6 && last_teal7 && last_teal8 && last_teal9) ? {8'h00,8'h80,8'h80} 
+	: ((yellow_ball_detect && last_detect_high_yellow && last_yellow && last_yellow2 && last_yellow3 && last_yellow4 && last_yellow5 && last_yellow6 && last_yellow7 && last_yellow8 && last_yellow9) ? {8'hff,8'hff,8'h00} 
+	: ((pink_ball_detect && last_detect_high_pink && last_pink && last_pink2 && last_pink3 && last_pink4 && last_pink5 && last_pink6 && last_pink7 && last_pink8 && last_pink9) ? {8'hdf,8'h55,8'he2}
+	: ((blue_ball_detect && last_detect_high_blue && last_blue && last_blue2 && last_blue3 && last_blue4 && last_blue5 && last_blue6 && last_blue7 && last_blue8 && last_blue9) ? {8'h00,8'h00,8'h8b}
+	: ((green_ball_detect && last_detect_high_green && last_green && last_green2 && last_green3 && last_green4 && last_green5 && last_green6 && last_green7 && last_green8 && last_green9) ? {8'h90,8'hee,8'h90}
 	: ((black_detect && last_detect_high_black && last_black && last_black2 && last_black3 && last_black4 && last_black5) ? {8'h30,8'h19,8'h34}
 	: ((white_detect && last_detect_high_white && last_white && last_white2 && last_white3 && last_white4 && last_white5) ? {8'hff,8'ha5,8'h00}
 	: {grey,grey,grey}) ) ) ) ) ) ) ;
@@ -455,29 +503,31 @@ initial begin
 
 end
 
+//Here setting new min and max every frame
+
 always@(posedge clk) begin
 	//Update bounds when the pixel is certain colour
 	if ((red_ball_detect && last_detect_high_red && last_red && last_red2 && last_red3 && last_red4 && last_red5) & in_valid & y > 280) begin
 		if (x < x_min_red) x_min_red <= x;
 		if (x > x_max_red) x_max_red <= x;
 	end
-	if ((yellow_ball_detect && last_detect_high_yellow && last_yellow && last_yellow2 && last_yellow3 && last_yellow4 && last_yellow5) & in_valid & y > 280) begin
+	if ((yellow_ball_detect && last_detect_high_yellow && last_yellow && last_yellow2 && last_yellow3 && last_yellow4 && last_yellow5 && last_yellow6 && last_yellow7 && last_yellow8 && last_yellow9) & in_valid & y > 280) begin
 		if (x < x_min_yellow) x_min_yellow <= x;
 		if (x > x_max_yellow) x_max_yellow <= x;
 	end
-	if ((teal_ball_detect && last_detect_high_teal && last_teal && last_teal2 && last_teal3 && last_teal4 && last_teal5) & in_valid & y > 280) begin
+	if ((teal_ball_detect && last_detect_high_teal && last_teal && last_teal2 && last_teal3 && last_teal4 && last_teal5 && last_teal6 && last_teal7 && last_teal8 && last_teal9) & in_valid & y > 280) begin
 		if (x < x_min_teal) x_min_teal <= x;
 		if (x > x_max_teal) x_max_teal <= x;
 	end
-	if ((pink_ball_detect && last_detect_high_pink && last_pink && last_pink2 && last_pink3 && last_pink4 && last_pink5) & in_valid & y > 280) begin
+	if ((pink_ball_detect && last_detect_high_pink && last_pink && last_pink2 && last_pink3 && last_pink4 && last_pink5 && last_pink6 && last_pink7 && last_pink8 && last_pink9) & in_valid & y > 280) begin
 		if (x < x_min_pink) x_min_pink <= x;
 		if (x > x_max_pink) x_max_pink <= x;
 	end
-	if ((blue_ball_detect && last_detect_high_blue && last_blue && last_blue2 && last_blue3 && last_blue4 && last_blue5) & in_valid & y > 280) begin
+	if ((blue_ball_detect && last_detect_high_blue && last_blue && last_blue2 && last_blue3 && last_blue4 && last_blue5 && last_blue6 && last_blue7 && last_blue8 && last_blue9) & in_valid & y > 280) begin
 		if (x < x_min_blue) x_min_blue <= x;
 		if (x > x_max_blue) x_max_blue <= x;
 	end
-	if ((green_ball_detect && last_detect_high_green && last_green && last_green2 && last_green3 && last_green4 && last_green5) & in_valid & y > 280) begin
+	if ((green_ball_detect && last_detect_high_green && last_green && last_green2 && last_green3 && last_green4 && last_green5 && last_green6 && last_green7 && last_green8 && last_green9) & in_valid & y > 280) begin
 		if (x < x_min_green) x_min_green <= x;
 		if (x > x_max_green) x_max_green <= x;
 	end
@@ -648,51 +698,49 @@ always@(*) begin	//Write words to FIFO as state machine advances
 			msg_buf_wr = 1'b0;
 		end
 		3'b001: begin
+			msg_buf_in = `RED_BOX_MSG_ID;	//Message ID
+			msg_buf_wr = 1'b1;
+		end
+		3'b010: begin
 			//msg_buf_in = `RED_BOX_MSG_ID;	//Message ID
 			dist_out_red = distance_red[15:0];
 			msg_buf_in = distance_red; 
 			msg_buf_wr = 1'b1;
 		end
-		3'b010: begin
+		3'b011: begin
 			//msg_buf_in = {5'b0, x_min, 5'b0, y_min};	//Top left coordinate
 			dist_out_yellow = distance_yellow[15:0];
-			dist_out_blue = distance_blue[15:0];
-			dist_out_blue = distance_blue[15:0];
-			dist_out_green = distance_green[15:0];
 			// dist_out_black = distance_black[15:0];
 			// dist_out_white = distance_white[15:0];
-			/*for (i = 0; i < 16; i = i+1)begin
-				out = out >> 1;
-			end
-			*/
 			msg_buf_in = distance_yellow; 
 			msg_buf_wr = 1'b1; 
 		end
-		3'b011: begin
+		3'b100: begin
 			//msg_buf_in = {5'b0, x_max, 5'b0, y_max};	//Top left coordinate
 			dist_out_teal = distance_teal[15:0];
 			msg_buf_in = distance_teal;
 			msg_buf_wr = 1'b1;  
 		end
-		3'b100: begin
+		3'b101: begin
 			dist_out_pink = distance_pink[15:0];
 			msg_buf_in = distance_pink;
 			msg_buf_wr = 1'b1;  
 		end
-		3'b101: begin
+		3'b110: begin
 			dist_out_blue = distance_blue[15:0];
 			msg_buf_in = distance_blue;
 			msg_buf_wr = 1'b1;  
 		end
-		3'b110: begin
+		3'b111: begin
 			dist_out_green = distance_green[15:0];
 			msg_buf_in = distance_green;
 			msg_buf_wr = 1'b1;  
 		end
-		3'b111: begin
-			msg_buf_in = 32'd0; 
+		default: begin
+			msg_buf_in = 32'b0;
 			msg_buf_wr = 1'b0;
 		end
+
 
 	endcase
 end
