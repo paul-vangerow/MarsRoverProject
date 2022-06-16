@@ -11,6 +11,8 @@ TaskHandle_t comms_core;
 Instruction_queue instrq;
 int session_id;
 
+HardwareSerial Sender(1);
+
 // init variables used to send data to the server
 Server_info s_info;
 
@@ -60,6 +62,7 @@ void send_to_server(void * parameters){
 void setup(){
 
   Serial.begin(115200);
+  Sender.begin(115200, SERIAL_8N1, 33, 32);
 
   cam_init();
   gyroInit();
@@ -76,6 +79,9 @@ void loop() {
 
   read_values();
   gyroRead();
+
+  float val = 5.1;
+  Sender.print(val);
 
   Serial.println(robotAngle); 
   //instrq.update();
