@@ -11,17 +11,23 @@ Instruction_queue instrq;
 int session_id;
 
 // init variables used to send data to the server
+<<<<<<< HEAD
 Server_info s_info;
+=======
+Orientation rover_orientation;
+Colour *colour_of_object = new Colour;
+int distance_to_object;
+>>>>>>> 9c0906250fc705bba990c25ffa491eb19b0a9e1f
 
 void drive_core_code( void * parameter){
   motorInit();
+  // delay(2000);
+  // rot(90);
+  // delay(1000);
+  // rot(-90);
   delay(2000);
-  rot(90);
-  delay(1000);
-  rot(-90);
-  delay(2000);
-  move(100);
-  
+  move(50);
+  /*
   for(;;){
     //Serial.println(instrq.isEmpty());
     if (!instrq.isEmpty()){
@@ -39,6 +45,7 @@ void drive_core_code( void * parameter){
     }
     delay(1000);
   }
+  */
 }
 
 void send_to_server(void * parameters){
@@ -75,10 +82,9 @@ void loop() {
 
   Serial.println(robotAngle); 
   //instrq.update();
-
+  delay(100);
 
   // PostRadarValue(5, 5, 10.3);
-  delay(10);
   elapsed_time = millis() - start;
   // delay(60000);
 }

@@ -29,7 +29,7 @@ const int CW  = 1; // do not change
 #define P_T 0.1
 
 // P Control Values (Driving)
-#define P_D 0.2
+#define P_D 2
 
 #define ROT_ERROR_TOL 1
 #define MOV_ERROR_TOL 1
@@ -68,7 +68,6 @@ void stp(){
 void move(float distance){
   
   int speed_d = 0;
-
   int target = total_optics[1] + (distance*DISTANCE_COEFFICIENT);
   int error = 2;
 
@@ -77,13 +76,19 @@ void move(float distance){
 
   stp();
   ROBOT_STATE = MOV;
-  while (error > MOV_ERROR_TOL){
+  while (abs(error) > MOV_ERROR_TOL){
 
     error = target - total_optics[1];
 
     // speed_d = straight_factor * P_D; OPTICS_CONTROL
+    
+    speed_d = (curr_angle - robotAngle) * P_D;
 
-    speed_d = curr_angle - robotAngle;
+    if (speed_d < -10){
+      speed_d = -10;
+    } else if (speed_d > 10){
+      speed_d = 10;
+    }
 
     if (kill_motion){
       break;
@@ -93,12 +98,10 @@ void move(float distance){
     robot.rotate(motor2, 30 + speed_d, CCW); 
     delay(100); 
   }
-
   kill_motion = false;
 
   stp();
   ROBOT_STATE = NOP;
-
 }
 
 void rot(int angle){
@@ -111,8 +114,8 @@ void rot(int angle){
   while (abs(error) > ROT_ERROR_TOL){
     error = target - robotAngle;
 
-    robot.rotate(motor1, 20, sign(error));
-    robot.rotate(motor2, 20, sign(error));
+    robot.rotate(motor1, 25, sign(error));
+    robot.rotate(motor2, 25, sign(error));
 
     delay(10);
   }
