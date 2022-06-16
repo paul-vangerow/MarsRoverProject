@@ -22,7 +22,7 @@ const int CW  = 1; // do not change
 #define motor2 2 // do not change
 
 #define ANGLE_COEFFICIENT 40
-#define DISTANCE_COEFFICIENT 40
+#define DISTANCE_COEFFICIENT 48
 #define TURN_CONTROL 26
 
 // P Control Values (Turning)
@@ -76,7 +76,7 @@ void move(float distance){
 
   stp();
   ROBOT_STATE = MOV;
-  while (abs(error) > MOV_ERROR_TOL){
+  while (error > MOV_ERROR_TOL){
 
     error = target - total_optics[1];
 
@@ -98,10 +98,14 @@ void move(float distance){
     robot.rotate(motor2, 30 + speed_d, CCW); 
     delay(100); 
   }
+
+  Serial.println("MOVE DONE");
+
   kill_motion = false;
 
   stp();
   ROBOT_STATE = NOP;
+  
 }
 
 void rot(int angle){

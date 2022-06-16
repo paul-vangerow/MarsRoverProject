@@ -120,7 +120,7 @@ void PostInstruction(Mouvement mouv){
     }
 }
 
-void PostRadarValue(val_t x, val_t y, double value){
+void PostRadarValues(val_t x, val_t y, double value){
     // initialise the http connection
     HTTPClient http;
     String GetAddress, LinkGet, GetData;

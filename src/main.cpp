@@ -7,6 +7,7 @@
 
 
 TaskHandle_t drive_core;
+TaskHandle_t comms_core;
 Instruction_queue instrq;
 int session_id;
 
@@ -19,9 +20,11 @@ void drive_core_code( void * parameter){
   // rot(90);
   // delay(1000);
   // rot(-90);
-  delay(2000);
-  move(50);
-  /*
+  // delay(2000);
+  // move(44);
+  // delay(100);
+  // rot(90);
+  
   for(;;){
     //Serial.println(instrq.isEmpty());
     if (!instrq.isEmpty()){
@@ -39,7 +42,7 @@ void drive_core_code( void * parameter){
     }
     delay(1000);
   }
-  */
+  
 }
 
 void send_to_server(void * parameters){
@@ -63,8 +66,8 @@ void setup(){
 
   delay(1000);
   
-  xTaskCreate(drive_core_code, "drive", 1000, &instrq, tskIDLE_PRIORITY, NULL);
-  xTaskCreate(send_to_server, "server", 1000, &s_info, tskIDLE_PRIORITY, NULL);
+  xTaskCreate(drive_core_code, "drive", 1000, &drive_core, tskIDLE_PRIORITY, NULL);
+  xTaskCreate(send_to_server, "server", 1000, &comms_core, tskIDLE_PRIORITY, NULL);
   
 }
 
