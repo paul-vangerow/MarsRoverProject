@@ -22,19 +22,21 @@ const int CW  = 1; // do not change
 #define motor2 2 // do not change
 
 #define ANGLE_COEFFICIENT 40
-#define DISTANCE_COEFFICIENT 40
+#define DISTANCE_COEFFICIENT 48
 #define TURN_CONTROL 26
 
 // P Control Values (Turning)
 #define P_T 0.1
 
 // P Control Values (Driving)
-#define P_D 0.2
+#define P_D 2
 
 #define ROT_ERROR_TOL 1
 #define MOV_ERROR_TOL 1
 
 bool kill_motion = false;
+
+float correct_angle = 0;
 
 // for two motors without debug information // Watch video instruciton for this line: https://youtu.be/2JTMqURJTwg
 Robojax_L298N_DC_motor robot(IN1, IN2, ENA, CHA,  IN3, IN4, ENB, CHB);
@@ -68,12 +70,10 @@ void stp(){
 void move(float distance){
   
   int speed_d = 0;
-
   int target = total_optics[1] + (distance*DISTANCE_COEFFICIENT);
   int error = 2;
 
   // straight_factor = 0;
-  float curr_angle = robotAngle;
 
   stp();
   ROBOT_STATE = MOV;
@@ -82,8 +82,14 @@ void move(float distance){
     error = target - total_optics[1];
 
     // speed_d = straight_factor * P_D; OPTICS_CONTROL
+    
+    speed_d = (correct_angle - robotAngle) * P_D;
 
-    speed_d = curr_angle - robotAngle;
+    if (speed_d < -10){
+      speed_d = -10;
+    } else if (speed_d > 10){
+      speed_d = 10;
+    }
 
     if (kill_motion){
       break;
@@ -93,19 +99,19 @@ void move(float distance){
     robot.rotate(motor2, 30 + speed_d, CCW); 
     delay(100); 
   }
-
   kill_motion = false;
 
   stp();
   ROBOT_STATE = NOP;
-
+  
 }
 
 void rot(int angle){
 
-  int target = robotAngle + angle;
+  correct_angle += angle;
+  float target = correct_angle;
   int error = 2;
-
+  
   stp();
   ROBOT_STATE = ROT;
   while (abs(error) > ROT_ERROR_TOL){
