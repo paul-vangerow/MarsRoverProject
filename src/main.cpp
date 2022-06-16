@@ -11,13 +11,7 @@ Instruction_queue instrq;
 int session_id;
 
 // init variables used to send data to the server
-<<<<<<< HEAD
 Server_info s_info;
-=======
-Orientation rover_orientation;
-Colour *colour_of_object = new Colour;
-int distance_to_object;
->>>>>>> 9c0906250fc705bba990c25ffa491eb19b0a9e1f
 
 void drive_core_code( void * parameter){
   motorInit();
