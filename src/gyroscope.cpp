@@ -34,7 +34,7 @@ void gyroRead() {
   sensors_event_t a, g, temp;
   mpu.getEvent(&a, &g, &temp);
 
-  if (abs(g.gyro.z * 0.1 *(180/PI)) > 0.1){
+  if (abs(g.gyro.z * 0.1 *(180/PI)) > 0.1 && abs(g.gyro.z * 0.1 *(180/PI)) < 5){
     robotAngle += g.gyro.z *(180/PI) * (elapsed_time/1000.0);
   }
   

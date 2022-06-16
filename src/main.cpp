@@ -7,7 +7,6 @@
 
 
 TaskHandle_t drive_core;
-TaskHandle_t comms_core;
 Instruction_queue instrq;
 int session_id;
 
@@ -19,28 +18,37 @@ void drive_core_code( void * parameter){
   // delay(2000);
   // rot(90);
   // delay(1000);
-  // rot(-90);
-  // delay(2000);
-  // move(44);
-  // delay(100);
-  // rot(90);
+  //rot(360);
+  
   
   for(;;){
+    // delay(2000);
+    // rot(90);
+    // delay(2000);
+    // rot(-90);
     //Serial.println(instrq.isEmpty());
-    if (!instrq.isEmpty()){
-      Serial.println("succ");
-      Mouvement instr = instrq.get_instruction();
+    // delay(100);
+    // move(36);
+    // delay(100);
+    // rot(90);
+    // delay(100);
+    // move(44);
+    // delay(100);
+    // rot(90);
+    // if (!instrq.isEmpty()){
+    //   Serial.println("succ");
+    //   Mouvement instr = instrq.get_instruction();
 
-      if (instr.get_instruction() == forward){
-        move(instr.get_value());
-      } else if (instr.get_instruction() == spinCW ) {
-        rot(instr.get_value());
-      } else if (instr.get_instruction() == spinCCW ) {
-        rot(instr.get_value());
-      }
+    //   if (instr.get_instruction() == forward){
+    //     move(instr.get_value());
+    //   } else if (instr.get_instruction() == spinCW ) {
+    //     rot(instr.get_value());
+    //   } else if (instr.get_instruction() == spinCCW ) {
+    //     rot(instr.get_value());
+    //   }
 
-    }
-    delay(1000);
+    // }
+    //delay(1000);
   }
   
 }
@@ -67,7 +75,6 @@ void setup(){
   delay(1000);
   
   xTaskCreate(drive_core_code, "drive", 1000, &drive_core, tskIDLE_PRIORITY, NULL);
-  xTaskCreate(send_to_server, "server", 1000, &comms_core, tskIDLE_PRIORITY, NULL);
   
 }
 
@@ -77,7 +84,7 @@ void loop() {
   read_values();
   gyroRead();
 
-  Serial.println(robotAngle); 
+  Serial.print(robotAngle); Serial.print(" "); Serial.println(correct_angle);
   //instrq.update();
   delay(100);
 
