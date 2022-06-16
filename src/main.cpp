@@ -22,8 +22,10 @@ void drive_core_code( void * parameter){
   // delay(1000);
   // rot(-90);
   delay(2000);
-  move(50);
-  /*
+  move(44);
+  delay(100);
+  rot(90);
+  
   for(;;){
     //Serial.println(instrq.isEmpty());
     if (!instrq.isEmpty()){
@@ -41,7 +43,7 @@ void drive_core_code( void * parameter){
     }
     delay(1000);
   }
-  */
+  
 }
 
 void setup(){
