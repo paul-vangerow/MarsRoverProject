@@ -29,7 +29,7 @@ String FetchInstruction();
 int InitDB();
 
 // send the instruction to the database as executed
-void PostInstruction(Mouvement mouv);
+// void PostInstruction(Mouvement mouv);
 
 // post position of the rover
 void PostSensorReadings(val_t x, val_t y, double value);

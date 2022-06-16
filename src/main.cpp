@@ -15,16 +15,15 @@ Orientation rover_orientation;
 Colour *colour_of_object = new Colour;
 int distance_to_object;
 
-
 void drive_core_code( void * parameter){
   motorInit();
+  // delay(2000);
+  // rot(90);
+  // delay(1000);
+  // rot(-90);
   delay(2000);
-  rot(90);
-  delay(1000);
-  rot(-90);
-  delay(2000);
-  move(100);
-  
+  move(50);
+  /*
   for(;;){
     //Serial.println(instrq.isEmpty());
     if (!instrq.isEmpty()){
@@ -42,6 +41,7 @@ void drive_core_code( void * parameter){
     }
     delay(1000);
   }
+  */
 }
 
 void setup(){
@@ -68,7 +68,7 @@ void loop() {
 
   Serial.println(robotAngle); 
   //instrq.update();
-  delay(10);
+  delay(100);
   elapsed_time = millis() - start;
   // PostSensorReadings(5, 5, 10.3);
   // delay(60000);
