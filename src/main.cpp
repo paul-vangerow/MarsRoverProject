@@ -7,17 +7,12 @@
 
 
 TaskHandle_t drive_core;
+TaskHandle_t comms_core;
 Instruction_queue instrq;
 int session_id;
 
 // init variables used to send data to the server
-<<<<<<< HEAD
 Server_info s_info;
-=======
-Orientation rover_orientation;
-Colour *colour_of_object = new Colour;
-int distance_to_object;
->>>>>>> 9c0906250fc705bba990c25ffa491eb19b0a9e1f
 
 void drive_core_code( void * parameter){
   motorInit();
@@ -25,10 +20,10 @@ void drive_core_code( void * parameter){
   // rot(90);
   // delay(1000);
   // rot(-90);
-  delay(2000);
-  move(44);
-  delay(100);
-  rot(90);
+  // delay(2000);
+  // move(44);
+  // delay(100);
+  // rot(90);
   
   for(;;){
     //Serial.println(instrq.isEmpty());
@@ -71,8 +66,8 @@ void setup(){
 
   delay(1000);
   
-  xTaskCreate(drive_core_code, "drive", 1000, &instrq, tskIDLE_PRIORITY, NULL);
-  xTaskCreate(send_to_server, "server", 1000, &s_info, tskIDLE_PRIORITY, NULL);
+  xTaskCreate(drive_core_code, "drive", 1000, &drive_core, tskIDLE_PRIORITY, NULL);
+  xTaskCreate(send_to_server, "server", 1000, &comms_core, tskIDLE_PRIORITY, NULL);
   
 }
 
