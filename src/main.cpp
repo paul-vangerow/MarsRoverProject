@@ -11,6 +11,8 @@ Instruction_queue instrq;
 int session_id;
 
 HardwareSerial Sender(1);
+float prev_elapsed = 1000;
+int rotations = 0;
 
 // init variables used to send data to the server
 Server_info s_info;
@@ -24,10 +26,12 @@ void drive_core_code( void * parameter){
   
   
   for(;;){
-    // delay(2000);
+    // delay(500);
     // rot(90);
-    // delay(2000);
+    // rotations++;
+    // delay(500);
     // rot(-90);
+    // rotations++;
     //Serial.println(instrq.isEmpty());
     // delay(100);
     // move(36);
@@ -55,22 +59,22 @@ void drive_core_code( void * parameter){
   
 }
 
-void send_to_server(void * parameters){
-  InitWifi();
-  // session_id = InitDB();
-  session_id = 2;
-  double radar_val = 10;
+// void send_to_server(void * parameters){
+//   InitWifi();
+//   // session_id = InitDB();
+//   session_id = 2;
+//   double radar_val = 10;
 
-  for(;;){
-    PostRadarValues(s_info.x, s_info.y, radar_val);
-    delay(1000);
-  }
-}
+//   for(;;){
+//     PostRadarValues(s_info.x, s_info.y, radar_val);
+//     delay(1000);
+//   }
+// }
 
 void setup(){
 
   Serial.begin(115200);
-  Sender.begin(115200, SERIAL_8N1, 33, 32);
+  //Sender.begin(115200, SERIAL_8N1, 33, 32);
 
   cam_init();
   gyroInit();
@@ -88,14 +92,15 @@ void loop() {
   gyroRead();
 
   float val = 5.1;
-  Sender.print(val);
+  //Sender.print(val);
 
-  Serial.println(robotAngle); 
+  Serial.print(robotAngle); Serial.print(" , "); Serial.print(rotations); Serial.print(" , ");
   //instrq.update();
   delay(100);
 
   // PostRadarValue(5, 5, 10.3);
   elapsed_time = millis() - start;
+
   Serial.println(elapsed_time);
   // delay(60000);
 }
