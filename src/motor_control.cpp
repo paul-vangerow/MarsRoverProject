@@ -36,6 +36,8 @@ const int CW  = 1; // do not change
 
 bool kill_motion = false;
 
+float correct_angle = 0;
+
 // for two motors without debug information // Watch video instruciton for this line: https://youtu.be/2JTMqURJTwg
 Robojax_L298N_DC_motor robot(IN1, IN2, ENA, CHA,  IN3, IN4, ENB, CHB);
 // for two motors with debug information
@@ -72,7 +74,6 @@ void move(float distance){
   int error = 2;
 
   // straight_factor = 0;
-  float curr_angle = robotAngle;
 
   stp();
   ROBOT_STATE = MOV;
@@ -82,7 +83,7 @@ void move(float distance){
 
     // speed_d = straight_factor * P_D; OPTICS_CONTROL
     
-    speed_d = (curr_angle - robotAngle) * P_D;
+    speed_d = (correct_angle - robotAngle) * P_D;
 
     if (speed_d < -10){
       speed_d = -10;
@@ -96,11 +97,8 @@ void move(float distance){
 
     robot.rotate(motor1, 30 - speed_d, CW);
     robot.rotate(motor2, 30 + speed_d, CCW); 
-    delay(100); 
+    delay(10); 
   }
-
-  Serial.println("MOVE DONE");
-
   kill_motion = false;
 
   stp();
@@ -110,16 +108,17 @@ void move(float distance){
 
 void rot(int angle){
 
-  int target = robotAngle + angle;
+  correct_angle += angle;
+  float target = correct_angle;
   int error = 2;
-
+  
   stp();
   ROBOT_STATE = ROT;
   while (abs(error) > ROT_ERROR_TOL){
     error = target - robotAngle;
 
-    robot.rotate(motor1, 25, sign(error));
-    robot.rotate(motor2, 25, sign(error));
+    robot.rotate(motor1, 20, sign(error));
+    robot.rotate(motor2, 20, sign(error));
 
     delay(10);
   }

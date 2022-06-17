@@ -7,11 +7,16 @@
 
 
 TaskHandle_t drive_core;
-TaskHandle_t comms_core;
 Instruction_queue instrq;
 int session_id;
 
 HardwareSerial Sender(1);
+#define Sender_Txd_pin 2
+#define Sender_Rxd_pin 32
+
+
+float prev_elapsed = 1000;
+int rotations = 0;
 
 // init variables used to send data to the server
 Server_info s_info;
@@ -21,48 +26,47 @@ void drive_core_code( void * parameter){
   // delay(2000);
   // rot(90);
   // delay(1000);
-  // rot(-90);
-  // delay(2000);
-  // move(44);
-  // delay(100);
-  // rot(90);
+  //rot(360);
+  
   
   for(;;){
+    // delay(200);
+    // rot(10);
+    // rotations++;
+    // delay(200);
+    // rot(-10);
+    // rotations++;
     //Serial.println(instrq.isEmpty());
-    if (!instrq.isEmpty()){
-      Serial.println("succ");
-      Mouvement instr = instrq.get_instruction();
+    // delay(100);
+    // move(36);
+    // delay(100);
+    // rot(90);
+    // delay(100);
+    // move(44);
+    // delay(100);
+    // rot(90);
+    // if (!instrq.isEmpty()){
+    //   Serial.println("succ");
+    //   Mouvement instr = instrq.get_instruction();
 
-      if (instr.get_instruction() == forward){
-        move(instr.get_value());
-      } else if (instr.get_instruction() == spinCW ) {
-        rot(instr.get_value());
-      } else if (instr.get_instruction() == spinCCW ) {
-        rot(instr.get_value());
-      }
+    //   if (instr.get_instruction() == forward){
+    //     move(instr.get_value());
+    //   } else if (instr.get_instruction() == spinCW ) {
+    //     rot(instr.get_value());
+    //   } else if (instr.get_instruction() == spinCCW ) {
+    //     rot(instr.get_value());
+    //   }
 
-    }
-    delay(1000);
+    // }
+    //delay(1000);
   }
   
-}
-
-void send_to_server(void * parameters){
-  InitWifi();
-  // session_id = InitDB();
-  session_id = 2;
-  double radar_val = 10;
-
-  for(;;){
-    PostRadarValues(s_info.x, s_info.y, radar_val);
-    delay(1000);
-  }
 }
 
 void setup(){
 
   Serial.begin(115200);
-  Sender.begin(115200, SERIAL_8N1, 33, 32);
+  Sender.begin(115200, SERIAL_8N1, Sender_Txd_pin, Sender_Rxd_pin);
 
   cam_init();
   gyroInit();
@@ -70,24 +74,24 @@ void setup(){
   delay(1000);
   
   xTaskCreate(drive_core_code, "drive", 1000, &drive_core, tskIDLE_PRIORITY, NULL);
-  // xTaskCreate(send_to_server, "server", 1000, &comms_core, tskIDLE_PRIORITY, NULL);
   
 }
 
 void loop() {
   float start = millis();
 
-  read_values();
-  gyroRead();
+  // read_values();
+  // gyroRead();
+  // float val = 5.3;
+  Sender.println("5.3\t8.9");
 
-  int val = 5;
-  Sender.print(val);
-
-  Serial.println(robotAngle); 
+  //Serial.print(robotAngle); Serial.print(" , "); Serial.print(rotations); Serial.print(" , ");
   //instrq.update();
   delay(100);
 
   // PostRadarValue(5, 5, 10.3);
   elapsed_time = millis() - start;
+
+  //Serial.print(elapsed_time); Serial.print("<"); Serial.println(ROBOT_STATE);
   // delay(60000);
 }

@@ -240,13 +240,13 @@ void read_values()
     total_optics[1] = total_optics[1] + d_optics[1];
 
   } else if (ROBOT_STATE == ROT){
-    // total_optics[0] = total_optics[0] + d_optics[0];
+    total_optics[0] = total_optics[0] + d_optics[0];
   }
 
   location_scaled[0] = location[0] / 40;
   location_scaled[1] = location[1] / 40;
 
-  // robot_angle = (total_optics[0] / 4000) * 360; OPTICAL FLOW CONTROL
+  robot_angle = (total_optics[0] / 4000) * 360; 
  
   //Serial.print(location_scaled[0]); Serial.print(" , "); Serial.println(location_scaled[1]); Serial.print(" , "); 
 }

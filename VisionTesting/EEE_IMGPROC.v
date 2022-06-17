@@ -87,7 +87,7 @@ wire         sop, eop, in_valid, out_ready;
 wire[7:0] hue ;
 wire[7:0] saturation, value, min;
 
-reg red_f, yellow_f, teal_f, pink_f, blue_f, green_f, black_f;
+reg red_f, yellow_f, teal_f, pink_f, blue_f, green_f, black_f, white_f;
 
 wire [14:0] value_spi;
 wire	data_received;
@@ -103,6 +103,7 @@ initial begin
 	blue_f <= 0;
 	green_f <= 0;
 	black_f <= 0;
+	white_f <= 0;
 end
 
 
@@ -128,6 +129,10 @@ always @(posedge clk)begin
 	if(value_spi == 6 && data_received)begin
 		black_f = 1;
 	end
+	if(value_spi == 7 && data_received)begin
+		white_f = 1;
+	end
+
 
 end
 
@@ -148,16 +153,16 @@ assign hue = (red == green && red == blue) ? 0 :((value != red)? (value != green
                 (blue < green) ? ((60*(green - blue)/(value - min))>>1): (((360*(value-min) +(60*(green - blue)))/(value - min))>>1));
 
 ///Detect Ping Pong balls
-reg last_detect_high_red, last_red, last_red2, last_red3, last_red4, last_red5;
-reg last_detect_high_yellow, last_yellow, last_yellow2, last_yellow3, last_yellow4, last_yellow5; 
-reg last_detect_high_teal, last_teal, last_teal2, last_teal3, last_teal4, last_teal5;
-reg last_detect_high_pink, last_pink, last_pink2, last_pink3, last_pink4, last_pink5;
-reg last_detect_high_blue, last_blue, last_blue2, last_blue3, last_blue4, last_blue5;
-reg last_detect_high_green, last_green, last_green2, last_green3, last_green4, last_green5;
+reg last_detect_high_red, last_red, last_red2, last_red3, last_red4, last_red5, last_red6, last_red7, last_red8, last_red9;
+reg last_detect_high_yellow, last_yellow, last_yellow2, last_yellow3, last_yellow4, last_yellow5, last_yellow6, last_yellow7, last_yellow8, last_yellow9; 
+reg last_detect_high_teal, last_teal, last_teal2, last_teal3, last_teal4, last_teal5, last_teal6, last_teal7, last_teal8, last_teal9;
+reg last_detect_high_pink, last_pink, last_pink2, last_pink3, last_pink4, last_pink5, last_pink6, last_pink7, last_pink8, last_pink9;
+reg last_detect_high_blue, last_blue, last_blue2, last_blue3, last_blue4, last_blue5, last_blue6, last_blue7, last_blue8, last_blue9;
+reg last_detect_high_green, last_green, last_green2, last_green3, last_green4, last_green5, last_green6, last_green7, last_green8, last_green9;
 reg last_detect_high_black, last_black, last_black2, last_black3, last_black4, last_black5;
+reg last_detect_high_white, last_white, last_white2, last_white3, last_white4, last_white5;
 
-
-wire red_ball_detect, pink_ball_detect, teal_ball_detect, yellow_ball_detect, blue_ball_detect, green_ball_detect, black_ball_detect;	
+wire red_ball_detect, pink_ball_detect, teal_ball_detect, yellow_ball_detect, blue_ball_detect, green_ball_detect, black_detect, white_detect;	
 wire building_detect;
 assign pink_ball_detect = //((((hue >= 150 && hue <= 180)||(hue <= 6 && hue >= 0)) && (saturation > 84 && value > 245))||
 //(hue <= 6 && hue >= 0 && ((value > 229 && saturation > 17 && saturation < 155)||(value > 210 && saturation > 130)))
@@ -191,7 +196,7 @@ assign teal_ball_detect = (((hue >= 60 && hue <= 85) && (saturation > 100 && sat
 
 //assign blue_ball_detect = (hue >= 55 && hue <= 85 && saturation >= 51 && saturation <= 89 && value >= 76 && value <= 240);
 
-assign blue_ball_detect = 0;
+assign blue_ball_detect = (hue >= 97 && hue <= 125 && saturation <= 160 && value <= 142);
 // assign blue_ball_detect = (hue >= 75 && hue <= 95 && ((saturation >= 63 && saturation <= 112 && value >= 130)||(saturation >= 63 && saturation <= 140 && value >= 58 && value <= 125)))
 // || ((hue >= 87 && hue <= 104) && ((saturation >= 90 && saturation <= 146 && value >= 91 && value <= 170) || (saturation >= 127 && saturation <= 178 && value >= 63 && value <= 89)))
 // || ((hue >= 62 && hue <= 75 && saturation >= 40 && saturation <= 89 && value <= 102 && value >= 114));
@@ -206,15 +211,19 @@ assign blue_ball_detect = (hue >= 75 && hue <= 95 && ((saturation >= 63 && satur
 assign green_ball_detect = (((hue >= 50 && hue <= 75) && (saturation > 105 && value >= 75)) || ((hue >= 50 && hue <= 75) && ((saturation > 127 && value > 173))));
 
 
-
+//WHITE////////////////////////////////
 
 //assign pink_ball_detect = (((hue >= 0 && hue <= 7)||(hue >= 170 && hue <= 180)) && value > 111 && saturation > 102); //sat > 102
 //assign teal_ball_detect = (hue >= 45 && hue <= 80 && value > 90 && saturation > 116);
 //assign yellow_ball_detect = (hue >= 15 && hue <= 32 && value > 130 && saturation > 112);
 
-assign black_ball_detect = (value > 40 && value < 75 && saturation < 155 && x > 10 && x < IMAGE_W-10 && y > 10 && y < IMAGE_H - 10);
+assign black_detect = (value > 23 && value < 53 && saturation < 48 && saturation > 36);
+//&& x > 10 && x < IMAGE_W-10 && y > 10 && y < IMAGE_H - 10
+assign white_detect = saturation >= 65 && saturation <= 119 && value >= 249;
+// hue > 15 && hue <=40 && 
 
-//Eliminating noise
+
+//Eliminating noisy pixels
 
 initial begin
 	last_detect_high_red <= 0;
@@ -223,48 +232,82 @@ initial begin
 	last_red3 <= 0;
 	last_red4 <= 0;
 	last_red5 <= 0;
+	last_red6 <= 0;
+	last_red7 <= 0;
+	last_red8 <= 0;
+	last_red9 <= 0;
 	last_detect_high_yellow <= 0;
 	last_yellow <= 0;
 	last_yellow2 <= 0;
 	last_yellow3 <= 0;
 	last_yellow4 <= 0;
 	last_yellow5 <= 0;
+	last_yellow6 <= 0;
+	last_yellow7 <= 0;
+	last_yellow8 <= 0;
+	last_yellow9 <= 0;
 	last_detect_high_teal <= 0;
 	last_teal <= 0;
 	last_teal2 <= 0;
 	last_teal3 <= 0;
 	last_teal4 <= 0;
 	last_teal5 <= 0;
+	last_teal6 <= 0;
+	last_teal7 <= 0;
+	last_teal8 <= 0;
+	last_teal9 <= 0;
 	last_detect_high_pink <= 0;
 	last_pink <= 0;
 	last_pink2 <= 0;
 	last_pink3 <= 0;
 	last_pink4 <= 0;
 	last_pink5 <= 0;
+	last_pink6 <= 0;
+	last_pink7 <= 0;
+	last_pink8 <= 0;
+	last_pink9 <= 0;
 	last_detect_high_blue <= 0;
 	last_blue <= 0;
 	last_blue2 <= 0;
 	last_blue3 <= 0;
 	last_blue4 <= 0;
 	last_blue5 <= 0;
+	last_blue6 <= 0;
+	last_blue7 <= 0;
+	last_blue8 <= 0;
+	last_blue9 <= 0;
 	last_detect_high_green <= 0;
 	last_green <= 0;
 	last_green2 <= 0;
 	last_green3 <= 0;
 	last_green4 <= 0;
 	last_green5 <= 0;
+	last_green6 <= 0;
+	last_green7 <= 0;
+	last_green8 <= 0;
+	last_green9 <= 0;
 	last_detect_high_black <= 0;
 	last_black <= 0;
 	last_black2 <= 0;
 	last_black3 <= 0;
 	last_black4 <= 0;
 	last_black5 <= 0;
+	last_detect_high_white <= 0;
+	last_white <= 0;
+	last_white2 <= 0;
+	last_white3 <= 0;
+	last_white4 <= 0;
+	last_white5 <= 0;
 end
 //r = red
 //y = yellow
 //g = teal
 //b = pink
 always@(negedge clk) begin
+	last_red9 = last_red8;
+	last_red8 = last_red7;
+	last_red7 = last_red6;
+	last_red6 = last_red5;
 	last_red5 = last_red4;
 	last_red4 = last_red3;
 	last_red3 = last_red2;
@@ -272,6 +315,10 @@ always@(negedge clk) begin
 	last_red = last_detect_high_red;
 	last_detect_high_red = (red_ball_detect);
 	
+	last_yellow9 = last_yellow8;
+	last_yellow8 = last_yellow7;
+	last_yellow7 = last_yellow6;
+	last_yellow6 = last_yellow5;
 	last_yellow5 = last_yellow4;
 	last_yellow4 = last_yellow3;
 	last_yellow3 = last_yellow2;
@@ -279,6 +326,10 @@ always@(negedge clk) begin
 	last_yellow = last_detect_high_yellow;
 	last_detect_high_yellow = (yellow_ball_detect);
 	
+	last_teal9 = last_teal8;
+	last_teal8 = last_teal7;
+	last_teal7 = last_teal6;
+	last_teal6 = last_teal5;
 	last_teal5 = last_teal4;
 	last_teal4 = last_teal3;
 	last_teal3 = last_teal2;
@@ -286,6 +337,10 @@ always@(negedge clk) begin
 	last_teal = last_detect_high_teal;
 	last_detect_high_teal = (teal_ball_detect);
 	
+	last_pink9 = last_pink8;
+	last_pink8 = last_pink7;
+	last_pink7 = last_pink6;
+	last_pink6 = last_pink5;
 	last_pink5 = last_pink4;
 	last_pink4 = last_pink3;
 	last_pink3 = last_pink2;
@@ -293,6 +348,10 @@ always@(negedge clk) begin
 	last_pink = last_detect_high_pink;
 	last_detect_high_pink = (pink_ball_detect);
 
+	last_blue9 = last_blue8;
+	last_blue8 = last_blue7;
+	last_blue7 = last_blue6;
+	last_blue6 = last_blue5;
 	last_blue5 = last_blue4;
 	last_blue4 = last_blue3;
 	last_blue3 = last_blue2;
@@ -300,6 +359,10 @@ always@(negedge clk) begin
 	last_blue = last_detect_high_blue;
 	last_detect_high_blue = (blue_ball_detect);
 	
+	last_green9 = last_green8;
+	last_green8 = last_green7;
+	last_green7 = last_green6;
+	last_green6 = last_green5;
 	last_green5 = last_green4;
 	last_green4 = last_green3;
 	last_green3 = last_green2;
@@ -312,21 +375,29 @@ always@(negedge clk) begin
 	last_black3 = last_black2;
 	last_black2 = last_black;
 	last_black = last_detect_high_black;
-	last_detect_high_black = (black_ball_detect);
+	last_detect_high_black = (black_detect);
+
+	last_white5 = last_white4;
+	last_white4 = last_white3;
+	last_white3 = last_white2;
+	last_white2 = last_white;
+	last_white = last_detect_high_white;
+	last_detect_high_white = (white_detect);
 	
 end
 
 // Colour in detected areas
 wire [23:0] color_high;
 assign grey = green[7:1] + red[7:2] + blue[7:2]; //Grey = green/2 + red/4 + blue/4
-assign color_high  =  (red_ball_detect && last_detect_high_red && last_red && last_red2 && last_red3 && last_red4 && last_red5) ? {8'hff,8'h10,8'h0} 
-	: ((teal_ball_detect && last_detect_high_teal && last_teal && last_teal2 && last_teal3 && last_teal4 && last_teal5) ? {8'h00,8'h80,8'h80} 
-	: ((yellow_ball_detect && last_detect_high_yellow && last_yellow && last_yellow2 && last_yellow3 && last_yellow4 && last_yellow5) ? {8'hff,8'hff,8'h00} 
-	: ((pink_ball_detect && last_detect_high_pink && last_pink && last_pink2 && last_pink3 && last_pink4 && last_pink5) ? {8'hdf,8'h55,8'he2}
-	: ((blue_ball_detect && last_detect_high_blue && last_blue && last_blue2 && last_blue3 && last_blue4 && last_blue5) ? {8'h00,8'h00,8'h8b}
-	: ((green_ball_detect && last_detect_high_green && last_green && last_green2 && last_green3 && last_green4 && last_green5) ? {8'h90,8'hee,8'h90}
-	: ((black_ball_detect && last_detect_high_black && last_black && last_black2 && last_black3 && last_black4 && last_black5) ? {8'h87,8'hce,8'heb}
-	: {grey,grey,grey}) ) ) ) ) ) ;
+assign color_high  =  (red_ball_detect && last_detect_high_red && last_red && last_red2 && last_red3 && last_red4 && last_red5 && last_red6 && last_red7 && last_red8 && last_red9) ? {8'hff,8'h10,8'h0} 
+	: ((teal_ball_detect && last_detect_high_teal && last_teal && last_teal2 && last_teal3 && last_teal4 && last_teal5 && last_teal6 && last_teal7 && last_teal8 && last_teal9) ? {8'h00,8'h80,8'h80} 
+	: ((yellow_ball_detect && last_detect_high_yellow && last_yellow && last_yellow2 && last_yellow3 && last_yellow4 && last_yellow5 && last_yellow6 && last_yellow7 && last_yellow8 && last_yellow9) ? {8'hff,8'hff,8'h00} 
+	: ((pink_ball_detect && last_detect_high_pink && last_pink && last_pink2 && last_pink3 && last_pink4 && last_pink5 && last_pink6 && last_pink7 && last_pink8 && last_pink9) ? {8'hdf,8'h55,8'he2}
+	: ((blue_ball_detect && last_detect_high_blue && last_blue && last_blue2 && last_blue3 && last_blue4 && last_blue5 && last_blue6 && last_blue7 && last_blue8 && last_blue9) ? {8'h00,8'h00,8'h8b}
+	: ((green_ball_detect && last_detect_high_green && last_green && last_green2 && last_green3 && last_green4 && last_green5 && last_green6 && last_green7 && last_green8 && last_green9) ? {8'h90,8'hee,8'h90}
+	: ((black_detect && last_detect_high_black && last_black && last_black2 && last_black3 && last_black4 && last_black5) ? {8'h30,8'h19,8'h34}
+	: ((white_detect && last_detect_high_white && last_white && last_white2 && last_white3 && last_white4 && last_white5) ? {8'hff,8'ha5,8'h00}
+	: {grey,grey,grey}) ) ) ) ) ) ) ;
 
 // Show bounding box
 wire [23:0] new_image_red;
@@ -364,11 +435,16 @@ wire bb_active_black;
 assign bb_active_black = (x == left_black && left_black != IMAGE_W-11'h1) | (x == right_black && right_black != 0);
 assign new_image_black = bb_active_black ? {24'h000000} : new_image_green;
 
+wire [23:0] new_image_white;
+wire bb_active_white;
+assign bb_active_white = (x == left_white && left_white != IMAGE_W-11'h1) | (x == right_white && right_white != 0);
+assign new_image_white = bb_active_white ? {24'hffffff} : new_image_black;
+
 
 // Switch output pixels depending on mode switch
 // Don't modify the start-of-packet word - it's a packet discriptor
 // Don't modify data in non-video packets
-assign {red_out, green_out, blue_out} = (mode & ~sop & packet_video) ? new_image_black : {red,green,blue};
+assign {red_out, green_out, blue_out} = (mode & ~sop & packet_video) ? new_image_white : {red,green,blue};
 
 //Count valid pixels to get the image coordinates. Reset and detect packet type on Start of Packet.
 reg [10:0] x, y;
@@ -392,8 +468,8 @@ end
 
 //Find first and last coloured pixels
 reg [10:0] x_min_red, x_max_red, x_min_yellow, x_max_yellow, x_min_teal, x_max_teal, x_min_pink, x_max_pink, 
-x_min_blue, x_max_blue, x_min_green, x_max_green, x_min_black, x_max_black;
-wire [10:0] x_dist_red, x_dist_yellow, x_dist_teal, x_dist_pink, x_dist_blue, x_dist_green, x_dist_black;
+x_min_blue, x_max_blue, x_min_green, x_max_green, x_min_black, x_max_black, x_min_white, x_max_white;
+wire [10:0] x_dist_red, x_dist_yellow, x_dist_teal, x_dist_pink, x_dist_blue, x_dist_green, x_dist_black, x_dist_white;
 
 
 //Here we do the horizon checking and exclusion
@@ -404,6 +480,7 @@ assign x_dist_pink = (x_min_pink > x_max_pink) ? 0 : (x_max_pink-x_min_pink);
 assign x_dist_blue = (x_min_blue > x_max_blue) ? 0 : (x_max_blue-x_min_blue);
 assign x_dist_green = (x_min_pink > x_max_green) ? 0 : (x_max_green-x_min_green);
 assign x_dist_black = (x_min_black > x_max_black) ? 0 : (x_max_pink-x_min_black);
+assign x_dist_white = (x_min_white > x_max_white) ? 0 : (x_max_pink-x_min_white);
 
 
 initial begin
@@ -421,9 +498,12 @@ initial begin
 	x_max_green <= 0;
 	x_min_black <= 0;
 	x_max_black <= 0;
-
+	x_min_white <= 0;
+	x_max_white <= 0;
 
 end
+
+//Here setting new min and max every frame
 
 always@(posedge clk) begin
 	//Update bounds when the pixel is certain colour
@@ -431,29 +511,33 @@ always@(posedge clk) begin
 		if (x < x_min_red) x_min_red <= x;
 		if (x > x_max_red) x_max_red <= x;
 	end
-	if ((yellow_ball_detect && last_detect_high_yellow && last_yellow && last_yellow2 && last_yellow3 && last_yellow4 && last_yellow5) & in_valid & y > 280) begin
+	if ((yellow_ball_detect && last_detect_high_yellow && last_yellow && last_yellow2 && last_yellow3 && last_yellow4 && last_yellow5 && last_yellow6 && last_yellow7 && last_yellow8 && last_yellow9) & in_valid & y > 280) begin
 		if (x < x_min_yellow) x_min_yellow <= x;
 		if (x > x_max_yellow) x_max_yellow <= x;
 	end
-	if ((teal_ball_detect && last_detect_high_teal && last_teal && last_teal2 && last_teal3 && last_teal4 && last_teal5) & in_valid & y > 280) begin
+	if ((teal_ball_detect && last_detect_high_teal && last_teal && last_teal2 && last_teal3 && last_teal4 && last_teal5 && last_teal6 && last_teal7 && last_teal8 && last_teal9) & in_valid & y > 280) begin
 		if (x < x_min_teal) x_min_teal <= x;
 		if (x > x_max_teal) x_max_teal <= x;
 	end
-	if ((pink_ball_detect && last_detect_high_pink && last_pink && last_pink2 && last_pink3 && last_pink4 && last_pink5) & in_valid & y > 280) begin
+	if ((pink_ball_detect && last_detect_high_pink && last_pink && last_pink2 && last_pink3 && last_pink4 && last_pink5 && last_pink6 && last_pink7 && last_pink8 && last_pink9) & in_valid & y > 280) begin
 		if (x < x_min_pink) x_min_pink <= x;
 		if (x > x_max_pink) x_max_pink <= x;
 	end
-	if ((blue_ball_detect && last_detect_high_blue && last_blue && last_blue2 && last_blue3 && last_blue4 && last_blue5) & in_valid & y > 280) begin
+	if ((blue_ball_detect && last_detect_high_blue && last_blue && last_blue2 && last_blue3 && last_blue4 && last_blue5 && last_blue6 && last_blue7 && last_blue8 && last_blue9) & in_valid & y > 280) begin
 		if (x < x_min_blue) x_min_blue <= x;
 		if (x > x_max_blue) x_max_blue <= x;
 	end
-	if ((green_ball_detect && last_detect_high_green && last_green && last_green2 && last_green3 && last_green4 && last_green5) & in_valid & y > 280) begin
+	if ((green_ball_detect && last_detect_high_green && last_green && last_green2 && last_green3 && last_green4 && last_green5 && last_green6 && last_green7 && last_green8 && last_green9) & in_valid & y > 280) begin
 		if (x < x_min_green) x_min_green <= x;
 		if (x > x_max_green) x_max_green <= x;
 	end
-	if ((black_ball_detect && last_detect_high_black && last_black && last_black2 && last_black3 && last_black4 && last_black5) & in_valid & y > 280) begin
+	if ((black_detect && last_detect_high_black && last_black && last_black2 && last_black3 && last_black4 && last_black5) & in_valid & y > 280) begin
 		if (x < x_min_black) x_min_black <= x;
 		if (x > x_max_black) x_max_black <= x;
+	end
+	if ((white_detect && last_detect_high_white && last_white && last_white2 && last_white3 && last_white4 && last_white5) & in_valid & y > 280) begin
+		if (x < x_min_white) x_min_white <= x;
+		if (x > x_max_white) x_max_white <= x;
 	end
 
 	if (sop & in_valid) begin	//Reset bounds on start of packet
@@ -471,7 +555,8 @@ always@(posedge clk) begin
 		x_max_green <= 0;
 		x_min_black <= IMAGE_W-11'h1;
 		x_max_black <= 0;
-
+		x_min_white <= IMAGE_W-11'h1;
+		x_max_white <= 0;
 		
 	end
 end
@@ -479,7 +564,7 @@ end
 //Process bounding box at the end of the frame.
 reg [1:0] msg_state;
 reg [10:0] left_red, right_red, left_yellow, right_yellow, left_teal, right_teal, left_pink, right_pink, 
-left_blue, right_blue, left_green, right_green, left_black, right_black;
+left_blue, right_blue, left_green, right_green, left_black, right_black, left_white, right_white;
 reg [7:0] frame_count;
 always@(posedge clk) begin
 	if (eop & in_valid & packet_video) begin  //Ignore non-video packets
@@ -499,7 +584,9 @@ always@(posedge clk) begin
 		right_green <= x_max_green;
 		left_black <= x_min_black;
 		right_black <= x_max_black;
-		
+		left_white <= x_min_white;
+		right_white <= x_max_white;
+
 		//Start message writer FSM once every MSG_INTERVAL frames, if there is room in the FIFO
 		frame_count <= frame_count - 1;
 		
@@ -521,7 +608,7 @@ reg msg_buf_wr;
 wire msg_buf_rd, msg_buf_flush;
 wire [7:0] msg_buf_size;
 wire msg_buf_empty;
-reg [31:0] distance_red, distance_yellow, distance_teal, distance_pink, distance_blue, distance_green, distance_black;
+reg [31:0] distance_red, distance_yellow, distance_teal, distance_pink, distance_blue, distance_green, distance_black, distance_white;
 `define RED_BOX_MSG_ID "RBB"
 
 wire[6:0] ratio1,ratio2;
@@ -582,12 +669,19 @@ always @(posedge clk)begin
 	else begin
 		distance_black = 0;
 	end
+	
+	if (x_min_white != IMAGE_W-11'h1 && x_max_white != 0 && !white_f) begin
+		distance_white = (x_dist_white < 97) ? ((constant * ratio1)/ratio2/x_dist_white) / 10: ((((constant - (((x_dist_white - 97) * 5)/16))* ratio1)/ratio2)/x_dist_white) / 10;
+	end
+	else begin
+		distance_white = 0;
+	end
 
 
 end
 //((732 * (79/20))/147) =19.66 ish 19
  // -> 14.9
-reg [15:0] dist_out_red, dist_out_yellow, dist_out_teal, dist_out_pink, dist_out_blue, dist_out_green, dist_out_black;
+reg [15:0] dist_out_red, dist_out_yellow, dist_out_teal, dist_out_pink, dist_out_blue, dist_out_green, dist_out_black, dist_out_white;
 //add out for other colours
 
 //79/20 = 3.95 -> 3
@@ -599,36 +693,55 @@ reg [15:0] dist_out_red, dist_out_yellow, dist_out_teal, dist_out_pink, dist_out
 //msg_buf_in is how to output for distance
 always@(*) begin	//Write words to FIFO as state machine advances
 	case(msg_state)
-		2'b00: begin
-			msg_buf_in = 32'd0; //Bottom right coordinate
+		3'b000: begin
+			msg_buf_in = 32'd0; 
 			msg_buf_wr = 1'b0;
 		end
-		2'b01: begin
+		3'b001: begin
 			msg_buf_in = `RED_BOX_MSG_ID;	//Message ID
 			msg_buf_wr = 1'b1;
 		end
-		2'b10: begin
+		3'b010: begin
+			//msg_buf_in = `RED_BOX_MSG_ID;	//Message ID
+			dist_out_red = distance_red[15:0];
+			msg_buf_in = distance_red; 
+			msg_buf_wr = 1'b1;
+		end
+		3'b011: begin
 			//msg_buf_in = {5'b0, x_min, 5'b0, y_min};	//Top left coordinate
 			dist_out_yellow = distance_yellow[15:0];
-			dist_out_red = distance_red[15:0];
-			dist_out_teal = distance_teal[15:0];
-			dist_out_pink = distance_pink[15:0];
-			dist_out_blue = distance_blue[15:0];
-			dist_out_blue = distance_blue[15:0];
-			dist_out_green = distance_green[15:0];
-			dist_out_black = distance_black[15:0];
-			/*for (i = 0; i < 16; i = i+1)begin
-				out = out >> 1;
-			end
-			*/
-			msg_buf_in = distance_yellow; //Bottom right coordinate
+			// dist_out_black = distance_black[15:0];
+			// dist_out_white = distance_white[15:0];
+			msg_buf_in = distance_yellow; 
 			msg_buf_wr = 1'b1; 
 		end
-		2'b11: begin
+		3'b100: begin
 			//msg_buf_in = {5'b0, x_max, 5'b0, y_max};	//Top left coordinate
-			msg_buf_in = distance_red; //Bottom right coordinate
-			msg_buf_wr = 1'b1;  //REPLACED WITH DISTANCE
+			dist_out_teal = distance_teal[15:0];
+			msg_buf_in = distance_teal;
+			msg_buf_wr = 1'b1;  
 		end
+		3'b101: begin
+			dist_out_pink = distance_pink[15:0];
+			msg_buf_in = distance_pink;
+			msg_buf_wr = 1'b1;  
+		end
+		3'b110: begin
+			dist_out_blue = distance_blue[15:0];
+			msg_buf_in = distance_blue;
+			msg_buf_wr = 1'b1;  
+		end
+		3'b111: begin
+			dist_out_green = distance_green[15:0];
+			msg_buf_in = distance_green;
+			msg_buf_wr = 1'b1;  
+		end
+		default: begin
+			msg_buf_in = 32'b0;
+			msg_buf_wr = 1'b0;
+		end
+
+
 	endcase
 end
 
