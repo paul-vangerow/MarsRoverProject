@@ -9,7 +9,7 @@
 #include <Wire.h>
 #include <optics.h>
 
-#define DRIFT_MODIFIER -0.005
+#define DRIFT_MODIFIER 0.005
 
 Adafruit_MPU6050 mpu;
 
@@ -44,9 +44,9 @@ void gyroRead() {
   if (abs(g.gyro.z * 0.1 *(180/PI)) > 0.1){
     robotAngle += g.gyro.z *(180/PI) * (elapsed_time/1000.0);
   }
-  // if (ROBOT_STATE == 2){
-  //   robotAngle += DRIFT_MODIFIER;
-  // }
+  if (ROBOT_STATE == 2){
+    robotAngle += DRIFT_MODIFIER;
+  }
   
   
   

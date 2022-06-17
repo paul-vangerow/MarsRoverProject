@@ -26,12 +26,12 @@ void drive_core_code( void * parameter){
   
   
   for(;;){
-    delay(200);
-    rot(10);
-    rotations++;
-    delay(200);
-    rot(-10);
-    rotations++;
+    // delay(200);
+    // rot(10);
+    // rotations++;
+    // delay(200);
+    // rot(-10);
+    // rotations++;
     //Serial.println(instrq.isEmpty());
     // delay(100);
     // move(36);
@@ -82,13 +82,13 @@ void loop() {
   float val = 5.1;
   //Sender.print(val);
 
-  Serial.print(robotAngle); Serial.print(" , "); Serial.print(rotations); Serial.print(" , ");
+  //Serial.print(robotAngle); Serial.print(" , "); Serial.print(rotations); Serial.print(" , ");
   //instrq.update();
   delay(100);
 
   // PostRadarValue(5, 5, 10.3);
   elapsed_time = millis() - start;
 
-  Serial.println(elapsed_time);
+  //Serial.print(elapsed_time); Serial.print("<"); Serial.println(ROBOT_STATE);
   // delay(60000);
 }
