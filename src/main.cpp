@@ -70,7 +70,7 @@ void setup(){
   delay(1000);
   
   xTaskCreate(drive_core_code, "drive", 1000, &drive_core, tskIDLE_PRIORITY, NULL);
-  xTaskCreate(send_to_server, "server", 1000, &comms_core, tskIDLE_PRIORITY, NULL);
+  // xTaskCreate(send_to_server, "server", 1000, &comms_core, tskIDLE_PRIORITY, NULL);
   
 }
 
@@ -80,7 +80,7 @@ void loop() {
   read_values();
   gyroRead();
 
-  float val = 5.1;
+  int val = 5;
   Sender.print(val);
 
   Serial.println(robotAngle); 
