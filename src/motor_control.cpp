@@ -97,7 +97,7 @@ void move(float distance){
 
     robot.rotate(motor1, 30 - speed_d, CW);
     robot.rotate(motor2, 30 + speed_d, CCW); 
-    delay(100); 
+    delay(10); 
   }
   kill_motion = false;
 

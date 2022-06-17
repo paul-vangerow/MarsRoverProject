@@ -26,12 +26,12 @@ void drive_core_code( void * parameter){
   
   
   for(;;){
-    // delay(500);
-    // rot(90);
-    // rotations++;
-    // delay(500);
-    // rot(-90);
-    // rotations++;
+    delay(200);
+    rot(10);
+    rotations++;
+    delay(200);
+    rot(-10);
+    rotations++;
     //Serial.println(instrq.isEmpty());
     // delay(100);
     // move(36);
@@ -58,18 +58,6 @@ void drive_core_code( void * parameter){
   }
   
 }
-
-// void send_to_server(void * parameters){
-//   InitWifi();
-//   // session_id = InitDB();
-//   session_id = 2;
-//   double radar_val = 10;
-
-//   for(;;){
-//     PostRadarValues(s_info.x, s_info.y, radar_val);
-//     delay(1000);
-//   }
-// }
 
 void setup(){
 
