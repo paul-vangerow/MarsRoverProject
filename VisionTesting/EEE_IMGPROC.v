@@ -1,4 +1,4 @@
-//cd C:/Users/Abdal/Downloads/EEE2Rover-masterNOW/DE10_LITE_D8M_VIP_16/software/D8M_Camera_Test
+// cd C:/Users/Abdal/Desktop/EEE2Rover-masterNOW/DE10_LITE_D8M_VIP_16/software/D8M_Camera_Test
 
 //nios2-download D8M_Camera_Test.elf -c 1 -g
 
@@ -159,10 +159,10 @@ reg last_detect_high_teal, last_teal, last_teal2, last_teal3, last_teal4, last_t
 reg last_detect_high_pink, last_pink, last_pink2, last_pink3, last_pink4, last_pink5, last_pink6, last_pink7, last_pink8, last_pink9;
 reg last_detect_high_blue, last_blue, last_blue2, last_blue3, last_blue4, last_blue5, last_blue6, last_blue7, last_blue8, last_blue9;
 reg last_detect_high_green, last_green, last_green2, last_green3, last_green4, last_green5, last_green6, last_green7, last_green8, last_green9;
-reg last_detect_high_black, last_black, last_black2, last_black3, last_black4, last_black5;
+reg last_detect_high_black, last_black, last_black2, last_black3, last_black4, last_black5, last_black6;
 reg last_detect_high_white, last_white, last_white2, last_white3, last_white4, last_white5;
 
-wire red_ball_detect, pink_ball_detect, teal_ball_detect, yellow_ball_detect, blue_ball_detect, green_ball_detect, black_detect, white_detect;	
+wire red_ball_detect, pink_ball_detect, teal_ball_detect, yellow_ball_detect, blue_ball_detect, green_ball_detect, black_detect, white_detect, edges_detect;	
 wire building_detect;
 assign pink_ball_detect = //((((hue >= 150 && hue <= 180)||(hue <= 6 && hue >= 0)) && (saturation > 84 && value > 245))||
 //(hue <= 6 && hue >= 0 && ((value > 229 && saturation > 17 && saturation < 155)||(value > 210 && saturation > 130)))
@@ -219,11 +219,12 @@ assign green_ball_detect = (((hue >= 46 && hue <= 65) && (saturation >= 116 && s
 //assign teal_ball_detect = (hue >= 45 && hue <= 80 && value > 90 && saturation > 116);
 //assign yellow_ball_detect = (hue >= 15 && hue <= 32 && value > 130 && saturation > 112);
 
-assign black_detect = (value > 23 && value < 53 && saturation < 48 && saturation > 36);
+assign black_detect = (value >= 73 && value <= 125 && saturation <= 130 && saturation >= 44);
 //&& x > 10 && x < IMAGE_W-10 && y > 10 && y < IMAGE_H - 10
-assign white_detect = saturation >= 65 && saturation <= 119 && value >= 249;
+assign white_detect = (saturation <= 37 && value >= 230);
 // hue > 15 && hue <=40 && 
 
+assign edges_detect = (((hue >= 20 && hue <= 54) && (saturation >= 63 && saturation <= 144 && value >= 117 && value <= 156) ));
 
 //Eliminating noisy pixels
 
@@ -294,6 +295,7 @@ initial begin
 	last_black3 <= 0;
 	last_black4 <= 0;
 	last_black5 <= 0;
+	last_black6 <= 0;
 	last_detect_high_white <= 0;
 	last_white <= 0;
 	last_white2 <= 0;
@@ -372,6 +374,7 @@ always@(negedge clk) begin
 	last_green = last_detect_high_green;
 	last_detect_high_green = (green_ball_detect);
 
+	last_black6 = last_black5;
 	last_black5 = last_black4;
 	last_black4 = last_black3;
 	last_black3 = last_black2;
@@ -398,8 +401,12 @@ assign color_high  =  (red_ball_detect && last_detect_high_red && last_red && la
 	: ((blue_ball_detect && last_detect_high_blue && last_blue && last_blue2 && last_blue3 && last_blue4 && last_blue5 && last_blue6 && last_blue7 && last_blue8 && last_blue9) ? {8'h00,8'h00,8'h8b}
 	: ((green_ball_detect && last_detect_high_green && last_green && last_green2 && last_green3 && last_green4 && last_green5 && last_green6 && last_green7 && last_green8 && last_green9) ? {8'h90,8'hee,8'h90}
 	: ((black_detect && last_detect_high_black && last_black && last_black2 && last_black3 && last_black4 && last_black5) ? {8'h30,8'h19,8'h34}
-	: ((white_detect && last_detect_high_white && last_white && last_white2 && last_white3 && last_white4 && last_white5) ? {8'hff,8'ha5,8'h00}
-	: {grey,grey,grey}) ) ) ) ) ) ) ;
+	: ((white_detect && last_detect_high_white && last_white && last_white2 && last_white3 && last_white4 && last_white5) ? {8'had,8'hd8,8'he6}
+	: ((((white_detect + last_detect_high_white + last_white + last_white2 + last_white3) >=3) && ((last_black2 + last_black3 + last_black4 + last_black5 + last_black6) >= 3)) ? {8'hff,8'ha5,8'h00}
+	: ((edges_detect) ? {8'h00,8'hff,8'h00}
+	: {grey,grey,grey}) ) ) ) ) ) ) ) ) ;
+
+//((white_detect + last_detect_high_white + last_white + last_white2 + last_white3 + last_white4) >=3) && ((last_black3 + last_black4 + last_black5 + last_black6) >= 3)
 
 // Show bounding box
 wire [23:0] new_image_red;
@@ -477,7 +484,7 @@ end
 //Find first and last coloured pixels
 reg [10:0] x_min_red, x_max_red, x_min_yellow, x_max_yellow, x_min_teal, x_max_teal, x_min_pink, x_max_pink, 
 x_min_blue, x_max_blue, x_min_green, x_max_green, x_min_black, x_max_black, x_min_white, x_max_white;
-wire [10:0] x_dist_red, x_dist_yellow, x_dist_teal, x_dist_pink, x_dist_blue, x_dist_green, x_dist_black, x_dist_white;
+wire [10:0] x_dist_red, x_dist_yellow, x_dist_teal, x_dist_pink, x_dist_blue, x_dist_green, x_dist_firstbw, x_dist_lastbw;
 
 
 //Here we do the horizon checking and exclusion
@@ -487,8 +494,8 @@ assign x_dist_teal = (x_min_teal > x_max_teal) ? 0 : (x_max_teal-x_min_teal);
 assign x_dist_pink = (x_min_pink > x_max_pink) ? 0 : (x_max_pink-x_min_pink);
 assign x_dist_blue = (x_min_blue > x_max_blue) ? 0 : (x_max_blue-x_min_blue);
 assign x_dist_green = (x_min_pink > x_max_green) ? 0 : (x_max_green-x_min_green);
-assign x_dist_black = (x_min_black > x_max_black) ? 0 : (x_max_pink-x_min_black);
-assign x_dist_white = (x_min_white > x_max_white) ? 0 : (x_max_pink-x_min_white);
+assign x_dist_firstbw = (x_min_black > x_min_white) ? (x_min_black - x_min_white) : (x_min_white-x_min_black);
+assign x_dist_lastbw = (x_max_black > x_max_white) ? (x_max_black-x_max_white) : (x_max_white-x_max_black);
 
 
 initial begin
@@ -616,7 +623,7 @@ reg msg_buf_wr;
 wire msg_buf_rd, msg_buf_flush;
 wire [7:0] msg_buf_size;
 wire msg_buf_empty;
-reg [31:0] distance_red, distance_yellow, distance_teal, distance_pink, distance_blue, distance_green, distance_black, distance_white;
+reg [31:0] distance_red, distance_yellow, distance_teal, distance_pink, distance_blue, distance_green, distance_firstbw, distance_lastbw;
 `define RED_BOX_MSG_ID "RBB"
 
 wire[6:0] ratio1,ratio2;
@@ -671,25 +678,25 @@ always @(posedge clk)begin
 		distance_blue = 0;
 	end
 
-	if (x_min_black != IMAGE_W-11'h1 && x_max_black != 0 && !black_f) begin
-		distance_black = (x_dist_black < 97) ? ((constant * ratio1)/ratio2/x_dist_black) / 10: ((((constant - (((x_dist_black - 97) * 5)/16))* ratio1)/ratio2)/x_dist_black) / 10;
+	if (x_min_black != IMAGE_W-11'h1 && x_min_white != IMAGE_W-11'h1 && x_min_black != 0 && x_min_white != 0) begin
+		distance_firstbw = (x_dist_firstbw < 97) ? ((constant * ratio1)/ratio2/x_dist_firstbw) / 10: ((((constant - (((x_dist_firstbw - 97) * 5)/16))* ratio1)/ratio2)/x_dist_firstbw) / 10;
 	end
 	else begin
-		distance_black = 0;
+		distance_firstbw = 0;
 	end
 	
-	if (x_min_white != IMAGE_W-11'h1 && x_max_white != 0 && !white_f) begin
-		distance_white = (x_dist_white < 97) ? ((constant * ratio1)/ratio2/x_dist_white) / 10: ((((constant - (((x_dist_white - 97) * 5)/16))* ratio1)/ratio2)/x_dist_white) / 10;
+	if (x_max_black != IMAGE_W-11'h1 && x_max_white != IMAGE_W-11'h1 && x_max_black != 0 && x_max_white != 0) begin
+		distance_lastbw = (x_dist_lastbw < 97) ? ((constant * ratio1)/ratio2/x_dist_lastbw) / 10: ((((constant - (((x_dist_lastbw - 97) * 5)/16))* ratio1)/ratio2)/x_dist_lastbw) / 10;
 	end
 	else begin
-		distance_white = 0;
+		distance_lastbw = 0;
 	end
 
 
 end
 //((732 * (79/20))/147) =19.66 ish 19
  // -> 14.9
-reg [15:0] dist_out_red, dist_out_yellow, dist_out_teal, dist_out_pink, dist_out_blue, dist_out_green, dist_out_black, dist_out_white;
+reg [15:0] dist_out_red, dist_out_yellow, dist_out_teal, dist_out_pink, dist_out_blue, dist_out_green, dist_out_firstbw, dist_out_lastbw;
 //add out for other colours
 
 //79/20 = 3.95 -> 3
@@ -701,56 +708,78 @@ reg [15:0] dist_out_red, dist_out_yellow, dist_out_teal, dist_out_pink, dist_out
 //msg_buf_in is how to output for distance
 always@(*) begin	//Write words to FIFO as state machine advances
 	case(msg_state)
-		3'b000: begin
-			msg_buf_in = 32'd0; 
+		2'b00: begin
+			msg_buf_in = 32'd0; //Bottom right coordinate
 			msg_buf_wr = 1'b0;
 		end
-		3'b001: begin
+		2'b01: begin
 			msg_buf_in = `RED_BOX_MSG_ID;	//Message ID
 			msg_buf_wr = 1'b1;
 		end
-		3'b010: begin
+		2'b10: begin
 			//msg_buf_in = `RED_BOX_MSG_ID;	//Message ID
-			dist_out_red = distance_red[15:0];
-			msg_buf_in = distance_red; 
+			dist_out_firstbw = distance_firstbw[15:0];
+			msg_buf_in = distance_firstbw; 
 			msg_buf_wr = 1'b1;
 		end
-		3'b011: begin
-			//msg_buf_in = {5'b0, x_min, 5'b0, y_min};	//Top left coordinate
-			dist_out_yellow = distance_yellow[15:0];
-			// dist_out_black = distance_black[15:0];
-			// dist_out_white = distance_white[15:0];
-			msg_buf_in = distance_yellow; 
-			msg_buf_wr = 1'b1; 
-		end
-		3'b100: begin
+		2'b11: begin
 			//msg_buf_in = {5'b0, x_max, 5'b0, y_max};	//Top left coordinate
-			dist_out_teal = distance_teal[15:0];
-			msg_buf_in = distance_teal;
+			dist_out_lastbw = distance_lastbw[15:0];
+			msg_buf_in = distance_lastbw;
 			msg_buf_wr = 1'b1;  
 		end
-		3'b101: begin
-			dist_out_pink = distance_pink[15:0];
-			msg_buf_in = distance_pink;
-			msg_buf_wr = 1'b1;  
-		end
-		3'b110: begin
-			dist_out_blue = distance_blue[15:0];
-			msg_buf_in = distance_blue;
-			msg_buf_wr = 1'b1;  
-		end
-		3'b111: begin
-			dist_out_green = distance_green[15:0];
-			msg_buf_in = distance_green;
-			msg_buf_wr = 1'b1;  
-		end
-		default: begin
-			msg_buf_in = 32'b0;
-			msg_buf_wr = 1'b0;
-		end
-
-
 	endcase
+	// case(msg_state)
+	// 	3'b000: begin
+	// 		msg_buf_in = 32'd0; 
+	// 		msg_buf_wr = 1'b0;
+	// 	end
+	// 	3'b001: begin
+	// 		msg_buf_in = `RED_BOX_MSG_ID;	//Message ID
+	// 		msg_buf_wr = 1'b1;
+	// 	end
+	// 	3'b010: begin
+	// 		//msg_buf_in = `RED_BOX_MSG_ID;	//Message ID
+	// 		dist_out_red = distance_red[15:0];
+	// 		msg_buf_in = distance_red; 
+	// 		msg_buf_wr = 1'b1;
+	// 	end
+	// 	3'b011: begin
+	// 		//msg_buf_in = {5'b0, x_min, 5'b0, y_min};	//Top left coordinate
+	// 		dist_out_yellow = distance_yellow[15:0];
+	// 		// dist_out_black = distance_black[15:0];
+	// 		// dist_out_white = distance_white[15:0];
+	// 		msg_buf_in = distance_yellow; 
+	// 		msg_buf_wr = 1'b1; 
+	// 	end
+	// 	3'b100: begin
+	// 		//msg_buf_in = {5'b0, x_max, 5'b0, y_max};	//Top left coordinate
+	// 		dist_out_teal = distance_teal[15:0];
+	// 		msg_buf_in = distance_teal;
+	// 		msg_buf_wr = 1'b1;  
+	// 	end
+	// 	3'b101: begin
+	// 		dist_out_pink = distance_pink[15:0];
+	// 		msg_buf_in = distance_pink;
+	// 		msg_buf_wr = 1'b1;  
+	// 	end
+	// 	3'b110: begin
+	// 		dist_out_blue = distance_blue[15:0];
+	// 		msg_buf_in = distance_blue;
+	// 		msg_buf_wr = 1'b1;  
+	// 	end
+	// 	3'b111: begin
+	// 		dist_out_green = distance_green[15:0];
+	// 		msg_buf_in = distance_green;
+	// 		msg_buf_wr = 1'b1;  
+	// 	end
+	// 	default: begin
+	// 		msg_buf_in = 32'b0;
+	// 		msg_buf_wr = 1'b0;
+	// 	end
+
+
+	// endcase
 end
 
 
