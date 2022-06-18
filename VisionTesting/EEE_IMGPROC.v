@@ -1,4 +1,4 @@
-//cd C:/Users/Abdal/Desktop/EEE2Rover-master/DE10_LITE_D8M_VIP_16/software/D8M_Camera_Test
+//cd C:/Users/Abdal/Downloads/EEE2Rover-masterNOW/DE10_LITE_D8M_VIP_16/software/D8M_Camera_Test
 
 //nios2-download D8M_Camera_Test.elf -c 1 -g
 
@@ -168,7 +168,8 @@ assign pink_ball_detect = //((((hue >= 150 && hue <= 180)||(hue <= 6 && hue >= 0
 //(hue <= 6 && hue >= 0 && ((value > 229 && saturation > 17 && saturation < 155)||(value > 210 && saturation > 130)))
 //|| ((hue >= 160 && hue <= 180) && ((saturation >= 76 && value >= 249) || (saturation >= 102 && value >= 140)))
 //|| (((hue >= 160 && hue <= 180)||(hue >= 0 && hue <= 4)) && (saturation > 140 && saturation <= 179 && value >= 89 && value <= 106)) ||
- (((hue >= 175 && hue <= 181)||(hue >= 0 && hue <= 22)) && ((saturation > 83 && saturation < 190)) && ((value >  205 && value <= 255)));
+ (((hue >= 2 && hue <= 12)) && ((saturation >= 100 && saturation < 185)) && ((value >=  248))
+ ||((hue >= 1 && hue <= 8)) && ((saturation >= 100 && saturation < 204)) && ((value >=  189)));
 
 assign red_ball_detect = ((((hue >= 150 && hue <= 180)||(hue <= 6 && hue >= 0)) && (saturation > 84 && value > 245))||
 (hue <= 6 && hue >= 0 && ((value > 229 && saturation > 17 && saturation < 155)||(value > 210 && saturation > 130)))
@@ -183,13 +184,14 @@ assign red_ball_detect = ((((hue >= 150 && hue <= 180)||(hue <= 6 && hue >= 0)) 
 //||(((hue >= 172 && hue <= 180)||(hue >= 3 && hue <= 10)) && ((value >  60 && saturation > 80) || (saturation > 60 && value > 80)))
 ); //sat > 102
 */
-assign yellow_ball_detect = (((hue >= 16 && hue <=25) && (saturation > 133 && value > 124)) || ((hue >= 23 && hue <= 30) && ((value > 155 && saturation > 127)||(saturation >= 153 && value > 252)||(value > 100 && saturation > 247))));
+assign yellow_ball_detect = (((hue >= 16 && hue <=25) && (saturation > 133 && value > 124)) 
+|| ((hue >= 23 && hue <= 30) && ((value > 155 && saturation > 127)||(saturation >= 153 && value > 252)||(value > 100 && saturation > 247))));
 
 //(((hue >= 16 && hue <=25) && (saturation > 133 && value > 78)) 
 //|| ((hue >= 23 && hue <= 30) && ((value > 155 && saturation > 127)||(saturation >= 153 && value > 252)||(value > 41 && saturation > 247))));
 
 assign teal_ball_detect = (((hue >= 60 && hue <= 85) && (saturation > 100 && saturation < 200) && (value > 110 && value < 245))
-||((hue >= 53 && hue <= 80) && (saturation > 80 && saturation < 114) && (value > 60 && value <= 255)));
+||((hue >= 53 && hue <= 80) && (saturation > 80 && saturation < 114) && (value > 60)));
 //test yellow
 //assign yellow_ball_detect = (((hue >= 14 && hue <=25) && (saturation > 160 && value > 128)) || ((hue >= 23 && hue <= 30) && ((value > 155 && saturation > 135)||(saturation >= 153 && value > 252)||(value > 109 && saturation > 247))));
 
@@ -208,7 +210,7 @@ assign blue_ball_detect = (hue >= 75 && hue <= 95 && ((saturation >= 63 && satur
 || ((hue >= 62 && hue <= 86 && saturation >= 35 && saturation <= 100 && value <= 104 && value >= 112));
 */
 
-assign green_ball_detect = (((hue >= 50 && hue <= 75) && (saturation > 105 && value >= 75)) || ((hue >= 50 && hue <= 75) && ((saturation > 127 && value > 173))));
+assign green_ball_detect = (((hue >= 46 && hue <= 65) && (saturation >= 116 && saturation <=208 && value >= 94) ));
 
 
 //WHITE////////////////////////////////
@@ -441,10 +443,16 @@ assign bb_active_white = (x == left_white && left_white != IMAGE_W-11'h1) | (x =
 assign new_image_white = bb_active_white ? {24'hffffff} : new_image_black;
 
 
+wire [23:0] new_image_line;
+wire bb_active_line;
+assign bb_active_line = (y==280)|(y==281)|(y==279);
+assign new_image_line = bb_active_line ? {24'hffffff} : new_image_white;
+
+
 // Switch output pixels depending on mode switch
 // Don't modify the start-of-packet word - it's a packet discriptor
 // Don't modify data in non-video packets
-assign {red_out, green_out, blue_out} = (mode & ~sop & packet_video) ? new_image_white : {red,green,blue};
+assign {red_out, green_out, blue_out} = (mode & ~sop & packet_video) ? new_image_line : {red,green,blue};
 
 //Count valid pixels to get the image coordinates. Reset and detect packet type on Start of Packet.
 reg [10:0] x, y;
