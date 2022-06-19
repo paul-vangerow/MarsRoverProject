@@ -80,18 +80,20 @@ void setup(){
 void loop() {
   float start = millis();
 
-  // read_values();
-  // gyroRead();
+  // -- Data Reading -- 
+  read_values(); // Optical flow data <-- Reads to 
+  gyroRead(); // Gyro angle data
+  // Read Camera Data
+  // Read Radar Data
+
   // float val = 5.3;
   Sender.println("5.3\t8.9");
 
-  //Serial.print(robotAngle); Serial.print(" , "); Serial.print(rotations); Serial.print(" , ");
   //instrq.update();
-  delay(100);
+  
 
   // PostRadarValue(5, 5, 10.3);
-  elapsed_time = millis() - start;
-
-  //Serial.print(elapsed_time); Serial.print("<"); Serial.println(ROBOT_STATE);
-  // delay(60000);
+   
+  delay(100); // Main loop Delay
+  elapsed_time = millis() - start; // Gyro Callibration
 }
