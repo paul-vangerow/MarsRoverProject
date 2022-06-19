@@ -246,7 +246,5 @@ void read_values()
   location_scaled[0] = location[0] / 40;
   location_scaled[1] = location[1] / 40;
 
-  robot_angle = (total_optics[0] / 4000) * 360; 
- 
-  //Serial.print(location_scaled[0]); Serial.print(" , "); Serial.println(location_scaled[1]); Serial.print(" , "); 
+  // robot_angle = (total_optics[0] / 4000) * 360; 
 }

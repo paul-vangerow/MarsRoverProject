@@ -81,19 +81,29 @@ void loop() {
   float start = millis();
 
   // -- Data Reading -- 
-  read_values(); // Optical flow data <-- Reads to 
-  gyroRead(); // Gyro angle data
+  read_values(); // Optical flow data <-- Location_Scaled (X, Y), Camera dx, dy, Total Change in dx, dy
+  gyroRead(); // Gyro angle data <-- Robot_Angle
+
   // Read Camera Data
   // Read Radar Data
+
+  // -- Send Sensor Data to Server --
 
   // float val = 5.3;
   Sender.println("5.3\t8.9");
 
-  //instrq.update();
-  
+    // PostRadarValue(5, 5, 10.3);
 
-  // PostRadarValue(5, 5, 10.3);
-   
+  // -- Recieve Server Instructions -- 
+
+
+
+  // -- Control Algorithm --
+
+  //instrq.update();
+
+  // -- Next Cycle --   
+  
   delay(100); // Main loop Delay
   elapsed_time = millis() - start; // Gyro Callibration
 }
