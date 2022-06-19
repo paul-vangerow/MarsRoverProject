@@ -87,6 +87,16 @@ void loop() {
   // Read Camera Data
   // Read Radar Data
 
+  /* Variables available: 
+    - Location_Scaled(X, Y)
+    - Camera (dx, dy)
+    - Total change (x, y)
+    - Robot Angle (Gyro) - degrees
+    - kill_motion <-- stop any current instruction
+    - collision <-- 1 when robot got stuck on a wall and retreated
+
+  */
+
   // -- Send Sensor Data to Server --
 
   // float val = 5.3;
@@ -103,7 +113,7 @@ void loop() {
   //instrq.update();
 
   // -- Next Cycle --   
-  
+
   delay(100); // Main loop Delay
   elapsed_time = millis() - start; // Gyro Callibration
 }

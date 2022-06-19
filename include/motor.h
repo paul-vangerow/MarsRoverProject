@@ -5,7 +5,8 @@
 
 // Motor Functions
 
-//extern bool kill_motion;
+extern bool kill_motion;
+extern bool collision;
 extern float correct_angle;
 
 void motorInit();
