@@ -6,8 +6,8 @@ typedef double val_t;
 
 enum Instruction{
     forward = 0,
-    spinCCW = 1,
-    spinCW = -1
+    rotate = 1,
+    end = 9
 };
 
 enum Orientation{
