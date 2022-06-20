@@ -35,6 +35,7 @@ const int CW  = 1; // do not change
 #define MOV_ERROR_TOL 1
 
 bool kill_motion = false;
+bool collision = false;
 
 float correct_angle = 0;
 
@@ -70,6 +71,7 @@ void stp(){
 void move(float distance){
   
   int speed_d = 0;
+  int crash_counter = 0;
   int target = total_optics[1] + (distance*DISTANCE_COEFFICIENT);
   int error = 2;
 
@@ -77,6 +79,7 @@ void move(float distance){
 
   stp();
   ROBOT_STATE = MOV;
+
   while (error > MOV_ERROR_TOL){
 
     error = target - total_optics[1];
@@ -91,6 +94,25 @@ void move(float distance){
       speed_d = 10;
     }
 
+    if (d_optics[1] == 0){
+      crash_counter++;
+    } else {
+      crash_counter = 0;
+    }
+
+    // Hopefully makes it that if the rover drives into a wall it will back off and kill off any forward instruction going on.
+    if (crash_counter > 50){
+      stp();
+      collision = true;
+      robot.rotate(motor1, 30, CCW);
+      robot.rotate(motor2, 30, CW);
+      delay(1000);
+      stp();
+
+      break;
+    }
+
+    // Externally callable to kill whatever the rover is doing
     if (kill_motion){
       break;
     }
@@ -116,6 +138,11 @@ void rot(int angle){
   ROBOT_STATE = ROT;
   while (abs(error) > ROT_ERROR_TOL){
     error = target - robotAngle;
+
+    // Externally callable to kill whatever the rover is doing
+    if (kill_motion){
+      break;
+    }
 
     robot.rotate(motor1, 20, sign(error));
     robot.rotate(motor2, 20, sign(error));

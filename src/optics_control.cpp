@@ -55,7 +55,7 @@
 #define MOD 40
 
 float total_optics[2];
-float robot_angle = 0;
+//float robot_angle = 0;
 float location[2];
 float location_scaled[2];
 
@@ -65,7 +65,7 @@ int a=0;
 int b=0;
 
 float d_optics[2];
-float straight_factor = 0;
+// float straight_factor = 0;
 
 enum state {
   MOV = 1,
@@ -147,8 +147,8 @@ void mousecam_read_motion(struct MD *p)
   delayMicroseconds(5);
 }
 
-// pdata must point to an array of size ADNS3080_PIXELS_X x ADNS3080_PIXELS_Y
-// you must call mousecam_reset() after this if you want to go back to normal operation
+// // pdata must point to an array of size ADNS3080_PIXELS_X x ADNS3080_PIXELS_Y
+// // you must call mousecam_reset() after this if you want to go back to normal operation
 int mousecam_frame_capture(byte *pdata)
 {
   mousecam_write_reg(ADNS3080_FRAME_CAPTURE,0x83);
@@ -219,11 +219,11 @@ byte frame[ADNS3080_PIXELS_X * ADNS3080_PIXELS_Y];
 
 void read_values()
 {
-  int val = mousecam_read_reg(ADNS3080_PIXEL_SUM);
+  // int val = mousecam_read_reg(ADNS3080_PIXEL_SUM);
   MD md;
   mousecam_read_motion(&md);
 
-  /* READ CAMERA QUALITY
+  ///* READ CAMERA QUALITY
   for(int i=0; i<md.squal/4; i++)
     Serial.print('*');
   Serial.println(md.squal);
@@ -232,7 +232,7 @@ void read_values()
   d_optics[0] = convTwosComp(md.dx);  d_optics[1] = convTwosComp(md.dy); // Change in X and Y of image (as int)
 
   if (ROBOT_STATE == MOV){
-    straight_factor = straight_factor + d_optics[0];
+    // straight_factor = straight_factor + d_optics[0];
 
     location[0] += cos((robotAngle / 180) * PI) * d_optics[1];
     location[1] += sin((robotAngle / 180) * PI) * d_optics[1];
@@ -240,13 +240,11 @@ void read_values()
     total_optics[1] = total_optics[1] + d_optics[1];
 
   } else if (ROBOT_STATE == ROT){
-    total_optics[0] = total_optics[0] + d_optics[0];
+    // total_optics[0] = total_optics[0] + d_optics[0];
   }
 
-  location_scaled[0] = location[0] / 40;
-  location_scaled[1] = location[1] / 40;
+  location_scaled[0] = location[0] / MOD;
+  location_scaled[1] = location[1] / MOD;
 
-  robot_angle = (total_optics[0] / 4000) * 360; 
- 
-  //Serial.print(location_scaled[0]); Serial.print(" , "); Serial.println(location_scaled[1]); Serial.print(" , "); 
+  // robot_angle = (total_optics[0] / 4000) * 360; 
 }

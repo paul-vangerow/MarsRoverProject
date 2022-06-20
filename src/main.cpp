@@ -5,15 +5,15 @@
 #include <communication.hpp>
 #include <gyro.hpp>
 
-
-TaskHandle_t drive_core;
-Instruction_queue instrq;
-int session_id;
-
-HardwareSerial Sender(1);
 #define Sender_Txd_pin 2
 #define Sender_Rxd_pin 32
 
+TaskHandle_t drive_core;
+Instruction_queue instrq;
+
+int session_id;
+
+HardwareSerial Sender(1);
 
 float prev_elapsed = 1000;
 int rotations = 0;
@@ -21,46 +21,39 @@ int rotations = 0;
 // init variables used to send data to the server
 Server_info s_info;
 
+void createInstruction(){
+
+  // Figure out what the next instruction needed is (Based on sensor data, e.t.c)
+
+}
+
 void drive_core_code( void * parameter){
   motorInit();
-  // delay(2000);
-  // rot(90);
-  // delay(1000);
-  //rot(360);
   
-  
+  delay(1000);
+  move(100);
+
   for(;;){
-    // delay(200);
-    // rot(10);
-    // rotations++;
-    // delay(200);
-    // rot(-10);
-    // rotations++;
-    //Serial.println(instrq.isEmpty());
-    // delay(100);
-    // move(36);
-    // delay(100);
-    // rot(90);
-    // delay(100);
-    // move(44);
-    // delay(100);
-    // rot(90);
-    // if (!instrq.isEmpty()){
-    //   Serial.println("succ");
-    //   Mouvement instr = instrq.get_instruction();
 
-    //   if (instr.get_instruction() == forward){
-    //     move(instr.get_value());
-    //   } else if (instr.get_instruction() == spinCW ) {
-    //     rot(instr.get_value());
-    //   } else if (instr.get_instruction() == spinCCW ) {
-    //     rot(instr.get_value());
-    //   }
+    if (!instrq.isEmpty()){
+      Serial.println("Fetching Instruction");
+      Mouvement instr = instrq.get_instruction();
 
-    // }
-    //delay(1000);
+      if (instr.get_instruction() == forward){
+        move(instr.get_value());
+      } else if (instr.get_instruction() == rotate ) {
+        rot(instr.get_value());
+      } else if (instr.get_instruction() == end) {
+        // Prevent Further Operation (When it reaches Homebase)
+        vTaskDelete(drive_core);
+      }
+
+    } else {
+      // If no instructions are left, create new instructions for the queue.
+      createInstruction();
+    }
+    delay(100);
   }
-  
 }
 
 void setup(){
@@ -80,18 +73,43 @@ void setup(){
 void loop() {
   float start = millis();
 
+<<<<<<< HEAD
   read_values();
   gyroRead();
   float val = 23.5;
   Sender.println("5\t6\t" + String(val)+"\t");
+=======
+  // -- Data Reading -- 
+  read_values(); // Optical flow data <-- Location_Scaled (X, Y), Camera dx, dy, Total Change in dx, dy
+  gyroRead(); // Gyro angle data <-- Robot_Angle
 
-  //Serial.print(robotAngle); Serial.print(" , "); Serial.print(rotations); Serial.print(" , ");
-  //instrq.update();
-  delay(100);
+  // Read Camera Data
+  // Read Radar Data
 
-  // PostRadarValue(5, 5, 10.3);
-  elapsed_time = millis() - start;
+  /* Variables available: 
+    - Location_Scaled(X, Y)
+    - Camera (dx, dy)
+    - Total change (x, y)
+    - Robot Angle (Gyro) - degrees
+    - kill_motion <-- stop any current instruction
+    - collision <-- 1 when robot got stuck on a wall and retreated
 
-  //Serial.print(elapsed_time); Serial.print("<"); Serial.println(ROBOT_STATE);
-  // delay(60000);
+  */
+
+  // -- Send Sensor Data to Server --
+
+  // float val = 5.3;
+  // Sender.println("5.3\t8.9");
+
+    // PostRadarValue(5, 5, 10.3);
+
+  // -- Recieve Server Instructions -- 
+>>>>>>> 205176aad307b961a2ee4d2a416fb2062df99663
+
+  //instrq.update(); <--- For recieving Instructions from the server
+
+  // -- Next Cycle --   
+
+  delay(100); // Main loop Delay
+  elapsed_time = millis() - start; // Gyro Callibration
 }
