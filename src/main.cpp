@@ -30,10 +30,10 @@ void createInstruction(){
 void drive_core_code( void * parameter){
   motorInit();
   
-  for(;;){
+  delay(1000);
+  move(100);
 
-    delay(1000);
-    move(1000);
+  for(;;){
 
     if (!instrq.isEmpty()){
       Serial.println("Fetching Instruction");

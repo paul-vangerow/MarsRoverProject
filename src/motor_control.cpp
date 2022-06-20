@@ -94,16 +94,19 @@ void move(float distance){
       speed_d = 10;
     }
 
-    if (d_optics[1] = 0){
+    if (d_optics[1] == 0){
       crash_counter++;
+    } else {
+      crash_counter = 0;
     }
 
     // Hopefully makes it that if the rover drives into a wall it will back off and kill off any forward instruction going on.
-    if (crash_counter > 10){
+    if (crash_counter > 50){
+      stp();
       collision = true;
       robot.rotate(motor1, 30, CCW);
       robot.rotate(motor2, 30, CW);
-      delay(500);
+      delay(1000);
       stp();
 
       break;

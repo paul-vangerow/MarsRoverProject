@@ -102,25 +102,25 @@ int mousecam_init()
   return 1;
 }
 
-// void mousecam_write_reg(int reg, int val)
-// {
-//   digitalWrite(PIN_MOUSECAM_CS, LOW);
-//   SPI.transfer(reg | 0x80);
-//   SPI.transfer(val);
-//   digitalWrite(PIN_MOUSECAM_CS,HIGH);
-//   delayMicroseconds(50);
-// }
+void mousecam_write_reg(int reg, int val)
+{
+  digitalWrite(PIN_MOUSECAM_CS, LOW);
+  SPI.transfer(reg | 0x80);
+  SPI.transfer(val);
+  digitalWrite(PIN_MOUSECAM_CS,HIGH);
+  delayMicroseconds(50);
+}
 
-// int mousecam_read_reg(int reg)
-// {
-//   digitalWrite(PIN_MOUSECAM_CS, LOW);
-//   SPI.transfer(reg);
-//   delayMicroseconds(75);
-//   int ret = SPI.transfer(0xff);
-//   digitalWrite(PIN_MOUSECAM_CS,HIGH);
-//   delayMicroseconds(1);
-//   return ret;
-// }
+int mousecam_read_reg(int reg)
+{
+  digitalWrite(PIN_MOUSECAM_CS, LOW);
+  SPI.transfer(reg);
+  delayMicroseconds(75);
+  int ret = SPI.transfer(0xff);
+  digitalWrite(PIN_MOUSECAM_CS,HIGH);
+  delayMicroseconds(1);
+  return ret;
+}
 
 struct MD
 {
@@ -149,49 +149,49 @@ void mousecam_read_motion(struct MD *p)
 
 // // pdata must point to an array of size ADNS3080_PIXELS_X x ADNS3080_PIXELS_Y
 // // you must call mousecam_reset() after this if you want to go back to normal operation
-// int mousecam_frame_capture(byte *pdata)
-// {
-//   mousecam_write_reg(ADNS3080_FRAME_CAPTURE,0x83);
+int mousecam_frame_capture(byte *pdata)
+{
+  mousecam_write_reg(ADNS3080_FRAME_CAPTURE,0x83);
 
-//   digitalWrite(PIN_MOUSECAM_CS, LOW);
+  digitalWrite(PIN_MOUSECAM_CS, LOW);
 
-//   SPI.transfer(ADNS3080_PIXEL_BURST);
-//   delayMicroseconds(50);
+  SPI.transfer(ADNS3080_PIXEL_BURST);
+  delayMicroseconds(50);
 
-//   int pix;
-//   byte started = 0;
-//   int count;
-//   int timeout = 0;
-//   int ret = 0;
-//   for(count = 0; count < ADNS3080_PIXELS_X * ADNS3080_PIXELS_Y; )
-//   {
-//     pix = SPI.transfer(0xff);
-//     delayMicroseconds(10);
-//     if(started==0)
-//     {
-//       if(pix&0x40)
-//         started = 1;
-//       else
-//       {
-//         timeout++;
-//         if(timeout==100)
-//         {
-//           ret = -1;
-//           break;
-//         }
-//       }
-//     }
-//     if(started==1)
-//     {
-//       pdata[count++] = (pix & 0x3f)<<2; // scale to normal grayscale byte range
-//     }
-//   }
+  int pix;
+  byte started = 0;
+  int count;
+  int timeout = 0;
+  int ret = 0;
+  for(count = 0; count < ADNS3080_PIXELS_X * ADNS3080_PIXELS_Y; )
+  {
+    pix = SPI.transfer(0xff);
+    delayMicroseconds(10);
+    if(started==0)
+    {
+      if(pix&0x40)
+        started = 1;
+      else
+      {
+        timeout++;
+        if(timeout==100)
+        {
+          ret = -1;
+          break;
+        }
+      }
+    }
+    if(started==1)
+    {
+      pdata[count++] = (pix & 0x3f)<<2; // scale to normal grayscale byte range
+    }
+  }
 
-//   digitalWrite(PIN_MOUSECAM_CS,HIGH);
-//   delayMicroseconds(14);
+  digitalWrite(PIN_MOUSECAM_CS,HIGH);
+  delayMicroseconds(14);
 
-//   return ret;
-// }
+  return ret;
+}
 
 void cam_init()
 {
@@ -215,7 +215,7 @@ void cam_init()
   
 }
 
-// byte frame[ADNS3080_PIXELS_X * ADNS3080_PIXELS_Y];
+byte frame[ADNS3080_PIXELS_X * ADNS3080_PIXELS_Y];
 
 void read_values()
 {
@@ -223,7 +223,7 @@ void read_values()
   MD md;
   mousecam_read_motion(&md);
 
-  /* READ CAMERA QUALITY
+  ///* READ CAMERA QUALITY
   for(int i=0; i<md.squal/4; i++)
     Serial.print('*');
   Serial.println(md.squal);
