@@ -8,13 +8,15 @@
 #define Sender_Txd_pin 2
 #define Sender_Rxd_pin 32
 
+#define FPGA_UART_Tx_PIN 16
+#define FPGA_UART_Rx_PIN 15
+
 TaskHandle_t drive_core;
 Instruction_queue instrq;
 
-int session_id;
-
 HardwareSerial Sender(1);
 
+int session_id;
 float prev_elapsed = 1000;
 int rotations = 0;
 
