@@ -8,17 +8,22 @@
 #define Sender_Txd_pin 2
 #define Sender_Rxd_pin 32
 
-#define FPGA_UART_Tx_PIN 16
-#define FPGA_UART_Rx_PIN 15
+#define FPGA_UART_Rx_PIN 1
+#define FPGA_UART_Tx_PIN 3
 
 TaskHandle_t drive_core;
 Instruction_queue instrq;
 
 HardwareSerial Sender(1);
+HardwareSerial FPGA(2);
 
 int session_id;
 float prev_elapsed = 1000;
 int rotations = 0;
+bool automated = false;
+
+int radar_spotted = 0;
+float alien_distances[7];
 
 // init variables used to send data to the server
 Server_info s_info;
@@ -27,13 +32,20 @@ void createInstruction(){
 
   // Figure out what the next instruction needed is (Based on sensor data, e.t.c)
 
+  /* Variables available: 
+    - Location_Scaled(X, Y)
+    - Camera (dx, dy)
+    - Total change (x, y)
+    - Robot Angle (Gyro) - degrees
+    - kill_motion <-- stop any current instruction
+    - collision <-- 1 when robot got stuck on a wall and retreated
+
+  */
+
 }
 
 void drive_core_code( void * parameter){
   motorInit();
-  
-  delay(1000);
-  move(100);
 
   for(;;){
 
@@ -45,14 +57,20 @@ void drive_core_code( void * parameter){
         move(instr.get_value());
       } else if (instr.get_instruction() == rotate ) {
         rot(instr.get_value());
-      } else if (instr.get_instruction() == end) {
+      } else if (instr.get_instruction() == explore ) {
+        automated = true;
+      } else if (instr.get_instruction() == end_explore ) {
+        automated = false;
+      }else if (instr.get_instruction() == end) {
         // Prevent Further Operation (When it reaches Homebase)
         vTaskDelete(drive_core);
       }
 
     } else {
       // If no instructions are left, create new instructions for the queue.
-      createInstruction();
+      if (automated){
+        createInstruction();
+      }  
     }
     delay(100);
   }
@@ -61,7 +79,10 @@ void drive_core_code( void * parameter){
 void setup(){
 
   Serial.begin(115200);
+
   Sender.begin(115200, SERIAL_8N1, Sender_Txd_pin, Sender_Rxd_pin);
+  FPGA.begin(115200, SERIAL_8N1, FPGA_UART_Tx_PIN, FPGA_UART_Rx_PIN);
+  Sender.setTimeout(10);
 
   cam_init();
   gyroInit();
@@ -85,33 +106,40 @@ void loop() {
   read_values(); // Optical flow data <-- Location_Scaled (X, Y), Camera dx, dy, Total Change in dx, dy
   gyroRead(); // Gyro angle data <-- Robot_Angle
 
+  String c = FPGA.readStringUntil('\n');
+
   // Read Camera Data
   // Read Radar Data
 
-  /* Variables available: 
-    - Location_Scaled(X, Y)
-    - Camera (dx, dy)
-    - Total change (x, y)
-    - Robot Angle (Gyro) - degrees
-    - kill_motion <-- stop any current instruction
-    - collision <-- 1 when robot got stuck on a wall and retreated
-
-  */
-
   // -- Send Sensor Data to Server --
 
-  // float val = 5.3;
-  // Sender.println("5.3\t8.9");
-
-    // PostRadarValue(5, 5, 10.3);
+  Sender.println(String(location_scaled[0])+
+                          "\t"+String(location_scaled[1])+
+                          "\t"+String(robotAngle)+
+                          "\t"+String(radar_spotted)+ 
+                          "\t"+String(alien_distances[0])+
+                          "\t"+String(alien_distances[1])+
+                          "\t"+String(alien_distances[2])+
+                          "\t"+String(alien_distances[3])+
+                          "\t"+String(alien_distances[4])+
+                          "\t"+String(alien_distances[5])+
+                          "\t"+String(alien_distances[6])+"\t");
 
   // -- Recieve Server Instructions -- 
 >>>>>>> 205176aad307b961a2ee4d2a416fb2062df99663
 
-  //instrq.update(); <--- For recieving Instructions from the server
+  String str = Sender.readStringUntil('\n');
+  if (!str.isEmpty()){
+    int index = std::string(str.c_str()).find_first_of('\t');
+    int instruction = str.substring(0, index).toInt();
+    float value = str.substring(index+1).toFloat();
+    Mouvement n(instruction, value);
+    instrq.add_instruction(n);
+  }
 
   // -- Next Cycle --   
 
   delay(100); // Main loop Delay
   elapsed_time = millis() - start; // Gyro Callibration
+  Serial.println(elapsed_time);
 }

@@ -121,8 +121,6 @@ void move(float distance){
     robot.rotate(motor2, 30 + speed_d, CCW); 
     delay(10); 
   }
-  kill_motion = false;
-
   stp();
   ROBOT_STATE = NOP;
   
@@ -138,11 +136,6 @@ void rot(int angle){
   ROBOT_STATE = ROT;
   while (abs(error) > ROT_ERROR_TOL){
     error = target - robotAngle;
-
-    // Externally callable to kill whatever the rover is doing
-    if (kill_motion){
-      break;
-    }
 
     robot.rotate(motor1, 20, sign(error));
     robot.rotate(motor2, 20, sign(error));
