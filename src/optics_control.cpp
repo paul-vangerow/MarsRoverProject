@@ -204,8 +204,6 @@ void cam_init()
   SPI.setClockDivider(SPI_CLOCK_DIV32);
   SPI.setDataMode(SPI_MODE3);
   SPI.setBitOrder(MSBFIRST);
-  
-  Serial.begin(9600);
 
   if(mousecam_init()==-1)
   {
@@ -223,7 +221,7 @@ void read_values()
   MD md;
   mousecam_read_motion(&md);
 
-  ///* READ CAMERA QUALITY
+  /* READ CAMERA QUALITY
   for(int i=0; i<md.squal/4; i++)
     Serial.print('*');
   Serial.println(md.squal);

@@ -79,8 +79,10 @@ void drive_core_code( void * parameter){
 void setup(){
 
   Serial.begin(115200);
+
   Sender.begin(115200, SERIAL_8N1, Sender_Txd_pin, Sender_Rxd_pin);
-  Sender.begin(115200, SERIAL_8N1, FPGA_UART_Tx_PIN, FPGA_UART_Rx_PIN);
+  FPGA.begin(115200, SERIAL_8N1, FPGA_UART_Tx_PIN, FPGA_UART_Rx_PIN);
+  Sender.setTimeout(10);
 
   cam_init();
   gyroInit();
@@ -98,22 +100,24 @@ void loop() {
   read_values(); // Optical flow data <-- Location_Scaled (X, Y), Camera dx, dy, Total Change in dx, dy
   gyroRead(); // Gyro angle data <-- Robot_Angle
 
+  String c = FPGA.readStringUntil('\n');
+
   // Read Camera Data
   // Read Radar Data
 
   // -- Send Sensor Data to Server --
 
-  Sender.print(String(location_scaled[0])+"\t"); // X
-  Sender.print(String(location_scaled[1])+"\t"); // Y
-  Sender.print(String(robotAngle)+"\t"); // Orientation
-  Sender.print(String(radar_spotted)+"\t"); // Radar
-  Sender.print(String(alien_distances[0])+"\t"); // Alien_1
-  Sender.print(String(alien_distances[1])+"\t"); // Alien_2
-  Sender.print(String(alien_distances[2])+"\t"); // Alien_3
-  Sender.print(String(alien_distances[3])+"\t"); // Alien_4
-  Sender.print(String(alien_distances[4])+"\t"); // Alien_5
-  Sender.print(String(alien_distances[5])+"\t"); // Alien_6
-  Sender.println(String(alien_distances[6])+"\t"); // Alien_Building
+  Sender.println(String(location_scaled[0])+
+                          "\t"+String(location_scaled[1])+
+                          "\t"+String(robotAngle)+
+                          "\t"+String(radar_spotted)+ 
+                          "\t"+String(alien_distances[0])+
+                          "\t"+String(alien_distances[1])+
+                          "\t"+String(alien_distances[2])+
+                          "\t"+String(alien_distances[3])+
+                          "\t"+String(alien_distances[4])+
+                          "\t"+String(alien_distances[5])+
+                          "\t"+String(alien_distances[6])+"\t");
 
   // -- Recieve Server Instructions -- 
 
@@ -130,4 +134,5 @@ void loop() {
 
   delay(100); // Main loop Delay
   elapsed_time = millis() - start; // Gyro Callibration
+  Serial.println(elapsed_time);
 }
