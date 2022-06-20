@@ -80,10 +80,10 @@ void setup(){
 void loop() {
   float start = millis();
 
-  // read_values();
-  // gyroRead();
-  // float val = 5.3;
-  Sender.println("5.3\t8.9");
+  read_values();
+  gyroRead();
+  float val = 23.5;
+  Sender.println("5\t6\t" + String(val)+"\t");
 
   //Serial.print(robotAngle); Serial.print(" , "); Serial.print(rotations); Serial.print(" , ");
   //instrq.update();
