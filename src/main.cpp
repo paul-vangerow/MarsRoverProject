@@ -20,6 +20,10 @@ HardwareSerial FPGA(2);
 int session_id;
 float prev_elapsed = 1000;
 int rotations = 0;
+bool automated = false;
+
+int radar_spotted = 0;
+float alien_distances[7];
 
 // init variables used to send data to the server
 Server_info s_info;
@@ -28,19 +32,22 @@ void createInstruction(){
 
   // Figure out what the next instruction needed is (Based on sensor data, e.t.c)
 
+  /* Variables available: 
+    - Location_Scaled(X, Y)
+    - Camera (dx, dy)
+    - Total change (x, y)
+    - Robot Angle (Gyro) - degrees
+    - kill_motion <-- stop any current instruction
+    - collision <-- 1 when robot got stuck on a wall and retreated
+
+  */
+
 }
 
 void drive_core_code( void * parameter){
   motorInit();
-  
-  delay(1000);
-  //move(100);
 
   for(;;){
-
-    move(10);
-    rot(90);
-    delay(10000);
 
     if (!instrq.isEmpty()){
       Serial.println("Fetching Instruction");
@@ -50,14 +57,20 @@ void drive_core_code( void * parameter){
         move(instr.get_value());
       } else if (instr.get_instruction() == rotate ) {
         rot(instr.get_value());
-      } else if (instr.get_instruction() == end) {
+      } else if (instr.get_instruction() == explore ) {
+        automated = true;
+      } else if (instr.get_instruction() == end_explore ) {
+        automated = false;
+      }else if (instr.get_instruction() == end) {
         // Prevent Further Operation (When it reaches Homebase)
         vTaskDelete(drive_core);
       }
 
     } else {
       // If no instructions are left, create new instructions for the queue.
-      createInstruction();
+      if (automated){
+        createInstruction();
+      }  
     }
     delay(100);
   }
@@ -88,30 +101,30 @@ void loop() {
   // Read Camera Data
   // Read Radar Data
 
-  Serial.print(location_scaled[0]); Serial.print(" "); Serial.println(location_scaled[1]);
-
-  Sender.print(String(location_scaled[0])+"\t"); 
-  Sender.print(String(location_scaled[1])+"\t"); 
-  Sender.print(String(robotAngle)+"\t"); 
-  Sender.println("2\t");
-
-  /* Variables available: 
-    - Location_Scaled(X, Y)
-    - Camera (dx, dy)
-    - Total change (x, y)
-    - Robot Angle (Gyro) - degrees
-    - kill_motion <-- stop any current instruction
-    - collision <-- 1 when robot got stuck on a wall and retreated
-
-  */
-
   // -- Send Sensor Data to Server --
 
-  // Sender.println("5.3\t8.9");
+  Sender.print(String(location_scaled[0])+"\t"); // X
+  Sender.print(String(location_scaled[1])+"\t"); // Y
+  Sender.print(String(robotAngle)+"\t"); // Orientation
+  Sender.print(String(radar_spotted)+"\t"); // Radar
+  Sender.print(String(alien_distances[0])+"\t"); // Alien_1
+  Sender.print(String(alien_distances[1])+"\t"); // Alien_2
+  Sender.print(String(alien_distances[2])+"\t"); // Alien_3
+  Sender.print(String(alien_distances[3])+"\t"); // Alien_4
+  Sender.print(String(alien_distances[4])+"\t"); // Alien_5
+  Sender.print(String(alien_distances[5])+"\t"); // Alien_6
+  Sender.println(String(alien_distances[6])+"\t"); // Alien_Building
 
   // -- Recieve Server Instructions -- 
 
-  //instrq.update(); <--- For recieving Instructions from the server
+  String str = Sender.readStringUntil('\n');
+  if (!str.isEmpty()){
+    int index = std::string(str.c_str()).find_first_of('\t');
+    int instruction = str.substring(0, index).toInt();
+    float value = str.substring(index+1).toFloat();
+    Mouvement n(instruction, value);
+    instrq.add_instruction(n);
+  }
 
   // -- Next Cycle --   
 

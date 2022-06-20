@@ -7,6 +7,8 @@ typedef double val_t;
 enum Instruction{
     forward = 0,
     rotate = 1,
+    explore = 2,
+    end_explore = 3,
     end = 9
 };
 
