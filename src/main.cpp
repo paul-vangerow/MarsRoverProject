@@ -8,13 +8,14 @@
 #define Sender_Txd_pin 2
 #define Sender_Rxd_pin 32
 
-#define FPGA_UART_Tx_PIN 16
-#define FPGA_UART_Rx_PIN 15
+#define FPGA_UART_Rx_PIN 1
+#define FPGA_UART_Tx_PIN 3
 
 TaskHandle_t drive_core;
 Instruction_queue instrq;
 
 HardwareSerial Sender(1);
+HardwareSerial FPGA(2);
 
 int session_id;
 float prev_elapsed = 1000;
@@ -33,9 +34,13 @@ void drive_core_code( void * parameter){
   motorInit();
   
   delay(1000);
-  move(100);
+  //move(100);
 
   for(;;){
+
+    move(10);
+    rot(90);
+    delay(10000);
 
     if (!instrq.isEmpty()){
       Serial.println("Fetching Instruction");
@@ -62,6 +67,7 @@ void setup(){
 
   Serial.begin(115200);
   Sender.begin(115200, SERIAL_8N1, Sender_Txd_pin, Sender_Rxd_pin);
+  Sender.begin(115200, SERIAL_8N1, FPGA_UART_Tx_PIN, FPGA_UART_Rx_PIN);
 
   cam_init();
   gyroInit();
@@ -82,6 +88,13 @@ void loop() {
   // Read Camera Data
   // Read Radar Data
 
+  Serial.print(location_scaled[0]); Serial.print(" "); Serial.println(location_scaled[1]);
+
+  Sender.print(String(location_scaled[0])+"\t"); 
+  Sender.print(String(location_scaled[1])+"\t"); 
+  Sender.print(String(robotAngle)+"\t"); 
+  Sender.println("2\t");
+
   /* Variables available: 
     - Location_Scaled(X, Y)
     - Camera (dx, dy)
@@ -94,10 +107,7 @@ void loop() {
 
   // -- Send Sensor Data to Server --
 
-  // float val = 5.3;
   // Sender.println("5.3\t8.9");
-
-    // PostRadarValue(5, 5, 10.3);
 
   // -- Recieve Server Instructions -- 
 
