@@ -24,6 +24,9 @@ float prev_elapsed = 1000;
 int rotations = 0;
 bool automated = false;
 
+uint8_t buffer[36];
+uint32_t readings[9];
+
 int radar_spotted = 0;
 float alien_distances[7];
 
@@ -83,8 +86,8 @@ void setup(){
   Serial.begin(115200);
 
   Sender.begin(115200, SERIAL_8N1, Sender_Txd_pin, Sender_Rxd_pin);
-  FPGA.begin(9600, SERIAL_8N1, FPGA_UART_Tx_PIN, FPGA_UART_Rx_PIN);
-  pinMode(RADAR_READ_PIN, INPUT);
+  FPGA.begin(115200, SERIAL_8N1, FPGA_UART_Tx_PIN, FPGA_UART_Rx_PIN);
+  //pinMode(RADAR_READ_PIN, INPUT);
 
   Sender.setTimeout(10);
   FPGA.setTimeout(10);
@@ -105,12 +108,25 @@ void loop() {
   read_values(); // Optical flow data <-- Location_Scaled (X, Y), Camera dx, dy, Total Change in dx, dy
   gyroRead(); // Gyro angle data <-- Robot_Angle
 
-  String c = FPGA.readStringUntil('\n'); // Read Camera Data
-  Serial.println(c);
+  Serial.println(FPGA.available());
+  
+  int optics_reading = FPGA.readBytes(buffer, 36); // Read Camera Data
+  for (int i = 0 ; i < 9; i++){
+    
+    readings[i] = (buffer[i+3]<<24)+(buffer[i+2]<<16)+(buffer[i+1]<<8)+buffer[i];
+
+    Serial.print(readings[i]);Serial.print(" ");
+  }
+  Serial.println();
+  
+  
+
+  // DATA FORMAT d1 d2 d3 d4 d5 d6 d7
 
   // Read Radar Data
 
-  radar_spotted = digitalRead(RADAR_READ_PIN);
+  //radar_spotted = digitalRead(RADAR_READ_PIN);
+  //Serial.println(radar_spotted);
 
   // -- Send Sensor Data to Server --
 
@@ -124,7 +140,8 @@ void loop() {
                           "\t"+String(alien_distances[3])+
                           "\t"+String(alien_distances[4])+
                           "\t"+String(alien_distances[5])+
-                          "\t"+String(alien_distances[6])+"\t");
+                          "\t"+String(alien_distances[6])+
+                          "\t");
 
   // -- Recieve Server Instructions -- 
 
