@@ -8,8 +8,10 @@
 #define Sender_Txd_pin 2
 #define Sender_Rxd_pin 32
 
-#define FPGA_UART_Rx_PIN 1
-#define FPGA_UART_Tx_PIN 3
+#define FPGA_UART_Rx_PIN 17
+#define FPGA_UART_Tx_PIN 16 
+
+#define RADAR_READ_PIN 26
 
 TaskHandle_t drive_core;
 Instruction_queue instrq;
@@ -81,8 +83,11 @@ void setup(){
   Serial.begin(115200);
 
   Sender.begin(115200, SERIAL_8N1, Sender_Txd_pin, Sender_Rxd_pin);
-  FPGA.begin(115200, SERIAL_8N1, FPGA_UART_Tx_PIN, FPGA_UART_Rx_PIN);
+  FPGA.begin(9600, SERIAL_8N1, FPGA_UART_Tx_PIN, FPGA_UART_Rx_PIN);
+  pinMode(RADAR_READ_PIN, INPUT);
+
   Sender.setTimeout(10);
+  FPGA.setTimeout(10);
 
   cam_init();
   gyroInit();
@@ -106,10 +111,12 @@ void loop() {
   read_values(); // Optical flow data <-- Location_Scaled (X, Y), Camera dx, dy, Total Change in dx, dy
   gyroRead(); // Gyro angle data <-- Robot_Angle
 
-  String c = FPGA.readStringUntil('\n');
+  String c = FPGA.readStringUntil('\n'); // Read Camera Data
+  Serial.println(c);
 
-  // Read Camera Data
   // Read Radar Data
+
+  radar_spotted = digitalRead(RADAR_READ_PIN);
 
   // -- Send Sensor Data to Server --
 
