@@ -578,7 +578,7 @@ always@(posedge clk) begin
 end
 
 //Process bounding box at the end of the frame.
-reg [1:0] msg_state;
+reg [3:0] msg_state;
 reg [10:0] left_red, right_red, left_yellow, right_yellow, left_teal, right_teal, left_pink, right_pink, 
 left_blue, right_blue, left_green, right_green, left_black, right_black, left_white, right_white;
 reg [7:0] frame_count;
@@ -777,23 +777,23 @@ always@(*) begin	//Write words to FIFO as state machine advances
 		4'b0111: begin
 			//dist_out_green = distance_green[15:0];
 			//msg_buf_in = distance_green;
-			msg_buf_in = {4'b0101, 12'b0, distance_green[15:0]};
+			msg_buf_in = {4'b0110, 12'b0, distance_green[15:0]};
 			msg_buf_wr = 1'b1;  
 		end
 		4'b1000: begin
 			//dist_out_firstbw = distance_firstbw[15:0];
 			//msg_buf_in = distance_firstbw;
-			msg_buf_in = {4'b0110, 12'b0, distance_firstbw[15:0]};
+			msg_buf_in = {4'b0111, 12'b0, distance_firstbw[15:0]};
 			msg_buf_wr = 1'b1;  
 		end
 		4'b1001: begin
 			//dist_out_lastbw = distance_lastbw[15:0];
 			//msg_buf_in = distance_lastbw;
-			msg_buf_in = {4'b0111, 12'b0, distance_lastbw[15:0]};
+			msg_buf_in = {4'b1000, 12'b0, distance_lastbw[15:0]};
 			msg_buf_wr = 1'b1;  
 		end
 		default: begin
-			msg_buf_in = {4'b0111, 12'b0, distance_lastbw[15:0]};
+			msg_buf_in = {4'b1001, 12'b0, distance_lastbw[15:0]};
 			msg_buf_wr = 1'b1; 
 		end
 
