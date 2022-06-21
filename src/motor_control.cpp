@@ -10,8 +10,8 @@
 #define IN2 15
 
 // motor 2 settings
-#define IN3 17
-#define IN4 16
+#define IN3 25
+#define IN4 33
 #define ENB 4// this pin must be PWM enabled pin if Arduino board is used
 #define CHB 1
 
