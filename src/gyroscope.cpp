@@ -18,7 +18,7 @@ float elapsed_time = 0;
 
 void gyroInit(void) {
 
-if (!mpu.begin()) {
+  if (!mpu.begin()) {
     Serial.println("Failed to find MPU6050 chip");
     while (1) {
       delay(10);
