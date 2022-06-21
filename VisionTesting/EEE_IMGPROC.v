@@ -71,12 +71,13 @@ output	[15:0]						outbuffer;
 input									received_data_byte_received;
 ////////////////////////////////////////////////////////////////////////
 //
+//WIDTH AND HEIGHT HERE!!!!!!
 parameter IMAGE_W = 11'd640;
 parameter IMAGE_H = 11'd480;
 parameter MESSAGE_BUF_MAX = 256;
 parameter MSG_INTERVAL = 6;
 parameter BB_COL_DEFAULT = 24'h00ff00;
-
+//could be msg_interval - nope its like how often it sends / second
 
 wire [7:0]   red, green, blue, grey;
 wire [7:0]   red_out, green_out, blue_out;
@@ -111,25 +112,25 @@ always @(posedge clk)begin
 	if(value_spi == 1 && data_received)begin
 		red_f = 1;
 	end
-	if(value_spi == 4 && data_received)begin
+	if(value_spi == 2 && data_received)begin
 		yellow_f = 1;
 	end
-	if(value_spi == 2 && data_received)begin
+	if(value_spi == 3 && data_received)begin
 		teal_f = 1;
 	end
-	if(value_spi == 3 && data_received)begin
+	if(value_spi == 4 && data_received)begin
 		pink_f = 1;
 	end
-	if(value_spi == 4 && data_received)begin
+	if(value_spi == 5 && data_received)begin
 		blue_f = 1;
 	end
-	if(value_spi == 5 && data_received)begin
+	if(value_spi == 6 && data_received)begin
 		green_f = 1;
 	end
-	if(value_spi == 6 && data_received)begin
+	if(value_spi == 7 && data_received)begin
 		black_f = 1;
 	end
-	if(value_spi == 7 && data_received)begin
+	if(value_spi == 8 && data_received)begin
 		white_f = 1;
 	end
 
@@ -402,9 +403,9 @@ assign color_high  =  (red_ball_detect && last_detect_high_red && last_red && la
 	: ((green_ball_detect && last_detect_high_green && last_green && last_green2 && last_green3 && last_green4 && last_green5 && last_green6 && last_green7 && last_green8 && last_green9) ? {8'h90,8'hee,8'h90}
 	: ((black_detect && last_detect_high_black && last_black && last_black2 && last_black3 && last_black4 && last_black5) ? {8'h30,8'h19,8'h34}
 	: ((white_detect && last_detect_high_white && last_white && last_white2 && last_white3 && last_white4 && last_white5) ? {8'had,8'hd8,8'he6}
-	: ((((white_detect + last_detect_high_white + last_white + last_white2 + last_white3) >=3) && ((last_black2 + last_black3 + last_black4 + last_black5 + last_black6) >= 3)) ? {8'hff,8'ha5,8'h00}
-	: ((edges_detect) ? {8'h00,8'hff,8'h00}
-	: {grey,grey,grey}) ) ) ) ) ) ) ) ) ;
+	: ((((white_detect + last_detect_high_white + last_white + last_white2 + last_white3 + last_white4 + last_white5) >=3) && ((black_detect + last_detect_high_black + last_black + last_black2 + last_black3 + last_black4 + last_black5 + last_black6) >= 3)) ? {8'hff,8'ha5,8'h00}
+	//: ((edges_detect) ? {8'h00,8'hff,8'h00}
+	: {grey,grey,grey} ) ) ) ) ) ) ) ) ;
 
 //((white_detect + last_detect_high_white + last_white + last_white2 + last_white3 + last_white4) >=3) && ((last_black3 + last_black4 + last_black5 + last_black6) >= 3)
 
@@ -606,14 +607,17 @@ always@(posedge clk) begin
 		frame_count <= frame_count - 1;
 		
 		if (frame_count == 0 && msg_buf_size < MESSAGE_BUF_MAX - 3) begin
-			msg_state <= 2'b01;
+			msg_state <= 4'b0001;
 			frame_count <= MSG_INTERVAL-1;
 		end
 	end
 	
 	//Cycle through message writer states once started
-	if (msg_state != 2'b00) msg_state <= msg_state + 2'b01;
-
+	if (msg_state != 4'b0000)
+		begin
+			if (msg_state == 4'b1001)  msg_state <= 4'b0000;
+			else msg_state <= msg_state + 4'b0001;
+		end
 end
 	
 //Generate output messages for CPU
@@ -694,12 +698,9 @@ always @(posedge clk)begin
 
 
 end
-//((732 * (79/20))/147) =19.66 ish 19
- // -> 14.9
+
 reg [15:0] dist_out_red, dist_out_yellow, dist_out_teal, dist_out_pink, dist_out_blue, dist_out_green, dist_out_firstbw, dist_out_lastbw;
 //add out for other colours
-
-//79/20 = 3.95 -> 3
 
 //angle calculation:
 //IMAGE_W/2 is centre 
@@ -707,79 +708,97 @@ reg [15:0] dist_out_red, dist_out_yellow, dist_out_teal, dist_out_pink, dist_out
 
 //msg_buf_in is how to output for distance
 always@(*) begin	//Write words to FIFO as state machine advances
-	case(msg_state)
-		2'b00: begin
-			msg_buf_in = 32'd0; //Bottom right coordinate
-			msg_buf_wr = 1'b0;
-		end
-		2'b01: begin
-			msg_buf_in = `RED_BOX_MSG_ID;	//Message ID
-			msg_buf_wr = 1'b1;
-		end
-		2'b10: begin
-			//msg_buf_in = `RED_BOX_MSG_ID;	//Message ID
-			dist_out_firstbw = distance_firstbw[15:0];
-			msg_buf_in = distance_firstbw; 
-			msg_buf_wr = 1'b1;
-		end
-		2'b11: begin
-			//msg_buf_in = {5'b0, x_max, 5'b0, y_max};	//Top left coordinate
-			dist_out_lastbw = distance_lastbw[15:0];
-			msg_buf_in = distance_lastbw;
-			msg_buf_wr = 1'b1;  
-		end
-	endcase
 	// case(msg_state)
-	// 	3'b000: begin
-	// 		msg_buf_in = 32'd0; 
+	// 	2'b00: begin
+	// 		msg_buf_in = 32'd0; //Bottom right coordinate
 	// 		msg_buf_wr = 1'b0;
 	// 	end
-	// 	3'b001: begin
+	// 	2'b01: begin
 	// 		msg_buf_in = `RED_BOX_MSG_ID;	//Message ID
 	// 		msg_buf_wr = 1'b1;
 	// 	end
-	// 	3'b010: begin
+	// 	2'b10: begin
 	// 		//msg_buf_in = `RED_BOX_MSG_ID;	//Message ID
-	// 		dist_out_red = distance_red[15:0];
-	// 		msg_buf_in = distance_red; 
+	// 		dist_out_firstbw = distance_firstbw[15:0];
+	// 		msg_buf_in = distance_firstbw; 
 	// 		msg_buf_wr = 1'b1;
 	// 	end
-	// 	3'b011: begin
-	// 		//msg_buf_in = {5'b0, x_min, 5'b0, y_min};	//Top left coordinate
-	// 		dist_out_yellow = distance_yellow[15:0];
-	// 		// dist_out_black = distance_black[15:0];
-	// 		// dist_out_white = distance_white[15:0];
-	// 		msg_buf_in = distance_yellow; 
-	// 		msg_buf_wr = 1'b1; 
-	// 	end
-	// 	3'b100: begin
+	// 	2'b11: begin
 	// 		//msg_buf_in = {5'b0, x_max, 5'b0, y_max};	//Top left coordinate
-	// 		dist_out_teal = distance_teal[15:0];
-	// 		msg_buf_in = distance_teal;
+	// 		dist_out_lastbw = distance_lastbw[15:0];
+	// 		msg_buf_in = distance_lastbw;
 	// 		msg_buf_wr = 1'b1;  
 	// 	end
-	// 	3'b101: begin
-	// 		dist_out_pink = distance_pink[15:0];
-	// 		msg_buf_in = distance_pink;
-	// 		msg_buf_wr = 1'b1;  
-	// 	end
-	// 	3'b110: begin
-	// 		dist_out_blue = distance_blue[15:0];
-	// 		msg_buf_in = distance_blue;
-	// 		msg_buf_wr = 1'b1;  
-	// 	end
-	// 	3'b111: begin
-	// 		dist_out_green = distance_green[15:0];
-	// 		msg_buf_in = distance_green;
-	// 		msg_buf_wr = 1'b1;  
-	// 	end
-	// 	default: begin
-	// 		msg_buf_in = 32'b0;
-	// 		msg_buf_wr = 1'b0;
-	// 	end
-
-
 	// endcase
+	case(msg_state)
+		4'b0000: begin
+			msg_buf_in = 32'd0; 
+			msg_buf_wr = 1'b0;
+		end
+		4'b0001: begin
+			msg_buf_in = `RED_BOX_MSG_ID;	//Message ID
+			msg_buf_wr = 1'b1;
+		end
+		4'b0010: begin
+			//msg_buf_in = `RED_BOX_MSG_ID;	//Message ID
+			//dist_out_red = distance_red[15:0];
+			//msg_buf_in = distance_red; 
+			msg_buf_in = {4'b0001, 12'b0, distance_red[15:0]};
+			msg_buf_wr = 1'b1;
+		end
+		4'b0011: begin
+			//msg_buf_in = {5'b0, x_min, 5'b0, y_min};	//Top left coordinate
+			//dist_out_yellow = distance_yellow[15:0];
+			// dist_out_black = distance_black[15:0];
+			// dist_out_white = distance_white[15:0];
+			//msg_buf_in = distance_yellow; 
+			msg_buf_in = {4'b0010, 12'b0, distance_yellow[15:0]};
+			msg_buf_wr = 1'b1; 
+		end
+		4'b0100: begin
+			//msg_buf_in = {5'b0, x_max, 5'b0, y_max};	//Top left coordinate
+			//dist_out_teal = distance_teal[15:0];
+			//msg_buf_in = distance_teal;
+			msg_buf_in = {4'b0011, 12'b0, distance_teal[15:0]};
+			msg_buf_wr = 1'b1;  
+		end
+		4'b0101: begin
+			//dist_out_pink = distance_pink[15:0];
+			//msg_buf_in = distance_pink;
+			msg_buf_in = {4'b0100, 12'b0, distance_pink[15:0]};
+			msg_buf_wr = 1'b1;  
+		end
+		4'b0110: begin
+			//dist_out_blue = distance_blue[15:0];
+			//msg_buf_in = distance_blue;
+			msg_buf_in = {4'b0101, 12'b0, distance_blue[15:0]};
+			msg_buf_wr = 1'b1;  
+		end
+		4'b0111: begin
+			//dist_out_green = distance_green[15:0];
+			//msg_buf_in = distance_green;
+			msg_buf_in = {4'b0101, 12'b0, distance_green[15:0]};
+			msg_buf_wr = 1'b1;  
+		end
+		4'b1000: begin
+			//dist_out_firstbw = distance_firstbw[15:0];
+			//msg_buf_in = distance_firstbw;
+			msg_buf_in = {4'b0110, 12'b0, distance_firstbw[15:0]};
+			msg_buf_wr = 1'b1;  
+		end
+		4'b1001: begin
+			//dist_out_lastbw = distance_lastbw[15:0];
+			//msg_buf_in = distance_lastbw;
+			msg_buf_in = {4'b0111, 12'b0, distance_lastbw[15:0]};
+			msg_buf_wr = 1'b1;  
+		end
+		default: begin
+			msg_buf_in = {4'b0111, 12'b0, distance_lastbw[15:0]};
+			msg_buf_wr = 1'b1; 
+		end
+
+
+	endcase
 end
 
 

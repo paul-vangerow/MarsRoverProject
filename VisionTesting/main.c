@@ -134,8 +134,9 @@ int main()
     usleep(2000);
     IOWR(MIPI_RESET_N_BASE, 0x00, 0xFF);
 
-    printf("Image Processor ID: %x\n", IORD(0x42000, EEE_IMGPROC_ID));
+    //printf("Image Processor ID: %x\n", IORD(0x42000, EEE_IMGPROC_ID));
     //printf("Image Processor ID: %x\n",IORD(EEE_IMGPROC_0_BASE,EEE_IMGPROC_ID)); //Don't know why this doesn't work - definition is in system.h in BSP
+    fprintf(stderr,"Image Processor ID: %x\n",IORD(EEE_IMGPROC_0_BASE,EEE_IMGPROC_ID));
 
 
     usleep(2000);
@@ -246,26 +247,57 @@ int main()
 
         //Read messages from the image processor and print them on the terminal
         int counter = 0;
-        while ((IORD(0x42000, EEE_IMGPROC_STATUS) >> 8) & 0xff) { 	//Find out if there are words to read
-            int word = IORD(0x42000, EEE_IMGPROC_MSG); 			//Get next word from message buffer
+        while ((IORD(EEE_IMGPROC_0_BASE, EEE_IMGPROC_STATUS) >> 8) & 0xff) { 	//Find out if there are words to read
+            int word = IORD(EEE_IMGPROC_0_BASE, EEE_IMGPROC_MSG); 			//Get next word from message buffer
             if (word == EEE_IMGPROC_MSG_START) { 					//Newline on message identifier
-                counter = 0;
                 printf("\n");
+                printf("Counter: %d ", counter);
             }
+            printf("word: %d ", (IORD(EEE_IMGPROC_0_BASE, EEE_IMGPROC_STATUS) >> 8));
+            printf("word2: %d ", (IORD(0x42000, EEE_IMGPROC_STATUS) >> 8));
+//            printf("msgstart: %d ", EEE_IMGPROC_MSG_START);
             if (word != EEE_IMGPROC_MSG_START) {
                 if (counter == 0) {
+                    printf("distance of red: %d ", word);
+                    counter++;
+                }
+                else if (counter == 1) {
                     printf("distance of yellow: %d ", word);
                     counter++;
                 }
-                else {
-                    printf("distance of red: %d ", word);
+                else if (counter == 2) {
+                	printf("distance of teal: %d ", word);
+                	counter++;
+                }
+                else if (counter == 3) {
+                    printf("distance of pink: %d ", word);
+                    counter++;
+                }
+                else if (counter == 4) {
+                	printf("distance of blue: %d ", word);
+                    counter++;
+                }
+                else if (counter == 5) {
+                    printf("distance of green: %d ", word);
+                    counter++;
+                }
+                else if (counter == 6) {
+                	printf("distance of firstbw: %d ", word);
+                    counter++;
+                }
+                else if (counter == 7){
+                    printf("distance of lastbw: %d ", word);
+                    counter++;
+                }
+                else{
+                	counter = 0;
                 }
             }
         }
 
         //Update the bounding box colour
         boundingBoxColour = ((boundingBoxColour + 1) & 0xff);
-        IOWR(0x42000, EEE_IMGPROC_BBCOL, (boundingBoxColour << 8) | (0xff - boundingBoxColour));
+        IOWR(EEE_IMGPROC_0_BASE, EEE_IMGPROC_BBCOL, (boundingBoxColour << 8) | (0xff - boundingBoxColour));
 
         //Process input commands
         int in = getchar();
