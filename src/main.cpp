@@ -107,19 +107,19 @@ void loop() {
   // -- Data Reading -- 
   read_values(); // Optical flow data <-- Location_Scaled (X, Y), Camera dx, dy, Total Change in dx, dy
   gyroRead(); // Gyro angle data <-- Robot_Angle
-
-  Serial.println(FPGA.available());
   
-  int optics_reading = FPGA.readBytes(buffer, 36); // Read Camera Data
-  for (int i = 0 ; i < 9; i++){
+  //Serial.print(FPGA.available());Serial.print(" ");
+  if (FPGA.available() >= 36){
     
-    readings[i] = (buffer[i+3]<<24)+(buffer[i+2]<<16)+(buffer[i+1]<<8)+buffer[i];
-
-    Serial.print(readings[i]);Serial.print(" ");
+    int optics_reading = FPGA.readBytes(buffer, 36); // Read Camera Data
+    //Serial.println(FPGA.available());
+    for (int i = 1; i < 9; i++){
+      alien_distances[i-1]=((buffer[4*i+1]<<8) + (buffer[4*i]));
+    }
   }
-  Serial.println();
-  
-  
+  while (FPGA.available()) {
+    FPGA.read();
+  }
 
   // DATA FORMAT d1 d2 d3 d4 d5 d6 d7
 
@@ -141,6 +141,7 @@ void loop() {
                           "\t"+String(alien_distances[4])+
                           "\t"+String(alien_distances[5])+
                           "\t"+String(alien_distances[6])+
+                          "\t"+String(alien_distances[7])+
                           "\t");
 
   // -- Recieve Server Instructions -- 
@@ -158,5 +159,5 @@ void loop() {
 
   delay(100); // Main loop Delay
   elapsed_time = millis() - start; // Gyro Callibration
-  Serial.println(elapsed_time);
+  //Serial.println(elapsed_time);
 }
