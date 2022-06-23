@@ -544,11 +544,11 @@ always@(posedge clk) begin
 		if (x < x_min_green) x_min_green <= x;
 		if (x > x_max_green) x_max_green <= x;
 	end
-	if ((black_detect && last_detect_high_black && last_black && last_black2 && last_black3 && last_black4 && last_black5) & in_valid & y > 280) begin
+	if ((black_detect && last_detect_high_black && last_black && last_black2 && last_black3 && last_black4 && last_black5) & in_valid & y > 260& x > 10 & x < (IMAGE_W-10)) begin
 		if (x < x_min_black) x_min_black <= x;
 		if (x > x_max_black) x_max_black <= x;
 	end
-	if ((white_detect && last_detect_high_white && last_white && last_white2 && last_white3 && last_white4 && last_white5) & in_valid & y > 280) begin
+	if ((white_detect && last_detect_high_white && last_white && last_white2 && last_white3 && last_white4 && last_white5) & in_valid & y > 260 & x > 10 & x < (IMAGE_W-10) ) begin
 		if (x < x_min_white) x_min_white <= x;
 		if (x > x_max_white) x_max_white <= x;
 	end
