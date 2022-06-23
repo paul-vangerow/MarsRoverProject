@@ -184,8 +184,8 @@ assign yellow_ball_detect = ((hue >= 24 && hue <=31) && (saturation >= 179 && sa
 //(((hue >= 16 && hue <=25) && (saturation > 133 && value > 78)) 
 //|| ((hue >= 23 && hue <= 30) && ((value > 155 && saturation > 127)||(saturation >= 153 && value > 252)||(value > 41 && saturation > 247))));
 
-assign teal_ball_detect = (((hue >= 60 && hue <= 85) && (saturation > 100 && saturation < 200) && (value > 110 && value < 245))
-||((hue >= 53 && hue <= 80) && (saturation > 80 && saturation < 114) && (value > 60)));
+assign teal_ball_detect = (((hue >= 69 && hue <= 85) && (saturation > 100 && saturation < 200) && (value > 110 && value < 245))
+||((hue >= 69 && hue <= 80) && (saturation > 80 && saturation < 114) && (value > 60)));
 //test yellow
 //assign yellow_ball_detect = (((hue >= 14 && hue <=25) && (saturation > 160 && value > 128)) || ((hue >= 23 && hue <= 30) && ((value > 155 && saturation > 135)||(saturation >= 153 && value > 252)||(value > 109 && saturation > 247))));
 
@@ -204,7 +204,8 @@ assign blue_ball_detect = (hue >= 75 && hue <= 95 && ((saturation >= 63 && satur
 || ((hue >= 62 && hue <= 86 && saturation >= 35 && saturation <= 100 && value <= 104 && value >= 112));
 */
 
-assign green_ball_detect = (((hue >= 46 && hue <= 65) && (saturation >= 116 && saturation <=208 && value >= 94) ));
+assign green_ball_detect = ((hue >= 46 && hue <= 65 && saturation >= 116 && saturation <=208 && value >= 94 )
+|| (hue >= 50 && hue <= 58 && saturation >= 109 && saturation <=185 && value >= 135 ));
 
 
 //WHITE////////////////////////////////
@@ -213,9 +214,10 @@ assign green_ball_detect = (((hue >= 46 && hue <= 65) && (saturation >= 116 && s
 //assign teal_ball_detect = (hue >= 45 && hue <= 80 && value > 90 && saturation > 116);
 //assign yellow_ball_detect = (hue >= 15 && hue <= 32 && value > 130 && saturation > 112);
 
-assign black_detect = (hue >= 28 && hue <= 31 && saturation >= 126 && saturation <= 130 && value >= 44 && value <= 51 );
+assign black_detect = (value >= 23 && value <= 40); 
+//(hue >= 28 && hue <= 31 && saturation >= 126 && saturation <= 130 && value >= 44 && value <= 51 );
 //&& x > 10 && x < IMAGE_W-10 && y > 10 && y < IMAGE_H - 10
-assign white_detect = (hue >= 2 && hue <= 40 && saturation <= 66 && value >= 250);
+assign white_detect = (hue >= 2 && hue <= 40 && saturation >= 65 && saturation <= 125 && (value >= 250 || (value >= 144 && value <=196)));
 // hue > 15 && hue <=40 && 
 
 assign edges_detect = (((hue >= 20 && hue <= 54) && (saturation >= 63 && saturation <= 144 && value >= 117 && value <= 156) ));
