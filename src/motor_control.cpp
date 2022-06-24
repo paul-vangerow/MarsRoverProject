@@ -104,8 +104,8 @@ void move(float distance){
     if (crash_counter > 50){
       stp();
       collision = true;
-      robot.rotate(motor1, 30, CCW);
-      robot.rotate(motor2, 30, CW);
+      robot.rotate(motor1, 60, CCW);
+      robot.rotate(motor2, 60, CW);
       delay(1000);
       stp();
 
@@ -117,8 +117,8 @@ void move(float distance){
       break;
     }
 
-    robot.rotate(motor1, 30 - speed_d, CW);
-    robot.rotate(motor2, 30 + speed_d, CCW); 
+    robot.rotate(motor1, 60 - speed_d, CW);
+    robot.rotate(motor2, 60 + speed_d, CCW); 
     delay(10); 
   }
   stp();
@@ -137,8 +137,8 @@ void rot(int angle){
   while (abs(error) > ROT_ERROR_TOL){
     error = target - robotAngle;
 
-    robot.rotate(motor1, 20, sign(error));
-    robot.rotate(motor2, 20, sign(error));
+    robot.rotate(motor1, 40, sign(error));
+    robot.rotate(motor2, 40, sign(error));
 
     delay(10);
   }
