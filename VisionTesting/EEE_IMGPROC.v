@@ -172,12 +172,7 @@ assign pink_ball_detect = //((((hue >= 150 && hue <= 180)||(hue <= 6 && hue >= 0
  (((hue >= 2 && hue <= 12)) && ((saturation >= 100 && saturation < 185)) && ((value >=  248))
  ||((hue >= 1 && hue <= 8)) && ((saturation >= 100 && saturation < 204)) && ((value >=  189)));
 
-assign red_ball_detect = ((((hue >= 150 && hue <= 180)||(hue <= 6 && hue >= 0)) && (saturation > 84 && value > 245))||
-(hue <= 6 && hue >= 0 && ((value > 229 && saturation > 17 && saturation < 155)||(value > 210 && saturation > 130)))
-|| ((hue >= 160 && hue <= 180) && ((saturation >= 76 && value >= 249) || (saturation >= 102 && value >= 140)))
-|| (((hue >= 160 && hue <= 180)||(hue >= 0 && hue <= 4)) && (saturation > 140 && saturation <= 179 && value >= 89 && value <= 106)) 
-||(((hue >= 172 && hue <= 180)||(hue >= 0 && hue <= 6)) && ((value >  105 && saturation > 102) || (saturation > 82 && value > 168)))); //sat > 102
-
+assign red_ball_detect = ((hue >= 7 && hue <= 12)&& (saturation >= 220 && value >= 75 && value <= 189));
 /*(//(((hue >= 160 && hue <= 180)||(hue <= 10 && hue >= 3)) && (saturation > 60 && value > 245))||
 (hue <= 17 && hue >= 5 && value <= 256 &&value > 112 && saturation > 195 && saturation <= 256) 
 ||(hue <= 17 && hue >= 8 && value > 248 && saturation > 223 && saturation <= 240)
@@ -185,21 +180,19 @@ assign red_ball_detect = ((((hue >= 150 && hue <= 180)||(hue <= 6 && hue >= 0)) 
 //||(((hue >= 172 && hue <= 180)||(hue >= 3 && hue <= 10)) && ((value >  60 && saturation > 80) || (saturation > 60 && value > 80)))
 ); //sat > 102
 */
-assign yellow_ball_detect = (((hue >= 16 && hue <=25) && (saturation > 133 && value > 124)) 
-|| ((hue >= 23 && hue <= 30) && ((value > 155 && saturation > 127)||(saturation >= 153 && value > 252)||(value > 100 && saturation > 247))));
-
+assign yellow_ball_detect = ((hue >= 24 && hue <=31) && (saturation >= 179 && saturation <= 214 && value >= 244));
 //(((hue >= 16 && hue <=25) && (saturation > 133 && value > 78)) 
 //|| ((hue >= 23 && hue <= 30) && ((value > 155 && saturation > 127)||(saturation >= 153 && value > 252)||(value > 41 && saturation > 247))));
 
-assign teal_ball_detect = (((hue >= 60 && hue <= 85) && (saturation > 100 && saturation < 200) && (value > 110 && value < 245))
-||((hue >= 53 && hue <= 80) && (saturation > 80 && saturation < 114) && (value > 60)));
+assign teal_ball_detect = (((hue >= 69 && hue <= 85) && (saturation > 100 && saturation < 200) && (value > 110 && value < 245))
+||((hue >= 69 && hue <= 80) && (saturation > 80 && saturation < 114) && (value > 60)));
 //test yellow
 //assign yellow_ball_detect = (((hue >= 14 && hue <=25) && (saturation > 160 && value > 128)) || ((hue >= 23 && hue <= 30) && ((value > 155 && saturation > 135)||(saturation >= 153 && value > 252)||(value > 109 && saturation > 247))));
 
 
 //assign blue_ball_detect = (hue >= 55 && hue <= 85 && saturation >= 51 && saturation <= 89 && value >= 76 && value <= 240);
 
-assign blue_ball_detect = (hue >= 97 && hue <= 125 && saturation <= 160 && value <= 142);
+assign blue_ball_detect = (hue >= 92 && hue <= 118 && saturation >= 174 && value >= 23 && value <= 36);
 // assign blue_ball_detect = (hue >= 75 && hue <= 95 && ((saturation >= 63 && saturation <= 112 && value >= 130)||(saturation >= 63 && saturation <= 140 && value >= 58 && value <= 125)))
 // || ((hue >= 87 && hue <= 104) && ((saturation >= 90 && saturation <= 146 && value >= 91 && value <= 170) || (saturation >= 127 && saturation <= 178 && value >= 63 && value <= 89)))
 // || ((hue >= 62 && hue <= 75 && saturation >= 40 && saturation <= 89 && value <= 102 && value >= 114));
@@ -211,7 +204,8 @@ assign blue_ball_detect = (hue >= 75 && hue <= 95 && ((saturation >= 63 && satur
 || ((hue >= 62 && hue <= 86 && saturation >= 35 && saturation <= 100 && value <= 104 && value >= 112));
 */
 
-assign green_ball_detect = (((hue >= 46 && hue <= 65) && (saturation >= 116 && saturation <=208 && value >= 94) ));
+assign green_ball_detect = ((hue >= 46 && hue <= 65 && saturation >= 116 && saturation <=208 && value >= 94 )
+|| (hue >= 50 && hue <= 58 && saturation >= 109 && saturation <=185 && value >= 135 ));
 
 
 //WHITE////////////////////////////////
@@ -220,9 +214,10 @@ assign green_ball_detect = (((hue >= 46 && hue <= 65) && (saturation >= 116 && s
 //assign teal_ball_detect = (hue >= 45 && hue <= 80 && value > 90 && saturation > 116);
 //assign yellow_ball_detect = (hue >= 15 && hue <= 32 && value > 130 && saturation > 112);
 
-assign black_detect = (value >= 73 && value <= 125 && saturation <= 130 && saturation >= 44);
+assign black_detect = (value >= 23 && value <= 40); 
+//(hue >= 28 && hue <= 31 && saturation >= 126 && saturation <= 130 && value >= 44 && value <= 51 );
 //&& x > 10 && x < IMAGE_W-10 && y > 10 && y < IMAGE_H - 10
-assign white_detect = (saturation <= 37 && value >= 230);
+assign white_detect = (hue >= 2 && hue <= 40 && saturation >= 65 && saturation <= 125 && (value >= 250 || (value >= 144 && value <=196)));
 // hue > 15 && hue <=40 && 
 
 assign edges_detect = (((hue >= 20 && hue <= 54) && (saturation >= 63 && saturation <= 144 && value >= 117 && value <= 156) ));
@@ -485,7 +480,7 @@ end
 //Find first and last coloured pixels
 reg [10:0] x_min_red, x_max_red, x_min_yellow, x_max_yellow, x_min_teal, x_max_teal, x_min_pink, x_max_pink, 
 x_min_blue, x_max_blue, x_min_green, x_max_green, x_min_black, x_max_black, x_min_white, x_max_white;
-wire [10:0] x_dist_red, x_dist_yellow, x_dist_teal, x_dist_pink, x_dist_blue, x_dist_green, x_dist_firstbw, x_dist_lastbw;
+wire [10:0] x_dist_red, x_dist_yellow, x_dist_teal, x_dist_pink, x_dist_blue, x_dist_green, x_dist_black, x_dist_white, x_dist_firstbw, x_dist_lastbw;
 
 
 //Here we do the horizon checking and exclusion
@@ -494,7 +489,9 @@ assign x_dist_yellow = (x_min_yellow > x_max_yellow) ? 0 : (x_max_yellow-x_min_y
 assign x_dist_teal = (x_min_teal > x_max_teal) ? 0 : (x_max_teal-x_min_teal);
 assign x_dist_pink = (x_min_pink > x_max_pink) ? 0 : (x_max_pink-x_min_pink);
 assign x_dist_blue = (x_min_blue > x_max_blue) ? 0 : (x_max_blue-x_min_blue);
-assign x_dist_green = (x_min_pink > x_max_green) ? 0 : (x_max_green-x_min_green);
+assign x_dist_green = (x_min_green > x_max_green) ? 0 : (x_max_green-x_min_green);
+assign x_dist_black = (x_min_black > x_max_black) ? 0 : (x_max_black-x_min_black);
+assign x_dist_white = (x_min_white > x_max_white) ? 0 : (x_max_white-x_min_white);
 assign x_dist_firstbw = (x_min_black > x_min_white) ? (x_min_black - x_min_white) : (x_min_white-x_min_black);
 assign x_dist_lastbw = (x_max_black > x_max_white) ? (x_max_black-x_max_white) : (x_max_white-x_max_black);
 
@@ -547,11 +544,11 @@ always@(posedge clk) begin
 		if (x < x_min_green) x_min_green <= x;
 		if (x > x_max_green) x_max_green <= x;
 	end
-	if ((black_detect && last_detect_high_black && last_black && last_black2 && last_black3 && last_black4 && last_black5) & in_valid & y > 280) begin
+	if ((black_detect && last_detect_high_black && last_black && last_black2 && last_black3 && last_black4 && last_black5) & in_valid & y > 260& x > 10 & x < (IMAGE_W-10)) begin
 		if (x < x_min_black) x_min_black <= x;
 		if (x > x_max_black) x_max_black <= x;
 	end
-	if ((white_detect && last_detect_high_white && last_white && last_white2 && last_white3 && last_white4 && last_white5) & in_valid & y > 280) begin
+	if ((white_detect && last_detect_high_white && last_white && last_white2 && last_white3 && last_white4 && last_white5) & in_valid & y > 260 & x > 10 & x < (IMAGE_W-10) ) begin
 		if (x < x_min_white) x_min_white <= x;
 		if (x > x_max_white) x_max_white <= x;
 	end
@@ -627,7 +624,7 @@ reg msg_buf_wr;
 wire msg_buf_rd, msg_buf_flush;
 wire [7:0] msg_buf_size;
 wire msg_buf_empty;
-reg [31:0] distance_red, distance_yellow, distance_teal, distance_pink, distance_blue, distance_green, distance_firstbw, distance_lastbw;
+reg [31:0] distance_red, distance_yellow, distance_teal, distance_pink, distance_blue, distance_green, distance_black, distance_white, distance_firstbw, distance_lastbw, distance_building1, distance_building2;
 `define RED_BOX_MSG_ID "RBB"
 
 wire[6:0] ratio1,ratio2;
@@ -640,7 +637,7 @@ assign constant = 16'd7443;
 
 //distance calculations based on width of coloured pixels
 always @(posedge clk)begin
-	if(x_min_red != IMAGE_W-11'h1 && x_max_red != 0 && !red_f) begin 
+	if((x_min_red != IMAGE_W-11'h1 && x_min_red >= 10) && x_max_red != 0 && !red_f) begin 
 		distance_red = (x_dist_red < 97) ? ((constant * ratio1)/ratio2/x_dist_red) / 10 : ((((constant - (((x_dist_red - 97) * 5)/16))* ratio1)/ratio2)/x_dist_red) / 10;
 	end
 	else begin
@@ -681,19 +678,53 @@ always @(posedge clk)begin
 	else begin
 		distance_blue = 0;
 	end
+	if (x_min_black != IMAGE_W-11'h1 && x_max_black != 0 && !black_f) begin
+		distance_black = ((x_dist_black < 97) ? ((constant * ratio1)/ratio2/x_dist_black) / 10: ((((constant - (((x_dist_black - 97) * 5)/16))* ratio1)/ratio2)/x_dist_black) / 10) << 8;
+	end
+	else begin
+		distance_black = 0;
+	end
+	if (x_min_white != IMAGE_W-11'h1 && x_max_white != 0 && !white_f) begin
+		distance_white = ((x_dist_white < 97) ? ((constant * ratio1)/ratio2/x_dist_white) / 10: ((((constant - (((x_dist_white - 97) * 5)/16))* ratio1)/ratio2)/x_dist_white) / 10) << 8;
+	end
+	else begin
+		distance_white = 0;
+	end
 
 	if (x_min_black != IMAGE_W-11'h1 && x_min_white != IMAGE_W-11'h1 && x_min_black != 0 && x_min_white != 0) begin
-		distance_firstbw = (x_dist_firstbw < 97) ? ((constant * ratio1)/ratio2/x_dist_firstbw) / 10: ((((constant - (((x_dist_firstbw - 97) * 5)/16))* ratio1)/ratio2)/x_dist_firstbw) / 10;
+		distance_firstbw = ((x_dist_firstbw < 97) ? ((constant * ratio1)/ratio2/x_dist_firstbw) / 10: ((((constant - (((x_dist_firstbw - 97) * 5)/16))* ratio1)/ratio2)/x_dist_firstbw) / 10) >> 1;
 	end
 	else begin
 		distance_firstbw = 0;
 	end
 	
 	if (x_max_black != IMAGE_W-11'h1 && x_max_white != IMAGE_W-11'h1 && x_max_black != 0 && x_max_white != 0) begin
-		distance_lastbw = (x_dist_lastbw < 97) ? ((constant * ratio1)/ratio2/x_dist_lastbw) / 10: ((((constant - (((x_dist_lastbw - 97) * 5)/16))* ratio1)/ratio2)/x_dist_lastbw) / 10;
+		distance_lastbw = ((x_dist_lastbw < 97) ? ((constant * ratio1)/ratio2/x_dist_lastbw) / 10: ((((constant - (((x_dist_lastbw - 97) * 5)/16))* ratio1)/ratio2)/x_dist_lastbw) / 10) >> 1;
 	end
 	else begin
 		distance_lastbw = 0;
+	end
+	if(distance_firstbw >= 15 && distance_firstbw <= 100 && distance_lastbw >= 15 && distance_lastbw <= 100)begin
+		if (distance_firstbw <= distance_lastbw )begin
+			distance_building1 = distance_firstbw;
+		end
+		else begin 
+			distance_building1 = distance_lastbw;
+		end
+	end
+	else begin
+		distance_building1 = 0;
+	end
+	if (x_min_black != IMAGE_W-11'h1 && x_max_black != 0 && x_min_white != IMAGE_W-11'h1 && x_max_white != 0)begin
+		if (distance_black <= distance_white) begin 
+			distance_building2 = distance_black;
+		end
+		else begin 
+			distance_building2 = distance_white;
+		end
+	end
+	else begin
+		distance_building2 = 0;
 	end
 
 
@@ -789,11 +820,11 @@ always@(*) begin	//Write words to FIFO as state machine advances
 		4'b1001: begin
 			//dist_out_lastbw = distance_lastbw[15:0];
 			//msg_buf_in = distance_lastbw;
-			msg_buf_in = {4'b1000, 12'b0, distance_lastbw[15:0]};
+			msg_buf_in = {4'b1000, 12'b0, distance_building1[15:0]};
 			msg_buf_wr = 1'b1;  
 		end
 		default: begin
-			msg_buf_in = {4'b1001, 12'b0, distance_lastbw[15:0]};
+			msg_buf_in = {4'b1001, 12'b0, distance_building2[15:0]};
 			msg_buf_wr = 1'b1; 
 		end
 
