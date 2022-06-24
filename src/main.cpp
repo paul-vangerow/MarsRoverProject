@@ -54,21 +54,31 @@ void drive_core_code( void * parameter){
 
   for(;;){
 
+    delay(1000);
+    rot(90);
+    delay(1000);
+    rot(-90);
+
     if (!instrq.isEmpty()){
       Serial.println("Fetching Instruction");
       Mouvement instr = instrq.get_instruction();
 
       if (instr.get_instruction() == forward){
         move(instr.get_value());
+        Serial.println("1");
       } else if (instr.get_instruction() == rotate ) {
         rot(instr.get_value());
+        Serial.println("2");
       } else if (instr.get_instruction() == explore ) {
         automated = true;
+        Serial.println("3");
       } else if (instr.get_instruction() == end_explore ) {
         automated = false;
+        Serial.println("4");
       }else if (instr.get_instruction() == end) {
         // Prevent Further Operation (When it reaches Homebase)
         vTaskDelete(drive_core);
+        Serial.println("5");
       }
 
     } else {
@@ -106,13 +116,13 @@ void loop() {
 
   // -- Data Reading -- 
   read_values(); // Optical flow data <-- Location_Scaled (X, Y), Camera dx, dy, Total Change in dx, dy
+  //Serial.print("Optical flow: "); Serial.print(millis() - start); Serial.print(" ");
   gyroRead(); // Gyro angle data <-- Robot_Angle
+  //Serial.print("Gyro: "); Serial.print(millis() - start); Serial.print(" ");
   
-  //Serial.print(FPGA.available());Serial.print(" ");
   if (FPGA.available() >= 36){
     
     int optics_reading = FPGA.readBytes(buffer, 36); // Read Camera Data
-    //Serial.println(FPGA.available());
     for (int i = 1; i < 9; i++){
       alien_distances[i-1]=((buffer[4*i+1]<<8) + (buffer[4*i]));
     }
@@ -145,9 +155,9 @@ void loop() {
                           "\t");
 
   // -- Recieve Server Instructions -- 
-
-  String str = Sender.readStringUntil('\n');
-  if (!str.isEmpty()){
+  String str = "";
+  str = Sender.readStringUntil('\n');
+  if (str.length() > 1){
     int index = std::string(str.c_str()).find_first_of('\t');
     int instruction = str.substring(0, index).toInt();
     float value = str.substring(index+1).toFloat();
@@ -157,7 +167,8 @@ void loop() {
 
   // -- Next Cycle --   
 
-  delay(100); // Main loop Delay
+  delay(10); // Main loop Delay
   elapsed_time = millis() - start; // Gyro Callibration
+  //Serial.print(robotAngle);Serial.print(" "); Serial.print(correct_angle);Serial.print(" ");
   //Serial.println(elapsed_time);
 }
