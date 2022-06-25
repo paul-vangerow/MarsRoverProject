@@ -5,12 +5,12 @@
 
 // motor 1 settings
 #define CHA 0
-#define ENA 12 // this pin must be PWM enabled pin if Arduino board is used
+#define ENA 27 // this pin must be PWM enabled pin if Arduino board is used
 #define IN1 14
 #define IN2 15
 
 // motor 2 settings
-#define IN3 27
+#define IN3 12
 #define IN4 13
 #define ENB 4// this pin must be PWM enabled pin if Arduino board is used
 #define CHB 1
@@ -31,7 +31,7 @@ const int CW  = 1; // do not change
 // P Control Values (Driving)
 #define P_D 4
 
-#define ROT_ERROR_TOL 0.5
+#define ROT_ERROR_TOL 1
 #define MOV_ERROR_TOL 1
 
 bool kill_motion = false;
@@ -88,10 +88,10 @@ void move(float distance){
     
     speed_d = (correct_angle - robotAngle) * P_D;
 
-    if (speed_d < -30){
-      speed_d = -30;
-    } else if (speed_d > 30){
-      speed_d = 30;
+    if (speed_d < -20){
+      speed_d = -20;
+    } else if (speed_d > 20){
+      speed_d = 20;
     }
 
     if (d_optics[1] == 0){
@@ -104,8 +104,8 @@ void move(float distance){
     if (crash_counter > 50){
       stp();
       collision = true;
-      robot.rotate(motor1, 60, CCW);
-      robot.rotate(motor2, 60, CW);
+      robot.rotate(motor1, 30, CCW);
+      robot.rotate(motor2, 30, CW);
       delay(1000);
       stp();
 
@@ -117,8 +117,8 @@ void move(float distance){
       break;
     }
 
-    robot.rotate(motor1, 60 - speed_d, CW);
-    robot.rotate(motor2, 60 + speed_d, CCW); 
+    robot.rotate(motor1, 30 - speed_d, CW);
+    robot.rotate(motor2, 30 + speed_d, CCW); 
     delay(10); 
   }
   stp();
@@ -137,8 +137,8 @@ void rot(int angle){
   while (abs(error) > ROT_ERROR_TOL){
     error = target - robotAngle;
 
-    robot.rotate(motor1, 40, sign(error));
-    robot.rotate(motor2, 40, sign(error));
+    robot.rotate(motor1, 30, sign(error));
+    robot.rotate(motor2, 30, sign(error));
 
     delay(10);
   }
