@@ -9,7 +9,7 @@
 #include <Wire.h>
 #include <optics.h>
 
-#define DRIFT_MODIFIER 0.005
+#define DRIFT_MODIFIER 0.01
 
 Adafruit_MPU6050 mpu;
 
@@ -34,6 +34,7 @@ void gyroInit(void) {
 
 void gyroRead() {
   /* Get new sensor events with the readings */
+  float time = millis();
   sensors_event_t a, g, temp;
   mpu.getEvent(&a, &g, &temp);
 

@@ -54,10 +54,12 @@ void drive_core_code( void * parameter){
 
   for(;;){
 
-    delay(1000);
-    rot(90);
-    delay(1000);
-    rot(-90);
+    // delay(1000);
+    // rot(90);
+    // delay(1000);
+    // rot(-90);
+
+    move(100);
 
     if (!instrq.isEmpty()){
       Serial.println("Fetching Instruction");
@@ -65,20 +67,15 @@ void drive_core_code( void * parameter){
 
       if (instr.get_instruction() == forward){
         move(instr.get_value());
-        Serial.println("1");
       } else if (instr.get_instruction() == rotate ) {
         rot(instr.get_value());
-        Serial.println("2");
       } else if (instr.get_instruction() == explore ) {
         automated = true;
-        Serial.println("3");
       } else if (instr.get_instruction() == end_explore ) {
         automated = false;
-        Serial.println("4");
       }else if (instr.get_instruction() == end) {
         // Prevent Further Operation (When it reaches Homebase)
         vTaskDelete(drive_core);
-        Serial.println("5");
       }
 
     } else {
@@ -169,6 +166,6 @@ void loop() {
 
   delay(10); // Main loop Delay
   elapsed_time = millis() - start; // Gyro Callibration
-  //Serial.print(robotAngle);Serial.print(" "); Serial.print(correct_angle);Serial.print(" ");
-  //Serial.println(elapsed_time);
+  Serial.print(robotAngle);Serial.print(" "); Serial.print(correct_angle);Serial.print(" ");
+  Serial.println(elapsed_time);
 }
