@@ -763,13 +763,13 @@ always@(*) begin	//Write words to FIFO as state machine advances
 		4'b1000: begin
 			//dist_out_firstbw = distance_firstbw[15:0];
 			//msg_buf_in = distance_firstbw;
-			msg_buf_in = {4'b0111, 12'b0, distance_firstbw[15:0]};
+			msg_buf_in = {4'b0111, 12'b0, distance_building1[15:0]};
 			msg_buf_wr = 1'b1;  
 		end
 		4'b1001: begin
 			//dist_out_lastbw = distance_lastbw[15:0];
 			//msg_buf_in = distance_lastbw;
-			msg_buf_in = {4'b1000, 12'b0, distance_building1[15:0]};
+			msg_buf_in = {4'b1000, 12'b0, distance_building2[15:0]};
 			msg_buf_wr = 1'b1;  
 		end
 		default: begin
