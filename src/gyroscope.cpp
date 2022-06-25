@@ -9,9 +9,10 @@
 #include <Wire.h>
 #include <optics.h>
 
-#define DRIFT_MODIFIER 0.01
+float DRIFT_MODIFIER = 0;
 
 Adafruit_MPU6050 mpu;
+sensors_event_t acc, g, temp;
 
 float robotAngle = 0;
 float elapsed_time = 0;
@@ -30,18 +31,22 @@ void gyroInit(void) {
   mpu.setGyroRange(MPU6050_RANGE_500_DEG);
   mpu.setFilterBandwidth(MPU6050_BAND_5_HZ);
 
+  Serial.println("Callibrating Gyroscope...");
+
+  for (int i = 0; i < 1000; i++){
+    mpu.getEvent(&acc, &g, &temp);
+    DRIFT_MODIFIER += g.gyro.z * (180/PI);
+  }
+  DRIFT_MODIFIER = DRIFT_MODIFIER / 1000;
+  
+  Serial.println("Done Callibrating, drift value = " + String(DRIFT_MODIFIER));
+
 }
 
 void gyroRead() {
   /* Get new sensor events with the readings */
-  float time = millis();
-  sensors_event_t a, g, temp;
-  mpu.getEvent(&a, &g, &temp);
+  
+  mpu.getEvent(&acc, &g, &temp);
 
-  if (abs(g.gyro.z * 0.1 *(180/PI)) > 0.1){
-    robotAngle += g.gyro.z *(180/PI) * (elapsed_time/1000.0);
-  }
-  if (ROBOT_STATE == 2){
-    robotAngle += DRIFT_MODIFIER;
-  }
+  robotAngle += (g.gyro.z *(180/PI) - DRIFT_MODIFIER) * (elapsed_time/1000.0);
 }

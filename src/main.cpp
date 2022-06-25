@@ -24,6 +24,8 @@ float prev_elapsed = 1000;
 int rotations = 0;
 bool automated = false;
 
+float main_time = 0;
+
 uint8_t buffer[36];
 uint32_t readings[9];
 
@@ -52,14 +54,16 @@ void createInstruction(){
 void drive_core_code( void * parameter){
   motorInit();
 
+  delay(100);
+
   for(;;){
 
-    // delay(1000);
-    // rot(90);
-    // delay(1000);
-    // rot(-90);
+    delay(1000);
+    rot(90);
+    delay(1000);
+    rot(-90);
 
-    move(100);
+    //move(20);
 
     if (!instrq.isEmpty()){
       Serial.println("Fetching Instruction");
@@ -99,13 +103,14 @@ void setup(){
   Sender.setTimeout(10);
   FPGA.setTimeout(10);
 
+  Serial.println("Initialising Camera...");
   cam_init();
+  
+  Serial.println("Initialising Gyro...");
   gyroInit();
 
-  delay(1000);
-  
   xTaskCreate(drive_core_code, "drive", 1000, &drive_core, tskIDLE_PRIORITY, NULL);
-  
+
 }
 
 void loop() {
@@ -164,8 +169,9 @@ void loop() {
 
   // -- Next Cycle --   
 
-  delay(10); // Main loop Delay
+  delay(50); // Main loop Delay
   elapsed_time = millis() - start; // Gyro Callibration
   Serial.print(robotAngle);Serial.print(" "); Serial.print(correct_angle);Serial.print(" ");
   Serial.println(elapsed_time);
+
 }
