@@ -22,7 +22,7 @@ const int CW  = 1; // do not change
 #define motor2 2 // do not change
 
 #define ANGLE_COEFFICIENT 40
-#define DISTANCE_COEFFICIENT 48
+#define DISTANCE_COEFFICIENT 44
 #define TURN_CONTROL 26
 
 // P Control Values (Turning)
@@ -32,7 +32,7 @@ const int CW  = 1; // do not change
 #define P_D 4
 
 #define ROT_ERROR_TOL 1
-#define MOV_ERROR_TOL 1
+#define MOV_ERROR_TOL 3
 
 bool kill_motion = false;
 bool collision = false;
@@ -73,7 +73,7 @@ void move(float distance){
   int speed_d = 0;
   int crash_counter = 0;
   int target = total_optics[1] + (distance*DISTANCE_COEFFICIENT);
-  int error = 2;
+  int error = 5;
 
   // straight_factor = 0;
 
@@ -101,7 +101,7 @@ void move(float distance){
     }
 
     // Hopefully makes it that if the rover drives into a wall it will back off and kill off any forward instruction going on.
-    if (crash_counter > 50){
+    if (crash_counter > 100){
       stp();
       collision = true;
       robot.rotate(motor1, 30, CCW);

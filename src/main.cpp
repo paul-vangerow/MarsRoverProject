@@ -4,6 +4,7 @@
 #include <instructions.hpp>
 #include <communication.hpp>
 #include <gyro.hpp>
+#include <list>
 
 #define Sender_Txd_pin 2
 #define Sender_Rxd_pin 32
@@ -24,30 +25,70 @@ float prev_elapsed = 1000;
 int rotations = 0;
 bool automated = false;
 
-float main_time = 0;
-
 uint8_t buffer[36];
-uint32_t readings[9];
-
-int radar_spotted = 0;
 float alien_distances[7];
+
+struct point{
+  float x;
+  float y;
+};
+
+std::list<point> points;
+
+int point_val = 0;
+int radar_spotted = 0;
 
 // init variables used to send data to the server
 Server_info s_info;
 
-void createInstruction(){
+void create_points(){
+  point val;
+  val.x=0; val.y=0;
+  points.push_back( val );
+  val.x=100; val.y=0;
+  points.push_back( val );
+  val.x=100; val.y=100;
+  points.push_back( val );
+  val.x=0; val.y=100;
+  points.push_back( val );
 
-  // Figure out what the next instruction needed is (Based on sensor data, e.t.c)
+}
 
-  /* Variables available: 
-    - Location_Scaled(X, Y)
-    - Camera (dx, dy)
-    - Total change (x, y)
-    - Robot Angle (Gyro) - degrees
-    - kill_motion <-- stop any current instruction
-    - collision <-- 1 when robot got stuck on a wall and retreated
+float getTan(float v1, float v2){
 
-  */
+  if (v2 == 0){
+    if (v1 < 0){
+      return -90;
+    } else {
+      return 90;
+    }
+  }
+
+  float angleValue = atan(v1/v2) * (180/PI);
+
+  if (v2 < 0 && v1 > 0){
+    return -180 - angleValue;
+  } else if (v2 < 0 && v1 < 0){
+    return 180 - angleValue;
+  } else {
+    return angleValue;
+  }
+
+}
+
+void createInstruction(float x, float y){
+
+  float dx = x - location_scaled[0];
+  float dy = y - location_scaled[1];
+  float new_angle = getTan(dy, dx) - correct_angle;
+
+  Serial.print(dx);Serial.print(" ");Serial.print(dy); Serial.print(" ");Serial.print(getTan(dy, dx)); Serial.print(" ");Serial.println(new_angle);
+
+  instrq.add_instruction( Mouvement(1, new_angle) );
+
+  float new_distance( sqrt( pow(dx, 2) + pow(dy, 2) ) );
+
+  instrq.add_instruction( Mouvement(0, new_distance) );
 
 }
 
@@ -56,18 +97,15 @@ void drive_core_code( void * parameter){
 
   delay(100);
 
+  automated = 1;
+
   for(;;){
-
-    delay(1000);
-    rot(90);
-    delay(1000);
-    rot(-90);
-
-    //move(20);
 
     if (!instrq.isEmpty()){
       Serial.println("Fetching Instruction");
       Mouvement instr = instrq.get_instruction();
+
+      Serial.print(instr.get_instruction());Serial.print(" "); Serial.println(instr.get_value());
 
       if (instr.get_instruction() == forward){
         move(instr.get_value());
@@ -85,7 +123,20 @@ void drive_core_code( void * parameter){
     } else {
       // If no instructions are left, create new instructions for the queue.
       if (automated){
-        createInstruction();
+
+        point val = points.front();
+        points.pop_front();
+
+        if (abs(val.x-location_scaled[0]) > 2 || abs(val.y-location_scaled[1]) > 2){
+          createInstruction(val.x, val.y);
+        }
+        
+        if (point_val == points.size()){
+          create_points();
+          point_val = 0;
+        } else {
+          point_val++;
+        }
       }  
     }
     delay(100);
@@ -95,6 +146,8 @@ void drive_core_code( void * parameter){
 void setup(){
 
   Serial.begin(115200);
+
+  create_points();
 
   Sender.begin(115200, SERIAL_8N1, Sender_Txd_pin, Sender_Rxd_pin);
   FPGA.begin(115200, SERIAL_8N1, FPGA_UART_Tx_PIN, FPGA_UART_Rx_PIN);
@@ -118,9 +171,8 @@ void loop() {
 
   // -- Data Reading -- 
   read_values(); // Optical flow data <-- Location_Scaled (X, Y), Camera dx, dy, Total Change in dx, dy
-  //Serial.print("Optical flow: "); Serial.print(millis() - start); Serial.print(" ");
+
   gyroRead(); // Gyro angle data <-- Robot_Angle
-  //Serial.print("Gyro: "); Serial.print(millis() - start); Serial.print(" ");
   
   if (FPGA.available() >= 36){
     
@@ -131,6 +183,14 @@ void loop() {
   }
   while (FPGA.available()) {
     FPGA.read();
+  }
+
+  for (int i = 0 ; i < 7; i++){
+    if (alien_distances[i] < 10 && alien_distances[i] > 5){
+      if (kill_motion == 0){
+        kill_motion = 1;
+      }
+    }
   }
 
   // DATA FORMAT d1 d2 d3 d4 d5 d6 d7
@@ -171,7 +231,8 @@ void loop() {
 
   delay(50); // Main loop Delay
   elapsed_time = millis() - start; // Gyro Callibration
-  Serial.print(robotAngle);Serial.print(" "); Serial.print(correct_angle);Serial.print(" ");
-  Serial.println(elapsed_time);
+  //Serial.print(robotAngle);Serial.print(" "); Serial.print(correct_angle);Serial.print(" ");
+  //Serial.print(location_scaled[0]); Serial.print(" "); Serial.println(location_scaled[1]);
+  //Serial.println(elapsed_time);
 
 }

@@ -152,7 +152,7 @@ void read_values()
   MD md;
   mousecam_read_motion(&md);
 
-  //* READ CAMERA QUALITY
+  /* READ CAMERA QUALITY
   for(int i=0; i<md.squal/4; i++)
     Serial.print('*');
   Serial.println(md.squal);
