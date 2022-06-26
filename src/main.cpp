@@ -4,7 +4,9 @@
 #include <instructions.hpp>
 #include <communication.hpp>
 #include <gyro.hpp>
+#include <sonic.hpp>
 #include <list>
+#include <random>
 
 #define Sender_Txd_pin 2
 #define Sender_Rxd_pin 32
@@ -37,6 +39,7 @@ std::list<point> points;
 
 int point_val = 0;
 int radar_spotted = 0;
+bool proximity = false;
 
 // init variables used to send data to the server
 Server_info s_info;
@@ -78,17 +81,30 @@ float getTan(float v1, float v2){
 
 void createInstruction(float x, float y){
 
-  float dx = x - location_scaled[0];
-  float dy = y - location_scaled[1];
-  float new_angle = getTan(dy, dx) - correct_angle;
+  if (kill_motion == 0){
+    float dx = x - location_scaled[0];
+    float dy = y - location_scaled[1];
+    float new_angle = getTan(dy, dx) - correct_angle;
 
-  Serial.print(dx);Serial.print(" ");Serial.print(dy); Serial.print(" ");Serial.print(getTan(dy, dx)); Serial.print(" ");Serial.println(new_angle);
+    Serial.print(dx);Serial.print(" ");Serial.print(dy); Serial.print(" ");Serial.print(getTan(dy, dx)); Serial.print(" ");Serial.println(new_angle);
 
-  instrq.add_instruction( Mouvement(1, new_angle) );
+    instrq.add_instruction( Mouvement(1, new_angle) );
 
-  float new_distance( sqrt( pow(dx, 2) + pow(dy, 2) ) );
+    float new_distance( sqrt( pow(dx, 2) + pow(dy, 2) ) );
 
-  instrq.add_instruction( Mouvement(0, new_distance) );
+    instrq.add_instruction( Mouvement(0, new_distance) );
+  } else {
+    std::default_random_engine generator;
+    std::uniform_int_distribution<int> distribution(0,90);
+    float angle = -1*distribution(generator); 
+    
+    kill_motion = 0;
+    instrq.add_instruction( Mouvement(1, angle) );
+    instrq.add_instruction( Mouvement(0, 300) );
+
+  }
+
+  
 
 }
 
@@ -97,7 +113,11 @@ void drive_core_code( void * parameter){
 
   delay(100);
 
-  automated = 1;
+  automated = 0;
+
+  if (automated){
+    instrq.add_instruction( Mouvement(0, 300) );
+  }
 
   for(;;){
 
@@ -171,8 +191,8 @@ void loop() {
 
   // -- Data Reading -- 
   read_values(); // Optical flow data <-- Location_Scaled (X, Y), Camera dx, dy, Total Change in dx, dy
-
   gyroRead(); // Gyro angle data <-- Robot_Angle
+  proximity = ping();
   
   if (FPGA.available() >= 36){
     
@@ -186,9 +206,12 @@ void loop() {
   }
 
   for (int i = 0 ; i < 7; i++){
-    if (alien_distances[i] < 10 && alien_distances[i] > 5){
+    if ((alien_distances[i] < 10 && alien_distances[i] > 5) || proximity){
       if (kill_motion == 0){
         kill_motion = 1;
+        while (!instrq.isEmpty()){
+          instrq.get_instruction();
+        }
       }
     }
   }
@@ -219,7 +242,7 @@ void loop() {
   // -- Recieve Server Instructions -- 
 
   String str = Sender.readStringUntil('\n');
-  String str = "";
+  str = "";
   str = Sender.readStringUntil('\n');
   if (str.length() > 1){
     int index = std::string(str.c_str()).find_first_of('\t');
@@ -233,8 +256,5 @@ void loop() {
 
   delay(50); // Main loop Delay
   elapsed_time = millis() - start; // Gyro Callibration
-  //Serial.print(robotAngle);Serial.print(" "); Serial.print(correct_angle);Serial.print(" ");
-  //Serial.print(location_scaled[0]); Serial.print(" "); Serial.println(location_scaled[1]);
-  //Serial.println(elapsed_time);
 
 }
