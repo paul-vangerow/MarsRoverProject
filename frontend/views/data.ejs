@@ -1,0 +1,172 @@
+<!DOCTYPE html> 
+<html>
+    <head>
+        <!-- <link rel=”stylesheet” type="text/css" href=”index.css”> -->
+        <style>
+            body {
+                background-color: rgb(236, 217, 217);
+            }
+            .bigun {
+                color:rgb(255, 145, 0);
+                text-align: left;
+                font: 3em "Fira Sans", arial bold;
+            }
+            h1 {
+                text-align: left;
+                font: 1.4em "Fira Sans", arial bold;
+            }
+            a {
+                text-decoration: none;
+                color: #fff;
+            }
+            ul {
+                list-style-type: none;
+                margin: 0;
+                padding: 0;
+            }
+            .navbar {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                padding: 20px;
+                background-color: rgb(253, 191, 76);
+                color: #fff;
+                font: 3em "Fira Sans", arial bold;
+            }
+            .logo {
+                font-size: 32px;
+            }
+            .menu {
+                display: flex;
+                padding: 10px;
+                gap: 1em;
+                font-size: 18px;
+                color: #fff;
+                text-decoration: none;
+            }
+            .icons {
+                width: 20px;
+                height: 20px;
+            }
+            .map {
+                width: 50%;
+                height: 50%;
+                /* background-image: url("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQz8xITnit8o9PO8vFQPACAI2JE9zIIEdA6f5rS4vykh_JMf16B_04Beczq-LjbFPxh1-4&usqp=CAU"); */
+                /* position: relative; 
+                z-index: 2; */
+            }
+            /* .map:before {
+                content: "";
+                position: absolute;
+                top: 0;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                z-index: 1;
+                background-image: url("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQz8xITnit8o9PO8vFQPACAI2JE9zIIEdA6f5rS4vykh_JMf16B_04Beczq-LjbFPxh1-4&usqp=CAU");
+                opacity: 0.5;
+            } */
+        </style>
+    </head>
+    <body>
+        <nav class="navbar">
+            <div class="logo">MarsRover</div>
+            <ul class="menu">
+                <li><img class="icons" style="vertical-align:middle" src="https://cdn-icons-png.flaticon.com/512/44/44386.png"><a href="/"> Home </a></li>
+                <li><img class="icons" style="vertical-align:middle" src="https://icon-library.com/images/status-icon-png/status-icon-png-2.jpg"><a href="/data"> Monitor </a></li>
+                <li><img class="icons" style="vertical-align:middle" src="https://icon-library.com/images/control-icon/control-icon-0.jpg"><a href="/control"> Control </a></li>
+                <li><img class="icons" style="vertical-align:middle" src="https://cdn-icons-png.flaticon.com/512/15/15659.png"><a href="/group"> About Us </a></li>
+            </ul>
+        </nav>
+        <div class="map">
+            <h1>Mars Surface Map:</h1>
+            <canvas id="myChart"></canvas>
+            <!-- not sure this works yet, need to test with rover -->
+            <button onclick="iterate()">Refresh</button>
+            <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+            <script>
+
+                const data = {
+                    datasets: [],
+                    backgroundColor: 'orange',
+                };
+
+                const config = {
+                    type: 'scatter',
+                    data: data,
+                    options: {
+                        scales: {
+                            x: {
+                                type: 'linear',
+                                position: 'bottom'
+                            }
+                        }
+                    }
+                };
+
+                const myChart = new Chart(
+                    document.getElementById('myChart'),
+                    config
+                );
+            </script>
+            <% yoma.forEach(yoma => { %>
+                <script>
+                    var jus = "<%= yoma.colour %>";
+                    var exx = <%= yoma.x %>;
+                    var eyy = <%= yoma.y %>;
+
+                    function iterate(){
+                        determine(jus, exx, eyy);
+                    }
+
+                    iterate();
+                    function addDataset(lblcolor, xpoint, ypoint){
+                        
+                        const newDataset = {
+                            label: lblcolor,
+                            data: [{
+                                x: xpoint,
+                                y: ypoint
+                            }],
+                            pointRadius: 8,
+                            backgroundColor: lblcolor
+                        };
+                        myChart.data.datasets.push(newDataset);
+                        myChart.update();
+                    };
+
+                    function addData(lblcolor, xpoint, ypoint) {
+                        let count = 0;
+                        for(let v=0;v<myChart.data.datasets.length;v++){
+                            if(myChart.data.datasets[v].label===lblcolor){
+                                count = v;
+                            };
+                        };
+                        myChart.data.datasets[count].data.push({
+                            x: xpoint,
+                            y: ypoint
+                        });
+                        myChart.update();
+                    };
+
+                    function determine(mee, xpoint, ypoint){
+                        var exists = false;
+                        for(let i=0; i<myChart.data.datasets.length;i++){
+                            if(myChart.data.datasets[i].label === mee){
+                                exists = true;
+                                break;
+                            } else {
+                                exists = false;
+                            };
+                        };
+                        if(exists){
+                            addData(mee, xpoint, ypoint);
+                        } else {
+                            addDataset(mee, xpoint, ypoint);
+                        }
+                    };
+                </script>
+            <% }) %>
+        </div>
+    </body>
+</html>
