@@ -55,7 +55,7 @@
 #define MOD 40
 
 float total_optics[2];
-//float robot_angle = 0;
+float optics_angle = 0;
 float location[2];
 float location_scaled[2];
 
@@ -102,26 +102,6 @@ int mousecam_init()
   return 1;
 }
 
-void mousecam_write_reg(int reg, int val)
-{
-  digitalWrite(PIN_MOUSECAM_CS, LOW);
-  SPI.transfer(reg | 0x80);
-  SPI.transfer(val);
-  digitalWrite(PIN_MOUSECAM_CS,HIGH);
-  delayMicroseconds(50);
-}
-
-int mousecam_read_reg(int reg)
-{
-  digitalWrite(PIN_MOUSECAM_CS, LOW);
-  SPI.transfer(reg);
-  delayMicroseconds(75);
-  int ret = SPI.transfer(0xff);
-  digitalWrite(PIN_MOUSECAM_CS,HIGH);
-  delayMicroseconds(1);
-  return ret;
-}
-
 struct MD
 {
  byte motion;
@@ -147,52 +127,6 @@ void mousecam_read_motion(struct MD *p)
   delayMicroseconds(5);
 }
 
-// // pdata must point to an array of size ADNS3080_PIXELS_X x ADNS3080_PIXELS_Y
-// // you must call mousecam_reset() after this if you want to go back to normal operation
-int mousecam_frame_capture(byte *pdata)
-{
-  mousecam_write_reg(ADNS3080_FRAME_CAPTURE,0x83);
-
-  digitalWrite(PIN_MOUSECAM_CS, LOW);
-
-  SPI.transfer(ADNS3080_PIXEL_BURST);
-  delayMicroseconds(50);
-
-  int pix;
-  byte started = 0;
-  int count;
-  int timeout = 0;
-  int ret = 0;
-  for(count = 0; count < ADNS3080_PIXELS_X * ADNS3080_PIXELS_Y; )
-  {
-    pix = SPI.transfer(0xff);
-    delayMicroseconds(10);
-    if(started==0)
-    {
-      if(pix&0x40)
-        started = 1;
-      else
-      {
-        timeout++;
-        if(timeout==100)
-        {
-          ret = -1;
-          break;
-        }
-      }
-    }
-    if(started==1)
-    {
-      pdata[count++] = (pix & 0x3f)<<2; // scale to normal grayscale byte range
-    }
-  }
-
-  digitalWrite(PIN_MOUSECAM_CS,HIGH);
-  delayMicroseconds(14);
-
-  return ret;
-}
-
 void cam_init()
 {
   pinMode(PIN_SS,OUTPUT);
@@ -213,15 +147,12 @@ void cam_init()
   
 }
 
-byte frame[ADNS3080_PIXELS_X * ADNS3080_PIXELS_Y];
-
 void read_values()
 {
-  // int val = mousecam_read_reg(ADNS3080_PIXEL_SUM);
   MD md;
   mousecam_read_motion(&md);
 
-  /* READ CAMERA QUALITY
+  //* READ CAMERA QUALITY
   for(int i=0; i<md.squal/4; i++)
     Serial.print('*');
   Serial.println(md.squal);
@@ -230,7 +161,6 @@ void read_values()
   d_optics[0] = convTwosComp(md.dx);  d_optics[1] = convTwosComp(md.dy); // Change in X and Y of image (as int)
 
   if (ROBOT_STATE == MOV){
-    // straight_factor = straight_factor + d_optics[0];
 
     location[0] += cos((robotAngle / 180) * PI) * d_optics[1];
     location[1] += sin((robotAngle / 180) * PI) * d_optics[1];
@@ -238,11 +168,11 @@ void read_values()
     total_optics[1] = total_optics[1] + d_optics[1];
 
   } else if (ROBOT_STATE == ROT){
-    // total_optics[0] = total_optics[0] + d_optics[0];
+    total_optics[0] = total_optics[0] + d_optics[0];
   }
 
   location_scaled[0] = location[0] / MOD;
   location_scaled[1] = location[1] / MOD;
 
-  // robot_angle = (total_optics[0] / 4000) * 360; 
+  optics_angle = (total_optics[0] / 4000) * 360 * 1.2; 
 }

@@ -5,13 +5,13 @@
 
 // motor 1 settings
 #define CHA 0
-#define ENA 12 // this pin must be PWM enabled pin if Arduino board is used
+#define ENA 27 // this pin must be PWM enabled pin if Arduino board is used
 #define IN1 14
 #define IN2 15
 
 // motor 2 settings
-#define IN3 25
-#define IN4 33
+#define IN3 12
+#define IN4 13
 #define ENB 4// this pin must be PWM enabled pin if Arduino board is used
 #define CHB 1
 
@@ -29,7 +29,7 @@ const int CW  = 1; // do not change
 #define P_T 0.1
 
 // P Control Values (Driving)
-#define P_D 2
+#define P_D 4
 
 #define ROT_ERROR_TOL 1
 #define MOV_ERROR_TOL 1
@@ -88,10 +88,10 @@ void move(float distance){
     
     speed_d = (correct_angle - robotAngle) * P_D;
 
-    if (speed_d < -10){
-      speed_d = -10;
-    } else if (speed_d > 10){
-      speed_d = 10;
+    if (speed_d < -20){
+      speed_d = -20;
+    } else if (speed_d > 20){
+      speed_d = 20;
     }
 
     if (d_optics[1] == 0){
@@ -137,8 +137,8 @@ void rot(int angle){
   while (abs(error) > ROT_ERROR_TOL){
     error = target - robotAngle;
 
-    robot.rotate(motor1, 20, sign(error));
-    robot.rotate(motor2, 20, sign(error));
+    robot.rotate(motor1, 30, sign(error));
+    robot.rotate(motor2, 30, sign(error));
 
     delay(10);
   }
