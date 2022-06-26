@@ -217,6 +217,8 @@ void loop() {
                           "\t");
 
   // -- Recieve Server Instructions -- 
+
+  String str = Sender.readStringUntil('\n');
   String str = "";
   str = Sender.readStringUntil('\n');
   if (str.length() > 1){

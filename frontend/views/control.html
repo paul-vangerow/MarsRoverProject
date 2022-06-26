@@ -1,0 +1,84 @@
+<!DOCTYPE html> 
+<html>
+    <head>
+        <!-- <link rel=”stylesheet” type="text/css" href=”index.css”> -->
+        <style>
+            body {
+                background-color: rgb(236, 217, 217);
+            }
+            .movement {
+                text-align: center;
+            }
+            a {
+                text-decoration: none;
+                color: #fff;
+            }
+            h3 {
+                font: 1em "Fira Sans", arial bold;
+                color: black;
+            }
+            ul {
+                list-style-type: none;
+                margin: 0;
+                padding: 0;
+            }
+            .navbar {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                padding: 20px;
+                background-color: rgb(253, 191, 76);
+                color: #fff;
+                font: 3em "Fira Sans", arial bold;
+            }
+            .logo {
+                font-size: 32px;
+            }
+            .menu {
+                display: flex;
+                padding: 10px;
+                gap: 1em;
+                font-size: 18px;
+                color: #fff;
+                text-decoration: none;
+            }
+            .icons {
+                width: 20px;
+                height: 20px;
+            }
+            
+        </style>
+    </head>
+    <body>
+        <nav class="navbar">
+            <div class="logo">MarsRover</div>
+            <ul class="menu">
+                <li><img class="icons" style="vertical-align:middle" src="https://cdn-icons-png.flaticon.com/512/44/44386.png"><a href="/"> Home </a></li>
+                <li><img class="icons" style="vertical-align:middle" src="https://icon-library.com/images/status-icon-png/status-icon-png-2.jpg"><a href="/data"> Monitor </a></li>
+                <li><img class="icons" style="vertical-align:middle" src="https://icon-library.com/images/control-icon/control-icon-0.jpg"><a href="/control"> Control </a></li>
+                <li><img class="icons" style="vertical-align:middle" src="https://cdn-icons-png.flaticon.com/512/15/15659.png"><a href="/group"> About Us </a></li>
+            </ul>
+        </nav>
+        <div class="movement">
+            <form action="/forward" method="post">
+                <label for="num1">Input Forward Amount</label>
+                <input type="text" id="num1" name="num1"><br>
+                <input type="submit" value="Go!">
+            </form>
+            <form action="/rotate" method="post">
+                <label for="num2">Rotate By: </label>
+                <input type="text" id="num2" name="num2"><br>
+                <input type="submit" value="Go!">
+            </form>
+        </div>
+        <div>
+            <form action="/explore" method="post">
+                <label for="num3">Automatic Exploration:</label><br>
+                <input type="submit" value="Start">
+            </form>
+            <form action="/stopexplore" method="post">
+                <input type="submit" value="Stop">
+            </form>
+        </div>
+    </body>
+</html>
