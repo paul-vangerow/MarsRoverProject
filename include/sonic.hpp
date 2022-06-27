@@ -1,6 +1,6 @@
 #ifndef sonic
 #define sonic
 
-bool ping();
+int ping();
 
 #endif

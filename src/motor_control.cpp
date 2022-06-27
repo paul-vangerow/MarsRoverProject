@@ -32,7 +32,7 @@ const int CW  = 1; // do not change
 #define P_D 4
 
 #define ROT_ERROR_TOL 1
-#define MOV_ERROR_TOL 3
+#define MOV_ERROR_TOL 1
 
 bool kill_motion = false;
 bool collision = false;
@@ -73,7 +73,7 @@ void move(float distance){
   int speed_d = 0;
   int crash_counter = 0;
   int target = total_optics[1] + (distance*DISTANCE_COEFFICIENT);
-  int error = 5;
+  int error = 10;
 
   // straight_factor = 0;
 

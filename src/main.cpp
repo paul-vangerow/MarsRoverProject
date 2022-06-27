@@ -30,16 +30,33 @@ bool automated = false;
 uint8_t buffer[36];
 float alien_distances[7];
 
+int ping_val = 0;
+
+int ensure_const_echo = 0;
+int echo_count = 0;
+
+int ensure_const_alien[6];
+int alien_count[6];
+
 struct point{
   float x;
   float y;
 };
 
+struct intPoint{
+  int x;
+  int y;
+};
+
 std::list<point> points;
+
+point recent_point;
 
 int point_val = 0;
 int radar_spotted = 0;
 bool proximity = false;
+
+bool pathable[280][280];
 
 // init variables used to send data to the server
 Server_info s_info;
@@ -48,13 +65,29 @@ void create_points(){
   point val;
   val.x=0; val.y=0;
   points.push_back( val );
-  val.x=20; val.y=0;
+  val.x=100; val.y=0;
   points.push_back( val );
-  val.x=20; val.y=20;
+  val.x=100; val.y=100;
   points.push_back( val );
-  val.x=0; val.y=20;
+  val.x=0; val.y=0;
   points.push_back( val );
+}
 
+float angleConver(float angle){
+
+  // Convert angle to be in range of -180 - 180
+
+  int temp = angle/360;
+
+  angle = angle - (360 * std::floor(temp));
+
+  if (angle < -180){
+    return 360 + angle;
+  } else if (angle > 180) {
+    return 360 - angle;
+  } else {
+    return angle;
+  }
 }
 
 float getTan(float v1, float v2){
@@ -69,10 +102,12 @@ float getTan(float v1, float v2){
 
   float angleValue = atan(v1/v2) * (180/PI);
 
+  // Allow tan values to be in correct quadrant
+
   if (v2 < 0 && v1 > 0){
-    return -180 - angleValue;
+    return 180 + angleValue;
   } else if (v2 < 0 && v1 < 0){
-    return 180 - angleValue;
+    return -180 + angleValue;
   } else {
     return angleValue;
   }
@@ -81,21 +116,23 @@ float getTan(float v1, float v2){
 
 void createInstruction(float x, float y){
 
-  if (kill_motion == 0){
-    float dx = x - location_scaled[0];
-    float dy = y - location_scaled[1];
-    float new_angle = getTan(dy, dx) - correct_angle;
+  float dx = x - location_scaled[0];
+  float dy = y - location_scaled[1];
+  float new_angle = getTan(dy, dx) - correct_angle;
 
-    Serial.print(dx);Serial.print(" ");Serial.print(dy); Serial.print(" ");Serial.print(getTan(dy, dx)); Serial.print(" ");Serial.println(new_angle);
+  Serial.print("x: ");Serial.println(location_scaled[0]);
+  Serial.print("y: ");Serial.println(location_scaled[1]);
+  Serial.print("dx: ");Serial.println(dx);
+  Serial.print("dy: ");Serial.println(dy); 
+  Serial.print("current angle: ");Serial.println(robotAngle);
+  Serial.print("angle: ");Serial.println(getTan(dy, dx)); 
+  Serial.print("amount to turn: ");Serial.println(new_angle);
 
-    instrq.add_instruction( Mouvement(1, new_angle) );
+  instrq.add_instruction( Mouvement(1, angleConver(new_angle)) );
 
-    float new_distance( sqrt( pow(dx, 2) + pow(dy, 2) ) );
+  float new_distance( sqrt( pow(dx, 2) + pow(dy, 2) ) );
+  instrq.add_instruction( Mouvement(0, new_distance) );
 
-    instrq.add_instruction( Mouvement(0, new_distance) );
-  } else {
-    Serial.print("Avoid");
-  }
 }
 
 void drive_core_code( void * parameter){
@@ -103,11 +140,12 @@ void drive_core_code( void * parameter){
 
   delay(100);
 
-  automated = 1;
+  automated = 0;
 
   for(;;){
 
-    if (!instrq.isEmpty()){
+    if (!instrq.isEmpty() && kill_motion == 0){
+      kill_motion = 0;
       Serial.println("Fetching Instruction");
       Mouvement instr = instrq.get_instruction();
 
@@ -130,23 +168,53 @@ void drive_core_code( void * parameter){
       // If no instructions are left, create new instructions for the queue.
       if (automated){
 
-        point val = points.front();
-        points.pop_front();
+        if (points.size() != 0 ){
+          if (kill_motion == 0){
+            recent_point = points.front();
+            points.pop_front();
 
-        if (abs(val.x-location_scaled[0]) > 2 || abs(val.y-location_scaled[1]) > 2){
-          createInstruction(val.x, val.y);
+            if (abs(recent_point.x-location_scaled[0]) > 2 || abs(recent_point.y-location_scaled[1]) > 2){
+              createInstruction(recent_point.x, recent_point.y);
+            }
+          } else {
+
+            // Motion Was killed. Create new points 
+
+
+          }
+          
+        } else {
+          // create_points(); // <-- For looping
         }
         
-        if (point_val == points.size()){
-          create_points();
-          point_val = 0;
-        } else {
-          point_val++;
-        }
       }  
     }
     delay(100);
   }
+}
+
+void disable_points(int distance){
+
+  float ang = robotAngle * (PI / 180);
+
+  int x = cos(ang)*distance + location_scaled[0];
+  int y = sin(ang)*distance + location_scaled[1];
+
+  Serial.print(x); Serial.print(" "); Serial.println(y);
+
+  if (pathable[x][y]==0){
+    for (int x_val = -10; x_val <10; x_val++){
+        if (x+x_val > 0 && x+x_val < 280){
+          for (int y_val = -10; y_val <10; y_val++){
+            if (y+y_val > 0 && y+y_val < 280){
+              pathable[x+x_val][y+y_val] == 1;
+            }
+          }
+        }
+    }
+  }
+
+
 }
 
 void setup(){
@@ -168,7 +236,7 @@ void setup(){
   Serial.println("Initialising Gyro...");
   gyroInit();
 
-  xTaskCreate(drive_core_code, "drive", 1000, &drive_core, tskIDLE_PRIORITY, NULL);
+  xTaskCreate(drive_core_code, "drive", 3000, &drive_core, tskIDLE_PRIORITY, NULL);
 
 }
 
@@ -176,9 +244,10 @@ void loop() {
   float start = millis();
 
   // -- Data Reading -- 
+
   read_values(); // Optical flow data <-- Location_Scaled (X, Y), Camera dx, dy, Total Change in dx, dy
   gyroRead(); // Gyro angle data <-- Robot_Angle
-  proximity = ping();
+  ping_val = ping();
   
   if (FPGA.available() >= 36){
     
@@ -191,25 +260,34 @@ void loop() {
     FPGA.read();
   }
 
-  for (int i = 0 ; i < 7; i++){
-    if ((alien_distances[i] < 10 && alien_distances[i] > 5) || proximity){
-      if (kill_motion == 0){
-        kill_motion = 1;
-        while (!instrq.isEmpty()){
-          instrq.get_instruction();
-        }
+  if (ping_val < ensure_const_echo-1 || ping_val > ensure_const_echo+1){
+    ensure_const_echo = ping_val;
+    echo_count = 0;
+  } else if (echo_count>=3){
+    //Serial.print("Wall at: "); Serial.println(ensure_const_echo);
+    disable_points(ensure_const_echo+10);
+  } else {
+    echo_count++;
+  }
+
+  for (int a = 0; a < 6; a++){
+    if (alien_distances[a] > 5 && alien_distances[a] < 50){
+      if (alien_distances[a] < ensure_const_alien[a]-1 || alien_distances[a] > ensure_const_alien[a]+1){
+        ensure_const_alien[a] = alien_distances[a];
+        alien_count[a] = 0;
+      } else if (alien_count[a]>=2){
+        //Serial.print("Alien! "); Serial.println(ensure_const_alien[a]);
+        disable_points(ensure_const_alien[a]+10);
+      }else {
+        alien_count[a]++;
       }
     }
   }
-
-  // DATA FORMAT d1 d2 d3 d4 d5 d6 d7
-
-  // Read Radar Data
-
-  //radar_spotted = digitalRead(RADAR_READ_PIN);
-  //Serial.println(radar_spotted);
+  Serial.println();
 
   // -- Send Sensor Data to Server --
+
+  // Serial.print(robotAngle); Serial.print(" "); Serial.print(correct_angle); Serial.print(" "); Serial.print(location_scaled[0]); Serial.print(" "); Serial.println(location_scaled[1]); 
 
   Sender.println(String(location_scaled[0])+
                           "\t"+String(location_scaled[1])+
@@ -228,8 +306,6 @@ void loop() {
   // -- Recieve Server Instructions -- 
 
   String str = Sender.readStringUntil('\n');
-  str = "";
-  str = Sender.readStringUntil('\n');
   if (str.length() > 1){
     int index = std::string(str.c_str()).find_first_of('\t');
     int instruction = str.substring(0, index).toInt();
@@ -242,5 +318,5 @@ void loop() {
 
   delay(50); // Main loop Delay
   elapsed_time = millis() - start; // Gyro Callibration
-
+  Serial.println(elapsed_time);
 }
