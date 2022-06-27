@@ -48,11 +48,11 @@ void create_points(){
   point val;
   val.x=0; val.y=0;
   points.push_back( val );
-  val.x=100; val.y=0;
+  val.x=20; val.y=0;
   points.push_back( val );
-  val.x=100; val.y=100;
+  val.x=20; val.y=20;
   points.push_back( val );
-  val.x=0; val.y=100;
+  val.x=0; val.y=20;
   points.push_back( val );
 
 }
@@ -94,18 +94,8 @@ void createInstruction(float x, float y){
 
     instrq.add_instruction( Mouvement(0, new_distance) );
   } else {
-    std::default_random_engine generator;
-    std::uniform_int_distribution<int> distribution(0,90);
-    float angle = -1*distribution(generator); 
-    
-    kill_motion = 0;
-    instrq.add_instruction( Mouvement(1, angle) );
-    instrq.add_instruction( Mouvement(0, 300) );
-
+    Serial.print("Avoid");
   }
-
-  
-
 }
 
 void drive_core_code( void * parameter){
@@ -113,11 +103,7 @@ void drive_core_code( void * parameter){
 
   delay(100);
 
-  automated = 0;
-
-  if (automated){
-    instrq.add_instruction( Mouvement(0, 300) );
-  }
+  automated = 1;
 
   for(;;){
 
