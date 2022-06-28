@@ -30,6 +30,7 @@ bool automated = false;
 uint8_t buffer[36];
 float alien_distances[7];
 
+int ping_val = 0;
 int timer = 0;
 
 bool home_time = false;
@@ -59,6 +60,8 @@ std::list<point> points;
 intPoint recents;
 
 point recent_point;
+
+int time = 0;
 
 int point_val = 0;
 int radar_spotted = 0;
@@ -166,7 +169,7 @@ void drive_core_code( void * parameter){
 
   for(;;){
 
-    if (!instrq.isEmpty()){
+    if (!instrq.isEmpty() && kill_motion == 0){
       kill_motion = 0;
       Serial.println();
       Serial.println("Fetching Instruction");
@@ -178,7 +181,6 @@ void drive_core_code( void * parameter){
         move(instr.get_value());
       } else if (instr.get_instruction() == rotate ) {
         rot(instr.get_value());
-        kill_motion = false;
       } else if (instr.get_instruction() == explore ) {
         automated = true;
       } else if (instr.get_instruction() == end_explore ) {
@@ -197,15 +199,12 @@ void drive_core_code( void * parameter){
             instrq.add_instruction( Mouvement(1, -90) );
             instrq.add_instruction( Mouvement(0, 30) );
             instrq.add_instruction( Mouvement(1, 90) );
-            kill_motion = false;
           } else {
             createInstruction(0, 0); // Go home
           }
         } else {
           if (kill_motion){
-            
-            instrq.add_instruction( Mouvement(1, random(45, 90)) ); // Turn randomly
-
+            // Bounce
           } else {
             instrq.add_instruction(Mouvement(0, 300) ); // Just go
           }
@@ -222,7 +221,7 @@ void setup(){
 
   //create_points();
 
-  timer = millis();
+  time = millis();
 
   Sender.begin(115200, SERIAL_8N1, Sender_Txd_pin, Sender_Rxd_pin);
   FPGA.begin(115200, SERIAL_8N1, FPGA_UART_Tx_PIN, FPGA_UART_Rx_PIN);
@@ -243,7 +242,6 @@ void setup(){
 
 void loop() {
   float start = millis();
-  bool alien_close = false;
 
   // -- Data Reading -- 
 
@@ -255,17 +253,17 @@ void loop() {
     int optics_reading = FPGA.readBytes(buffer, 36); // Read Camera Data
     for (int i = 1; i < 9; i++){
       alien_distances[i-1]=((buffer[4*i+1]<<8) + (buffer[4*i]));
-      if (alien_distances[i-1] > 5 && alien_distances[i-1] < 10){
-        alien_close = true;
-      }
     }
   }
   while (FPGA.available()) {
     FPGA.read();
   }
 
-  if (ping()||alien_close){
+  if (ping()){
     kill_motion = 1;
+    while (!instrq.isEmpty()){
+      instrq.get_instruction();
+    }
   }
 
   // -- Send Sensor Data to Server --
@@ -299,7 +297,7 @@ void loop() {
 
   // -- Next Cycle --   
 
-  if (timer >= 300000){
+  if (time >= 300000){
     home_time = true;
   }
 
