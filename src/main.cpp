@@ -162,7 +162,7 @@ void drive_core_code( void * parameter){
 
   delay(100);
 
-  automated = 1;
+  automated = 0;
 
   for(;;){
 
