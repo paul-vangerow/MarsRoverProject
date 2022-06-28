@@ -96,11 +96,6 @@ void move(float distance){
 
     // Externally callable to kill whatever the rover is doing
     if (kill_motion){
-      stp();
-      robot.rotate(motor1, 30, CCW);
-      robot.rotate(motor2, 30, CW); 
-      delay(500);
-      stp();
       break;
     }
 
