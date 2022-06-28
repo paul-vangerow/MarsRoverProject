@@ -31,12 +31,20 @@ uint8_t buffer[36];
 float alien_distances[7];
 
 int ping_val = 0;
+int timer = 0;
+
+bool home_time = false;
 
 int ensure_const_echo = 0;
 int echo_count = 0;
 
+int alien_dist  = 0;
+int wall_dist = 0;
+
 int ensure_const_alien[6];
 int alien_count[6];
+
+bool motion_killable = true;
 
 struct point{
   float x;
@@ -49,8 +57,11 @@ struct intPoint{
 };
 
 std::list<point> points;
+intPoint recents;
 
 point recent_point;
+
+int time = 0;
 
 int point_val = 0;
 int radar_spotted = 0;
@@ -65,9 +76,19 @@ void create_points(){
   point val;
   val.x=0; val.y=0;
   points.push_back( val );
+  val.x=50; val.y=0;
+  points.push_back( val );
   val.x=100; val.y=0;
   points.push_back( val );
+  val.x=100; val.y=50;
+  points.push_back( val );
   val.x=100; val.y=100;
+  points.push_back( val );
+  val.x=50; val.y=100;
+  points.push_back( val );
+  val.x=0; val.y=100;
+  points.push_back( val );
+  val.x=0; val.y=50;
   points.push_back( val );
   val.x=0; val.y=0;
   points.push_back( val );
@@ -116,9 +137,13 @@ float getTan(float v1, float v2){
 
 void createInstruction(float x, float y){
 
+  // Long distance motion
+
   float dx = x - location_scaled[0];
   float dy = y - location_scaled[1];
   float new_angle = getTan(dy, dx) - correct_angle;
+
+  Serial.println("--------");
 
   Serial.print("x: ");Serial.println(location_scaled[0]);
   Serial.print("y: ");Serial.println(location_scaled[1]);
@@ -140,12 +165,13 @@ void drive_core_code( void * parameter){
 
   delay(100);
 
-  automated = 0;
+  automated = 1;
 
   for(;;){
 
     if (!instrq.isEmpty() && kill_motion == 0){
       kill_motion = 0;
+      Serial.println();
       Serial.println("Fetching Instruction");
       Mouvement instr = instrq.get_instruction();
 
@@ -168,60 +194,34 @@ void drive_core_code( void * parameter){
       // If no instructions are left, create new instructions for the queue.
       if (automated){
 
-        if (points.size() != 0 ){
-          if (kill_motion == 0){
-            recent_point = points.front();
-            points.pop_front();
-
-            if (abs(recent_point.x-location_scaled[0]) > 2 || abs(recent_point.y-location_scaled[1]) > 2){
-              createInstruction(recent_point.x, recent_point.y);
-            }
+        if (home_time){
+          if (kill_motion){ // Maybe it works? I dont really care anymore
+            instrq.add_instruction( Mouvement(1, -90) );
+            instrq.add_instruction( Mouvement(0, 30) );
+            instrq.add_instruction( Mouvement(1, 90) );
           } else {
-
-            // Motion Was killed. Create new points 
-
-
+            createInstruction(0, 0); // Go home
           }
-          
         } else {
-          // create_points(); // <-- For looping
+          if (kill_motion){
+            // Bounce
+          } else {
+            instrq.add_instruction(Mouvement(0, 300) ); // Just go
+          }
         }
-        
       }  
     }
     delay(100);
   }
 }
 
-void disable_points(int distance){
-
-  float ang = robotAngle * (PI / 180);
-
-  int x = cos(ang)*distance + location_scaled[0];
-  int y = sin(ang)*distance + location_scaled[1];
-
-  Serial.print(x); Serial.print(" "); Serial.println(y);
-
-  if (pathable[x][y]==0){
-    for (int x_val = -10; x_val <10; x_val++){
-        if (x+x_val > 0 && x+x_val < 280){
-          for (int y_val = -10; y_val <10; y_val++){
-            if (y+y_val > 0 && y+y_val < 280){
-              pathable[x+x_val][y+y_val] == 1;
-            }
-          }
-        }
-    }
-  }
-
-
-}
-
 void setup(){
 
   Serial.begin(115200);
 
-  create_points();
+  //create_points();
+
+  time = millis();
 
   Sender.begin(115200, SERIAL_8N1, Sender_Txd_pin, Sender_Rxd_pin);
   FPGA.begin(115200, SERIAL_8N1, FPGA_UART_Tx_PIN, FPGA_UART_Rx_PIN);
@@ -247,7 +247,6 @@ void loop() {
 
   read_values(); // Optical flow data <-- Location_Scaled (X, Y), Camera dx, dy, Total Change in dx, dy
   gyroRead(); // Gyro angle data <-- Robot_Angle
-  ping_val = ping();
   
   if (FPGA.available() >= 36){
     
@@ -260,30 +259,12 @@ void loop() {
     FPGA.read();
   }
 
-  if (ping_val < ensure_const_echo-1 || ping_val > ensure_const_echo+1){
-    ensure_const_echo = ping_val;
-    echo_count = 0;
-  } else if (echo_count>=3){
-    //Serial.print("Wall at: "); Serial.println(ensure_const_echo);
-    disable_points(ensure_const_echo+10);
-  } else {
-    echo_count++;
-  }
-
-  for (int a = 0; a < 6; a++){
-    if (alien_distances[a] > 5 && alien_distances[a] < 50){
-      if (alien_distances[a] < ensure_const_alien[a]-1 || alien_distances[a] > ensure_const_alien[a]+1){
-        ensure_const_alien[a] = alien_distances[a];
-        alien_count[a] = 0;
-      } else if (alien_count[a]>=2){
-        //Serial.print("Alien! "); Serial.println(ensure_const_alien[a]);
-        disable_points(ensure_const_alien[a]+10);
-      }else {
-        alien_count[a]++;
-      }
+  if (ping()){
+    kill_motion = 1;
+    while (!instrq.isEmpty()){
+      instrq.get_instruction();
     }
   }
-  Serial.println();
 
   // -- Send Sensor Data to Server --
 
@@ -316,7 +297,11 @@ void loop() {
 
   // -- Next Cycle --   
 
+  if (time >= 300000){
+    home_time = true;
+  }
+
   delay(50); // Main loop Delay
   elapsed_time = millis() - start; // Gyro Callibration
-  Serial.println(elapsed_time);
+  //Serial.println(elapsed_time);
 }
